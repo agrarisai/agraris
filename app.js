@@ -71,7 +71,7 @@ function renderEmptyState(title, body) {
 }
 
 // Fetch agents from Supabase, newest first.
-async function fetchAgents({ search = "", category = "" } = {}) {
+async function fetchAgents({ search = "", category = "", limit = null } = {}) {
   let query = supabaseClient
     .from("agents")
     .select("*")
@@ -88,6 +88,10 @@ async function fetchAgents({ search = "", category = "" } = {}) {
     query = query.ilike("category", `%${category}%`);
   }
 
+  if (limit) {
+    query = query.limit(limit);
+  }
+
   const { data, error } = await query;
 
   if (error) {
@@ -96,6 +100,21 @@ async function fetchAgents({ search = "", category = "" } = {}) {
   }
 
   return data || [];
+}
+
+// Fetch the total number of agents in the registry without
+// downloading any rows.
+async function fetchAgentCount() {
+  const { count, error } = await supabaseClient
+    .from("agents")
+    .select("*", { count: "exact", head: true });
+
+  if (error) {
+    console.error("Gagal mengambil jumlah agent:", error);
+    throw error;
+  }
+
+  return count || 0;
 }
 
 async function fetchAgentById(id) {

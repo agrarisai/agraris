@@ -6,11 +6,16 @@
   const listEl = document.getElementById("agent-list");
   const countEl = document.getElementById("agent-count");
 
-  try {
-    const agents = await fetchAgents();
+  const RECENT_LIMIT = 4;
 
-    countEl.textContent = agents.length
-      ? `${agents.length} agent${agents.length === 1 ? "" : "s"}`
+  try {
+    const [agents, totalCount] = await Promise.all([
+      fetchAgents({ limit: RECENT_LIMIT }),
+      fetchAgentCount(),
+    ]);
+
+    countEl.textContent = totalCount
+      ? `${totalCount} agent${totalCount === 1 ? "" : "s"}`
       : "";
 
     if (agents.length === 0) {

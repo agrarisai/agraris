@@ -573,6 +573,12 @@ body.menu-open {
   gap: 14px;
 }
 
+.listing-panel-actions {
+  display: flex;
+  justify-content: center;
+  margin-top: 26px;
+}
+
 .agent-row {
   display: block;
   text-decoration: none;
