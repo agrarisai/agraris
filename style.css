@@ -546,6 +546,25 @@ body.menu-open {
   opacity: 0.65;
 }
 
+/* ---------- listing panel ---------- */
+
+/* Wraps a listing's heading + list in its own shaded block so it reads as
+   one bounded unit against the cream body, rather than a border-top rule
+   floating in open space. */
+.listing-panel {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  margin: 8px 0 18px;
+  padding: 26px 22px 20px;
+}
+
+.listing-panel .section-head {
+  margin-top: 0;
+  padding-top: 0;
+  border-top: none;
+}
+
 /* ---------- agent ledger rows ---------- */
 
 .agent-list {
@@ -861,6 +880,10 @@ body.menu-open {
 
   .section-head {
     padding-top: 22px;
+  }
+
+  .listing-panel {
+    padding: 20px 16px 16px;
   }
 
   .section-head h2 {
