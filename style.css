@@ -29,7 +29,10 @@ html {
 
 body {
   margin: 0;
-  background: var(--cream);
+  background-color: var(--cream);
+  /* Faint topographic contour lines, echoing the wave in logo.svg */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 200 200'%3E%3Cg fill='none' stroke='%232f6b3f' stroke-width='1.5' stroke-opacity='0.04'%3E%3Cpath d='M0,30 C50,-10 150,70 200,30'/%3E%3Cpath d='M0,100 C70,60 130,140 200,100'/%3E%3Cpath d='M0,160 C40,140 160,180 200,160'/%3E%3C/g%3E%3C/svg%3E");
+  background-repeat: repeat;
   color: var(--ink);
   font-family: var(--font-mono);
   font-size: 15px;
