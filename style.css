@@ -814,8 +814,8 @@ body.menu-open {
 
 .reveal {
   opacity: 0;
-  transform: translateY(14px);
-  transition: opacity 0.45s ease-out, transform 0.45s ease-out;
+  transform: translateY(30px);
+  transition: opacity 0.65s ease-out, transform 0.65s ease-out;
 }
 
 .reveal.is-visible {
