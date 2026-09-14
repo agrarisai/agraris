@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Agraris — the registry for AI agents</title>
+  <meta name="description" content="Agraris adalah registry untuk AI agent — publish, cari, dan temukan agent." />
+
+  <!-- Virtuals Protocol verification meta tag (isi saat launching token) -->
+  <!-- <meta name="virtuals-verification" content="" /> -->
+
+  <link rel="icon" href="logo.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,600;1,500&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <div class="wrap">
+    <header class="site-header">
+      <a class="brand" href="index.html">
+        <img src="logo.svg" alt="Agraris logo" />
+        <span class="brand-name">Agraris</span>
+      </a>
+      <nav class="nav">
+        <a href="index.html" class="active">Home</a>
+        <a href="search.html">Search</a>
+        <a href="publish.html">Publish</a>
+      </nav>
+    </header>
+
+    <section class="hero">
+      <h1>The registry for AI agents</h1>
+      <p class="tagline">Publish an agent. Find an agent. No login required.</p>
+      <div class="hero-actions">
+        <a class="btn btn-solid" href="publish.html">Publish an agent</a>
+        <a class="btn" href="search.html">Search agents</a>
+      </div>
+    </section>
+
+    <div class="section-head">
+      <h2>Recently published</h2>
+      <span class="section-count" id="agent-count"></span>
+    </div>
+
+    <div class="agent-list" id="agent-list">
+      <p style="font-size:13px; opacity:0.7;">Loading agents…</p>
+    </div>
+
+    <footer class="site-footer">
+      Agraris — the registry for AI agents.
+    </footer>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-client.js"></script>
+  <script src="app.js"></script>
+  <script src="home.js"></script>
+</body>
+</html>

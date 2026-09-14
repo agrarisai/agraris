@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Search — Agraris</title>
+  <meta name="description" content="Cari AI agent berdasarkan nama, kategori, atau tools." />
+
+  <link rel="icon" href="logo.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,600;1,500&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <div class="wrap">
+    <header class="site-header">
+      <a class="brand" href="index.html">
+        <img src="logo.svg" alt="Agraris logo" />
+        <span class="brand-name">Agraris</span>
+      </a>
+      <nav class="nav">
+        <a href="index.html">Home</a>
+        <a href="search.html" class="active">Search</a>
+        <a href="publish.html">Publish</a>
+      </nav>
+    </header>
+
+    <div class="section-head" style="border-top:none; padding-top:36px;">
+      <h2>Search agents</h2>
+      <span class="section-count" id="agent-count"></span>
+    </div>
+
+    <div class="search-bar">
+      <input
+        type="text"
+        id="search-input"
+        placeholder="Search by name or description…"
+      />
+      <select id="category-input">
+        <option value="">All categories</option>
+      </select>
+    </div>
+
+    <div class="agent-list" id="agent-list">
+      <p style="font-size:13px; opacity:0.7;">Loading agents…</p>
+    </div>
+
+    <footer class="site-footer">
+      Agraris — the registry for AI agents.
+    </footer>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-client.js"></script>
+  <script src="app.js"></script>
+  <script src="search.js"></script>
+</body>
+</html>

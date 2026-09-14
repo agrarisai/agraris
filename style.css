@@ -1,0 +1,448 @@
+/* ============================================
+   Agraris — the registry for AI agents
+   Design tokens: deep green / cream / earth
+   ============================================ */
+
+:root {
+  --green: #2f6b3f;
+  --green-dark: #1f4a2c;
+  --cream: #e8dcc8;
+  --panel: #efe9df;
+  --ink: #4a3320;
+  --line: #c9bda3;
+  --line-soft: #d9cfba;
+  --danger: #8a3324;
+
+  --font-display: "Fraunces", Georgia, serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+
+  --max-width: 880px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--cream);
+  color: var(--ink);
+  font-family: var(--font-mono);
+  font-size: 15px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: var(--green-dark);
+}
+
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: 2px solid var(--green);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+/* ---------- layout shell ---------- */
+
+.wrap {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.site-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 22px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  color: var(--ink);
+}
+
+.brand img {
+  width: 28px;
+  height: 28px;
+  display: block;
+}
+
+.brand-name {
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: 0.2px;
+}
+
+.nav {
+  display: flex;
+  gap: 22px;
+}
+
+.nav a {
+  text-decoration: none;
+  color: var(--ink);
+  font-size: 13px;
+  border-bottom: 1px solid transparent;
+  padding-bottom: 2px;
+}
+
+.nav a:hover,
+.nav a.active {
+  border-bottom-color: var(--green);
+}
+
+.site-footer {
+  border-top: 1px solid var(--line);
+  margin-top: 60px;
+  padding: 24px 0 40px;
+  font-size: 12px;
+  color: var(--ink);
+  opacity: 0.7;
+}
+
+/* ---------- hero ---------- */
+
+.hero {
+  padding: 56px 0 40px;
+}
+
+.hero h1 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 42px;
+  line-height: 1.1;
+  margin: 0 0 14px;
+  max-width: 12ch;
+}
+
+.hero p.tagline {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 19px;
+  color: var(--green-dark);
+  margin: 0 0 26px;
+  max-width: 34ch;
+}
+
+.hero-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+/* ---------- buttons ---------- */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  padding: 11px 18px;
+  border-radius: 3px;
+  border: 1px solid var(--green);
+  cursor: pointer;
+  text-decoration: none;
+  background: transparent;
+  color: var(--green-dark);
+}
+
+.btn-solid {
+  background: var(--green);
+  color: var(--cream);
+}
+
+.btn-solid:hover {
+  background: var(--green-dark);
+  border-color: var(--green-dark);
+}
+
+.btn:not(.btn-solid):hover {
+  background: rgba(47, 107, 63, 0.08);
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ---------- section headings ---------- */
+
+.section-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin: 8px 0 18px;
+  padding-top: 28px;
+  border-top: 1px solid var(--line);
+}
+
+.section-head h2 {
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.section-count {
+  font-size: 12px;
+  color: var(--ink);
+  opacity: 0.65;
+}
+
+/* ---------- agent ledger rows ---------- */
+
+.agent-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.agent-row {
+  display: block;
+  text-decoration: none;
+  color: var(--ink);
+  border-bottom: 1px solid var(--line);
+  border-left: 3px solid transparent;
+  padding: 16px 14px 16px 16px;
+  transition: border-left-color 0.15s ease, background 0.15s ease;
+}
+
+.agent-row:hover {
+  border-left-color: var(--green);
+  background: rgba(47, 107, 63, 0.05);
+}
+
+.agent-row:first-child {
+  border-top: 1px solid var(--line);
+}
+
+.agent-row-top {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 4px;
+}
+
+.agent-name {
+  font-family: var(--font-display);
+  font-size: 17px;
+  font-weight: 600;
+}
+
+.agent-version {
+  font-size: 12px;
+  color: var(--green-dark);
+  white-space: nowrap;
+}
+
+.agent-desc {
+  font-size: 13px;
+  line-height: 1.55;
+  margin: 4px 0 8px;
+  opacity: 0.9;
+}
+
+.agent-meta {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.tag {
+  font-size: 11px;
+  padding: 3px 8px;
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  color: var(--ink);
+  background: var(--panel);
+}
+
+.empty-state {
+  padding: 40px 16px;
+  border: 1px dashed var(--line);
+  text-align: left;
+  font-size: 13px;
+}
+
+.empty-state strong {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 17px;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+/* ---------- forms ---------- */
+
+.field {
+  margin-bottom: 18px;
+}
+
+.field label {
+  display: block;
+  font-size: 12px;
+  margin-bottom: 6px;
+  color: var(--ink);
+}
+
+.field .hint {
+  display: block;
+  font-size: 11px;
+  opacity: 0.65;
+  margin-top: 5px;
+}
+
+.field input[type="text"],
+.field input[type="url"],
+.field textarea,
+.field select {
+  width: 100%;
+  font-family: var(--font-mono);
+  font-size: 14px;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  background: #fff;
+  color: var(--ink);
+}
+
+.field textarea {
+  resize: vertical;
+  min-height: 90px;
+}
+
+.required-mark {
+  color: var(--danger);
+}
+
+.form-actions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 26px;
+}
+
+.form-msg {
+  font-size: 12px;
+}
+
+.form-msg.error {
+  color: var(--danger);
+}
+
+.form-msg.success {
+  color: var(--green-dark);
+}
+
+/* ---------- search ---------- */
+
+.search-bar {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+}
+
+.search-bar input[type="text"] {
+  flex: 1;
+  min-width: 180px;
+  font-family: var(--font-mono);
+  font-size: 14px;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  background: #fff;
+  color: var(--ink);
+}
+
+.search-bar select {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  background: #fff;
+  color: var(--ink);
+}
+
+/* ---------- agent detail ---------- */
+
+.detail-head {
+  padding: 40px 0 20px;
+  border-bottom: 1px solid var(--line);
+}
+
+.detail-head .agent-name {
+  font-size: 30px;
+}
+
+.detail-head .agent-version {
+  font-size: 13px;
+}
+
+.detail-desc {
+  font-size: 15px;
+  line-height: 1.7;
+  margin: 18px 0;
+  max-width: 60ch;
+}
+
+.detail-links {
+  display: flex;
+  gap: 10px;
+  margin-top: 18px;
+  flex-wrap: wrap;
+}
+
+.detail-row {
+  padding: 22px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.detail-row-label {
+  font-size: 11px;
+  opacity: 0.65;
+  margin-bottom: 6px;
+}
+
+/* ---------- responsive ---------- */
+
+@media (max-width: 560px) {
+  .hero h1 {
+    font-size: 32px;
+  }
+
+  .hero p.tagline {
+    font-size: 17px;
+  }
+
+  .nav {
+    gap: 14px;
+  }
+
+  .detail-head .agent-name {
+    font-size: 24px;
+  }
+}

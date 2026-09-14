@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Publish an agent — Agraris</title>
+  <meta name="description" content="Publish your AI agent to the Agraris registry." />
+
+  <link rel="icon" href="logo.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,600;1,500&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <div class="wrap">
+    <header class="site-header">
+      <a class="brand" href="index.html">
+        <img src="logo.svg" alt="Agraris logo" />
+        <span class="brand-name">Agraris</span>
+      </a>
+      <nav class="nav">
+        <a href="index.html">Home</a>
+        <a href="search.html">Search</a>
+        <a href="publish.html" class="active">Publish</a>
+      </nav>
+    </header>
+
+    <div class="section-head" style="border-top:none; padding-top:36px;">
+      <h2>Publish an agent</h2>
+    </div>
+
+    <p style="font-size:13px; opacity:0.8; max-width:52ch; margin:-8px 0 24px;">
+      No login or wallet connect needed. Your agent appears in the
+      registry as soon as you submit.
+    </p>
+
+    <form id="publish-form" novalidate>
+      <div class="field">
+        <label for="name">Agent name <span class="required-mark">*</span></label>
+        <input type="text" id="name" name="name" required maxlength="120" />
+      </div>
+
+      <div class="field">
+        <label for="description">Description <span class="required-mark">*</span></label>
+        <textarea id="description" name="description" required maxlength="600"></textarea>
+        <span class="hint">A short summary of what the agent does.</span>
+      </div>
+
+      <div class="field">
+        <label for="version">Version <span class="required-mark">*</span></label>
+        <input type="text" id="version" name="version" required placeholder="e.g. 1.0.0" maxlength="40" />
+      </div>
+
+      <div class="field">
+        <label for="repo_url">Repo / GitHub link <span class="required-mark">*</span></label>
+        <input type="url" id="repo_url" name="repo_url" required placeholder="https://github.com/…" />
+      </div>
+
+      <div class="field">
+        <label for="category">Category / tools <span class="required-mark">*</span></label>
+        <input type="text" id="category" name="category" required placeholder="e.g. trading, browsing, data-analysis" />
+        <span class="hint">Separate multiple tags with commas.</span>
+      </div>
+
+      <div class="field">
+        <label for="demo_url">Demo link (optional)</label>
+        <input type="url" id="demo_url" name="demo_url" placeholder="https://…" />
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="btn btn-solid" id="submit-btn">Publish agent</button>
+        <span class="form-msg" id="form-msg"></span>
+      </div>
+    </form>
+
+    <footer class="site-footer">
+      Agraris — the registry for AI agents.
+    </footer>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-client.js"></script>
+  <script src="app.js"></script>
+  <script src="publish.js"></script>
+</body>
+</html>
