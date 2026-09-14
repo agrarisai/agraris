@@ -30,7 +30,27 @@ html {
 body {
   margin: 0;
   background-color: var(--cream);
-  /* Faint technical/blueprint grid, static and low-opacity to avoid eye strain */
+  color: var(--ink);
+  font-family: var(--font-mono);
+  font-size: 15px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+/* Faint technical/blueprint grid, pinned to the viewport so it never scrolls
+   with the page. `background-attachment: fixed` is unreliable on mobile
+   (notably older iOS Safari, and it can jank on Chrome Android too), so the
+   pattern lives on a fixed pseudo-element instead — this renders consistently
+   across mobile browsers. Negative z-index keeps it under all real content;
+   it relies on the root element's stacking context (no positioning needed
+   on body/html) so it can never cover text, buttons, or the sticky header. */
+html::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
   background-image:
     repeating-linear-gradient(
       to right,
@@ -47,12 +67,6 @@ body {
       transparent 28px
     );
   background-repeat: repeat;
-  color: var(--ink);
-  font-family: var(--font-mono);
-  font-size: 15px;
-  line-height: 1.6;
-  -webkit-font-smoothing: antialiased;
-  overflow-x: hidden;
 }
 
 img {
