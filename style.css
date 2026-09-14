@@ -570,25 +570,30 @@ body.menu-open {
 .agent-list {
   display: flex;
   flex-direction: column;
+  gap: 14px;
 }
 
 .agent-row {
   display: block;
   text-decoration: none;
   color: var(--ink);
-  border-bottom: 1.5px solid var(--line-strong);
-  border-left: 3px solid transparent;
-  padding: 22px 14px 22px 16px;
-  transition: border-left-color 0.15s ease, background 0.15s ease;
+  background: var(--cream);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 20px 18px;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
 }
 
 .agent-row:hover {
-  border-left-color: var(--green);
-  background: rgba(47, 107, 63, 0.05);
+  border-color: var(--green);
+  box-shadow: 0 4px 10px rgba(74, 51, 32, 0.12);
+  transform: translateY(-2px);
 }
 
-.agent-row:first-child {
-  border-top: 1.5px solid var(--line-strong);
+.agent-row:active {
+  border-color: var(--green);
+  box-shadow: 0 1px 4px rgba(74, 51, 32, 0.15);
+  transform: translateY(0);
 }
 
 .agent-row-top {
