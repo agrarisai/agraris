@@ -50,7 +50,7 @@ function renderAgentRow(agent) {
     .join("");
 
   return `
-    <a class="agent-row" href="agent.html?id=${encodeURIComponent(agent.id)}">
+    <a class="agent-row reveal" data-reveal-stagger href="agent.html?id=${encodeURIComponent(agent.id)}">
       <div class="agent-row-top">
         <span class="agent-name">${escapeHtml(agent.name)}</span>
         <span class="agent-version">v${escapeHtml(agent.version)}</span>
