@@ -126,10 +126,66 @@ select:focus-visible {
 .site-footer {
   border-top: 1px solid var(--line);
   margin-top: 60px;
-  padding: 24px 0 40px;
+  padding: 28px 0 24px;
   font-size: 12px;
   color: var(--ink);
+}
+
+.footer-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 20px 32px;
+}
+
+.footer-github {
+  display: inline-flex;
+  color: var(--ink);
   opacity: 0.7;
+}
+
+.footer-github svg {
+  width: 20px;
+  height: 20px;
+  display: block;
+}
+
+.footer-github:hover {
+  color: var(--green-dark);
+  opacity: 1;
+}
+
+.footer-col-title {
+  display: block;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink);
+  opacity: 0.55;
+  margin: 0 0 8px;
+}
+
+.footer-col a {
+  display: block;
+  color: var(--ink);
+  opacity: 0.8;
+  text-decoration: none;
+  font-size: 12px;
+}
+
+.footer-col a:hover {
+  color: var(--green-dark);
+  opacity: 1;
+}
+
+.footer-bottom {
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line-soft);
+  font-size: 11px;
+  opacity: 0.6;
 }
 
 /* ---------- reusable page bits ---------- */
