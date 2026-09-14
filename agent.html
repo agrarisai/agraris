@@ -25,7 +25,25 @@
         <a href="search.html">Search</a>
         <a href="publish.html">Publish</a>
       </nav>
+      <button class="menu-toggle" id="menu-toggle" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="menu-panel">
+        <span class="menu-toggle-bars"><span></span><span></span><span></span></span>
+      </button>
     </header>
+
+    <div class="menu-overlay" id="menu-overlay"></div>
+    <nav class="menu-panel" id="menu-panel" aria-hidden="true">
+      <div class="menu-panel-head">
+        <span class="menu-panel-title">Menu</span>
+        <button class="menu-close" id="menu-close" type="button" aria-label="Close menu">✕</button>
+      </div>
+      <a href="index.html">Home</a>
+      <a href="search.html">Search</a>
+      <a href="publish.html">Publish</a>
+      <hr class="menu-sep" />
+      <a href="index.html#about" data-hash="#about">About</a>
+      <a href="index.html#privacy" data-hash="#privacy">Privacy</a>
+      <a href="index.html#terms" data-hash="#terms">Terms</a>
+    </nav>
 
     <div id="agent-detail">
       <p class="loading-text loading-text--standalone">Loading agent…</p>
