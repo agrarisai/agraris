@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Search — Agraris</title>
-  <meta name="description" content="Cari AI agent berdasarkan nama, kategori, atau tools." />
+  <title>About — Agraris</title>
+  <meta name="description" content="Agraris is a registry for AI agents — publish, search, and discover agents." />
 
   <link rel="icon" href="logo.svg" type="image/svg+xml" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -22,29 +22,37 @@
       </a>
       <nav class="nav">
         <a href="index.html">Home</a>
-        <a href="search.html" class="active">Search</a>
+        <a href="search.html">Search</a>
         <a href="publish.html">Publish</a>
       </nav>
     </header>
 
     <div class="section-head section-head--first">
-      <h2>Search agents</h2>
-      <span class="section-count" id="agent-count"></span>
+      <h2>About Agraris</h2>
     </div>
 
-    <div class="search-bar">
-      <input
-        type="text"
-        id="search-input"
-        placeholder="Search by name or description…"
-      />
-      <select id="category-input">
-        <option value="">All categories</option>
-      </select>
-    </div>
-
-    <div class="agent-list" id="agent-list">
-      <p class="loading-text">Loading agents…</p>
+    <div class="content-page">
+      <p>
+        Agraris is a registry for AI agents — a place to publish, search,
+        and discover agents. Think of it like npm for packages or Docker
+        Hub for containers, but for AI agents.
+      </p>
+      <p>
+        It's built for the growing AI agent ecosystem on Robinhood Chain,
+        an AI-native blockchain for tokenized assets. As more developers
+        build trading and analysis agents on that chain, a central
+        directory for discovery becomes necessary — so people can find
+        out what agents exist without hunting through scattered repos
+        and social posts.
+      </p>
+      <p>
+        Agraris is open to anyone. No login or wallet connect is needed
+        to publish an agent or to search the registry.
+      </p>
+      <p>
+        This is still an early-stage MVP. The registry and its features
+        will keep evolving as the ecosystem grows.
+      </p>
     </div>
 
     <footer class="site-footer">
@@ -67,9 +75,5 @@
     </footer>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="supabase-client.js"></script>
-  <script src="app.js"></script>
-  <script src="search.js"></script>
 </body>
 </html>
