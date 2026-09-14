@@ -475,7 +475,7 @@ body.menu-open {
   font-size: 19px;
   color: var(--green-dark);
   margin: 0 0 26px;
-  max-width: 34ch;
+  max-width: 50ch;
 }
 
 .hero-actions {
