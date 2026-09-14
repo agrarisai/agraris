@@ -8,7 +8,7 @@
 //    supabase/migration.sql)
 
 const SUPABASE_URL = "https://gnydurjxrynqcbpkxopd.supabase.co";
-const SUPABASE_ANON_KEY = sb_publishable_4roHAzTOTw9P0_8NXKt2IA_kXniR9pm; // ganti ini dengan Publishable key kamu
+const SUPABASE_ANON_KEY = "sb_publishable_4roHAzTOTw9P0_8NXKt2IA_kXniR9pm"; // ganti ini dengan Publishable key kamu
 
 const supabaseClient = window.supabase.createClient(
   SUPABASE_URL,
