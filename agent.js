@@ -24,7 +24,7 @@
 
     container.innerHTML = `
       <div class="detail-head">
-        <div class="agent-row-top" style="margin-bottom:10px;">
+        <div class="agent-row-top">
           <span class="agent-name">${escapeHtml(agent.name)}</span>
           <span class="agent-version">v${escapeHtml(agent.version)}</span>
         </div>
