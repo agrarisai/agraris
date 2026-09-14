@@ -22,6 +22,7 @@
     }
 
     listEl.innerHTML = agents.map(renderAgentRow).join("");
+    observeReveal(listEl);
   } catch (err) {
     listEl.innerHTML = renderEmptyState(
       "Couldn't load agents",

@@ -23,7 +23,7 @@
       .join("");
 
     container.innerHTML = `
-      <div class="detail-head">
+      <div class="detail-head reveal">
         <div class="agent-row-top">
           <span class="agent-name">${escapeHtml(agent.name)}</span>
           <span class="agent-version">v${escapeHtml(agent.version)}</span>
@@ -40,11 +40,12 @@
         </div>
       </div>
 
-      <div class="detail-row">
+      <div class="detail-row reveal">
         <div class="detail-row-label">Published</div>
         <div>${escapeHtml(formatDate(agent.created_at))}</div>
       </div>
     `;
+    observeReveal(container);
   } catch (err) {
     container.innerHTML = renderEmptyState(
       "Agent not found",

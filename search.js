@@ -58,6 +58,7 @@
     }
 
     listEl.innerHTML = agents.map(renderAgentRow).join("");
+    observeReveal(listEl);
   }
 
   try {
