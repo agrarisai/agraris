@@ -35,6 +35,11 @@ body {
   font-size: 15px;
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+img {
+  max-width: 100%;
 }
 
 a {
@@ -69,7 +74,9 @@ select:focus-visible {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 22px 0;
+  flex-wrap: wrap;
+  gap: 10px 16px;
+  padding: 18px 0;
   border-bottom: 1px solid var(--line);
 }
 
@@ -79,12 +86,14 @@ select:focus-visible {
   gap: 10px;
   text-decoration: none;
   color: var(--ink);
+  min-width: 0;
 }
 
 .brand img {
   width: 28px;
   height: 28px;
   display: block;
+  flex-shrink: 0;
 }
 
 .brand-name {
@@ -92,11 +101,12 @@ select:focus-visible {
   font-size: 20px;
   font-weight: 600;
   letter-spacing: 0.2px;
+  white-space: nowrap;
 }
 
 .nav {
   display: flex;
-  gap: 22px;
+  gap: 18px;
 }
 
 .nav a {
@@ -104,7 +114,8 @@ select:focus-visible {
   color: var(--ink);
   font-size: 13px;
   border-bottom: 1px solid transparent;
-  padding-bottom: 2px;
+  padding: 8px 0 6px;
+  white-space: nowrap;
 }
 
 .nav a:hover,
@@ -119,6 +130,30 @@ select:focus-visible {
   font-size: 12px;
   color: var(--ink);
   opacity: 0.7;
+}
+
+/* ---------- reusable page bits ---------- */
+
+.loading-text {
+  font-size: 13px;
+  opacity: 0.7;
+  padding: 8px 0;
+}
+
+.loading-text--standalone {
+  padding-top: 36px;
+}
+
+.page-lead {
+  font-size: 13px;
+  opacity: 0.8;
+  max-width: 52ch;
+  margin: -8px 0 24px;
+}
+
+.section-head--first {
+  border-top: none;
+  padding-top: 8px;
 }
 
 /* ---------- hero ---------- */
@@ -156,9 +191,11 @@ select:focus-visible {
 .btn {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
   font-family: var(--font-mono);
   font-size: 13px;
+  min-height: 44px;
   padding: 11px 18px;
   border-radius: 3px;
   border: 1px solid var(--green);
@@ -241,7 +278,8 @@ select:focus-visible {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
-  gap: 10px;
+  flex-wrap: wrap;
+  gap: 4px 10px;
   margin-bottom: 4px;
 }
 
@@ -249,6 +287,7 @@ select:focus-visible {
   font-family: var(--font-display);
   font-size: 17px;
   font-weight: 600;
+  overflow-wrap: anywhere;
 }
 
 .agent-version {
@@ -320,7 +359,7 @@ select:focus-visible {
 .field select {
   width: 100%;
   font-family: var(--font-mono);
-  font-size: 14px;
+  font-size: 16px;
   padding: 10px 12px;
   border: 1px solid var(--line);
   border-radius: 3px;
@@ -366,10 +405,10 @@ select:focus-visible {
 }
 
 .search-bar input[type="text"] {
-  flex: 1;
-  min-width: 180px;
+  flex: 1 1 220px;
+  min-width: 0;
   font-family: var(--font-mono);
-  font-size: 14px;
+  font-size: 16px;
   padding: 10px 12px;
   border: 1px solid var(--line);
   border-radius: 3px;
@@ -378,8 +417,10 @@ select:focus-visible {
 }
 
 .search-bar select {
+  flex: 1 1 auto;
+  min-width: 140px;
   font-family: var(--font-mono);
-  font-size: 13px;
+  font-size: 14px;
   padding: 10px 12px;
   border: 1px solid var(--line);
   border-radius: 3px;
@@ -392,6 +433,10 @@ select:focus-visible {
 .detail-head {
   padding: 40px 0 20px;
   border-bottom: 1px solid var(--line);
+}
+
+.detail-head .agent-row-top {
+  margin-bottom: 10px;
 }
 
 .detail-head .agent-name {
@@ -407,6 +452,7 @@ select:focus-visible {
   line-height: 1.7;
   margin: 18px 0;
   max-width: 60ch;
+  overflow-wrap: anywhere;
 }
 
 .detail-links {
@@ -430,19 +476,76 @@ select:focus-visible {
 /* ---------- responsive ---------- */
 
 @media (max-width: 560px) {
+  .wrap {
+    padding: 0 16px;
+  }
+
+  .hero {
+    padding: 36px 0 28px;
+  }
+
   .hero h1 {
-    font-size: 32px;
+    font-size: 28px;
+    max-width: none;
   }
 
   .hero p.tagline {
-    font-size: 17px;
+    font-size: 16px;
+    max-width: none;
+  }
+
+  .hero-actions .btn {
+    flex: 1 1 auto;
   }
 
   .nav {
-    gap: 14px;
+    gap: 16px;
+  }
+
+  .section-head {
+    padding-top: 22px;
+  }
+
+  .section-head h2 {
+    font-size: 19px;
+  }
+
+  .agent-row {
+    padding: 14px 12px;
+  }
+
+  .detail-head {
+    padding: 28px 0 18px;
   }
 
   .detail-head .agent-name {
-    font-size: 24px;
+    font-size: 23px;
+  }
+
+  .form-actions {
+    flex-wrap: wrap;
+  }
+
+  .form-actions .btn {
+    width: 100%;
+  }
+}
+
+@media (max-width: 380px) {
+  .brand-name {
+    font-size: 18px;
+  }
+
+  .brand img {
+    width: 24px;
+    height: 24px;
+  }
+
+  .nav {
+    gap: 12px;
+  }
+
+  .nav a {
+    font-size: 12px;
   }
 }
