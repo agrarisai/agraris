@@ -112,3 +112,71 @@ async function fetchAgentById(id) {
 
   return data;
 }
+
+// ============================================
+// Hamburger menu (shared header, all pages)
+// ============================================
+
+(function initMenu() {
+  const toggle = document.getElementById("menu-toggle");
+  const panel = document.getElementById("menu-panel");
+  const overlay = document.getElementById("menu-overlay");
+  const closeBtn = document.getElementById("menu-close");
+
+  if (!toggle || !panel || !overlay) return;
+
+  function openMenu() {
+    panel.classList.add("is-open");
+    overlay.classList.add("is-open");
+    document.body.classList.add("menu-open");
+    toggle.setAttribute("aria-expanded", "true");
+    panel.setAttribute("aria-hidden", "false");
+  }
+
+  function closeMenu() {
+    panel.classList.remove("is-open");
+    overlay.classList.remove("is-open");
+    document.body.classList.remove("menu-open");
+    toggle.setAttribute("aria-expanded", "false");
+    panel.setAttribute("aria-hidden", "true");
+  }
+
+  toggle.addEventListener("click", () => {
+    if (panel.classList.contains("is-open")) {
+      closeMenu();
+    } else {
+      openMenu();
+    }
+  });
+
+  closeBtn?.addEventListener("click", closeMenu);
+  overlay.addEventListener("click", closeMenu);
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && panel.classList.contains("is-open")) {
+      closeMenu();
+    }
+  });
+
+  // About/Privacy/Terms links only carry a URL hash (they all point
+  // at index.html), so highlight them by matching the current hash
+  // instead of a static "active" class in the markup. When one of
+  // them matches, it takes over from the page-level active link
+  // (e.g. "Home") so only one item is ever highlighted at a time.
+  const pageActiveLink = panel.querySelector("a.active");
+  const hashLinks = panel.querySelectorAll("a[data-hash]");
+
+  function highlightHashLinks() {
+    const hash = window.location.hash;
+    let matched = false;
+    hashLinks.forEach((a) => {
+      const isMatch = hash !== "" && hash === a.getAttribute("data-hash");
+      a.classList.toggle("active", isMatch);
+      if (isMatch) matched = true;
+    });
+    pageActiveLink?.classList.toggle("active", !matched);
+  }
+
+  highlightHashLinks();
+  window.addEventListener("hashchange", highlightHashLinks);
+})();

@@ -123,6 +123,129 @@ select:focus-visible {
   border-bottom-color: var(--green);
 }
 
+/* ---------- hamburger menu ---------- */
+
+.menu-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  background: transparent;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.menu-toggle:hover {
+  border-color: var(--green);
+}
+
+.menu-toggle-bars {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 4px;
+  width: 18px;
+}
+
+.menu-toggle-bars span {
+  display: block;
+  height: 2px;
+  background: var(--ink);
+  border-radius: 1px;
+}
+
+body.menu-open {
+  overflow: hidden;
+}
+
+.menu-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(31, 74, 44, 0.35);
+  z-index: 40;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.2s ease, visibility 0.2s ease;
+}
+
+.menu-overlay.is-open {
+  opacity: 1;
+  visibility: visible;
+}
+
+.menu-panel {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: min(280px, 82vw);
+  background: var(--panel);
+  border-left: 1px solid var(--line);
+  z-index: 41;
+  display: flex;
+  flex-direction: column;
+  padding: 18px 20px 24px;
+  transform: translateX(100%);
+  transition: transform 0.25s ease;
+  box-shadow: -8px 0 24px rgba(31, 74, 44, 0.15);
+  overflow-y: auto;
+}
+
+.menu-panel.is-open {
+  transform: translateX(0);
+}
+
+.menu-panel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.menu-panel-title {
+  font-family: var(--font-display);
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.menu-close {
+  border: none;
+  background: transparent;
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+  color: var(--ink);
+  padding: 4px;
+}
+
+.menu-close:hover {
+  color: var(--green);
+}
+
+.menu-panel a {
+  text-decoration: none;
+  color: var(--ink);
+  font-size: 14px;
+  padding: 13px 4px;
+  border-bottom: 1px solid var(--line-soft);
+}
+
+.menu-panel a:hover,
+.menu-panel a.active {
+  color: var(--green-dark);
+  font-weight: 500;
+}
+
+.menu-sep {
+  border: none;
+  border-top: 1px solid var(--line);
+  margin: 6px 0;
+}
+
 .site-footer {
   border-top: 1px solid var(--line);
   margin-top: 60px;
@@ -648,7 +771,7 @@ select:focus-visible {
   }
 
   .nav {
-    gap: 16px;
+    display: none;
   }
 
   .section-head {
@@ -688,13 +811,5 @@ select:focus-visible {
   .brand img {
     width: 34px;
     height: 34px;
-  }
-
-  .nav {
-    gap: 12px;
-  }
-
-  .nav a {
-    font-size: 12px;
   }
 }
