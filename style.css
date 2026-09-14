@@ -529,6 +529,45 @@ select:focus-visible {
   margin-bottom: 6px;
 }
 
+/* ---------- static content pages ---------- */
+
+.content-page {
+  max-width: 60ch;
+  padding-bottom: 40px;
+}
+
+.content-page p {
+  font-size: 14px;
+  line-height: 1.7;
+  margin: 0 0 16px;
+}
+
+.content-page ul {
+  margin: 0 0 16px;
+  padding-left: 20px;
+}
+
+.content-page li {
+  font-size: 14px;
+  line-height: 1.7;
+  margin-bottom: 8px;
+}
+
+.content-page h3 {
+  font-family: var(--font-display);
+  font-size: 17px;
+  font-weight: 600;
+  margin: 28px 0 10px;
+}
+
+.content-note {
+  font-size: 12px;
+  opacity: 0.65;
+  margin-top: 8px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line-soft);
+}
+
 /* ---------- responsive ---------- */
 
 @media (max-width: 560px) {

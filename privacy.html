@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Search — Agraris</title>
-  <meta name="description" content="Cari AI agent berdasarkan nama, kategori, atau tools." />
+  <title>Privacy — Agraris</title>
+  <meta name="description" content="Agraris privacy policy — what data we collect and how it's stored." />
 
   <link rel="icon" href="logo.svg" type="image/svg+xml" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -22,29 +22,51 @@
       </a>
       <nav class="nav">
         <a href="index.html">Home</a>
-        <a href="search.html" class="active">Search</a>
+        <a href="search.html">Search</a>
         <a href="publish.html">Publish</a>
       </nav>
     </header>
 
     <div class="section-head section-head--first">
-      <h2>Search agents</h2>
-      <span class="section-count" id="agent-count"></span>
+      <h2>Privacy Policy</h2>
     </div>
 
-    <div class="search-bar">
-      <input
-        type="text"
-        id="search-input"
-        placeholder="Search by name or description…"
-      />
-      <select id="category-input">
-        <option value="">All categories</option>
-      </select>
-    </div>
+    <div class="content-page">
+      <p>
+        Agraris is a simple, early-stage MVP. This policy explains what
+        little data we collect and how it's handled, in plain terms.
+      </p>
 
-    <div class="agent-list" id="agent-list">
-      <p class="loading-text">Loading agents…</p>
+      <h3>What we collect</h3>
+      <p>
+        The only data we collect comes from the publish form: agent
+        name, description, version, repo link, category, and an
+        optional demo link. All of this is public by design — once you
+        submit an agent, anyone can see it in the registry.
+      </p>
+
+      <h3>No accounts</h3>
+      <p>
+        There's no login or account system, so we don't collect any
+        personal user data such as email addresses or passwords.
+      </p>
+
+      <h3>Where data is stored</h3>
+      <p>
+        Published agent data is stored with Supabase, a third-party
+        database provider.
+      </p>
+
+      <h3>Analytics</h3>
+      <p>
+        We don't currently run any third-party analytics or tracking on
+        this site.
+      </p>
+
+      <p class="content-note">
+        This is an MVP and this policy may be updated as the product
+        evolves.
+      </p>
     </div>
 
     <footer class="site-footer">
@@ -67,9 +89,5 @@
     </footer>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="supabase-client.js"></script>
-  <script src="app.js"></script>
-  <script src="search.js"></script>
 </body>
 </html>

@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Search — Agraris</title>
-  <meta name="description" content="Cari AI agent berdasarkan nama, kategori, atau tools." />
+  <title>Terms — Agraris</title>
+  <meta name="description" content="Agraris terms of use." />
 
   <link rel="icon" href="logo.svg" type="image/svg+xml" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -22,29 +22,50 @@
       </a>
       <nav class="nav">
         <a href="index.html">Home</a>
-        <a href="search.html" class="active">Search</a>
+        <a href="search.html">Search</a>
         <a href="publish.html">Publish</a>
       </nav>
     </header>
 
     <div class="section-head section-head--first">
-      <h2>Search agents</h2>
-      <span class="section-count" id="agent-count"></span>
+      <h2>Terms of Use</h2>
     </div>
 
-    <div class="search-bar">
-      <input
-        type="text"
-        id="search-input"
-        placeholder="Search by name or description…"
-      />
-      <select id="category-input">
-        <option value="">All categories</option>
-      </select>
-    </div>
+    <div class="content-page">
+      <p>
+        Agraris is an early-stage MVP, not a formal legal product. These
+        terms are kept short and plain on purpose.
+      </p>
 
-    <div class="agent-list" id="agent-list">
-      <p class="loading-text">Loading agents…</p>
+      <h3>As is</h3>
+      <p>
+        The service is provided "as is", with no warranties of any kind.
+      </p>
+
+      <h3>Your content, your responsibility</h3>
+      <p>
+        If you publish an agent, you're fully responsible for the
+        accuracy of the information you submit — name, description,
+        version, links, and category.
+      </p>
+
+      <h3>Removal</h3>
+      <p>
+        Agraris reserves the right to remove entries that are spam,
+        misleading, or illegal. Right now removal is done manually by an
+        admin — there's no report or flagging feature yet.
+      </p>
+
+      <h3>Just a directory</h3>
+      <p>
+        Agraris is only a directory/catalog of agents. We are not
+        responsible for the performance, security, or outcomes of any
+        third-party agent listed here.
+      </p>
+
+      <p class="content-note">
+        These terms may change at any time as the product evolves.
+      </p>
     </div>
 
     <footer class="site-footer">
@@ -67,9 +88,5 @@
     </footer>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="supabase-client.js"></script>
-  <script src="app.js"></script>
-  <script src="search.js"></script>
 </body>
 </html>
