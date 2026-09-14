@@ -426,6 +426,20 @@ body.menu-open {
   padding-top: 8px;
 }
 
+/* Major topic sections (About / Privacy / Terms) — needs a much stronger
+   break than the sub-headings (h3) inside each .content-page, so a reader
+   scrolling fast can tell a new topic started without reading the text. */
+.section-head--topic {
+  margin-top: 64px;
+  padding-top: 44px;
+  border-top: 4px solid var(--green);
+}
+
+.section-head--topic h2 {
+  font-size: 30px;
+  color: var(--green-dark);
+}
+
 /* ---------- hero ---------- */
 
 .hero {
@@ -817,6 +831,16 @@ body.menu-open {
 
   .section-head h2 {
     font-size: 19px;
+  }
+
+  .section-head--topic {
+    margin-top: 44px;
+    padding-top: 30px;
+    border-top-width: 3px;
+  }
+
+  .section-head--topic h2 {
+    font-size: 23px;
   }
 
   .agent-row {
