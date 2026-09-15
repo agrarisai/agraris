@@ -1,4 +1,4 @@
-name: Generate RSS feed
+name: Generate feeds
 
 on:
   schedule:
@@ -7,7 +7,7 @@ on:
   workflow_dispatch: {}
 
 jobs:
-  generate-rss:
+  generate-feeds:
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -29,14 +29,20 @@ jobs:
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
         run: node scripts/generate-rss.js
 
-      - name: Commit and push rss.xml
+      - name: Generate sitemap.xml
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: node scripts/generate-sitemap.js
+
+      - name: Commit and push generated files
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          if git diff --quiet -- rss.xml; then
-            echo "No changes to rss.xml"
+          if git diff --quiet -- rss.xml sitemap.xml; then
+            echo "No changes to rss.xml or sitemap.xml"
             exit 0
           fi
-          git add rss.xml
-          git commit -m "chore: update rss.xml [skip ci]"
+          git add rss.xml sitemap.xml
+          git commit -m "chore: update rss.xml and sitemap.xml [skip ci]"
           git push origin HEAD:main
