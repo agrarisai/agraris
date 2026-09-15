@@ -51,8 +51,8 @@
 
     if (agents.length === 0) {
       listEl.innerHTML = renderEmptyState(
-        "No matching agents",
-        "Try a different search term or category."
+        "No agents match your search",
+        "Try a different keyword, or clear the category filter to see more results."
       );
       return;
     }
@@ -70,6 +70,8 @@
       "Couldn't load agents",
       "Check your Supabase connection and try again."
     );
+  } finally {
+    listEl.removeAttribute("aria-busy");
   }
 
   searchInput.addEventListener("input", () => {
