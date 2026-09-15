@@ -898,6 +898,35 @@ body.menu-open {
   color: var(--ink);
 }
 
+.category-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 18px;
+}
+
+.category-chip {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  line-height: 1.4;
+  padding: 6px 10px;
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  background: var(--panel);
+  color: var(--ink);
+  cursor: pointer;
+}
+
+.category-chip:hover {
+  border-color: var(--green);
+}
+
+.category-chip.is-active {
+  background: var(--green);
+  border-color: var(--green);
+  color: var(--cream);
+}
+
 /* ---------- agent detail ---------- */
 
 .detail-head {

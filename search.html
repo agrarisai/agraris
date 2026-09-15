@@ -60,10 +60,16 @@
           id="search-input"
           placeholder="Search by name or description…"
         />
-        <select id="category-input">
-          <option value="">All categories</option>
+        <select id="sort-input" aria-label="Sort agents">
+          <option value="newest">Newest first</option>
+          <option value="oldest">Oldest first</option>
+          <option value="name-asc">Name (A-Z)</option>
+          <option value="name-desc">Name (Z-A)</option>
+          <option value="stars">Most stars</option>
         </select>
       </div>
+
+      <div class="category-chips" id="category-chips"></div>
 
       <div class="agent-list" id="agent-list" aria-busy="true">
         <div class="skeleton-row" aria-hidden="true">
