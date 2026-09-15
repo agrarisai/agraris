@@ -751,6 +751,51 @@ body.menu-open {
   opacity: 0.65;
 }
 
+/* ---------- how it works ---------- */
+
+.how-it-works {
+  display: flex;
+  margin: 8px 0 40px;
+}
+
+.how-step {
+  flex: 1 1 0;
+  padding: 0 28px;
+  border-left: 1px solid var(--line);
+}
+
+.how-step:first-child {
+  padding-left: 0;
+  border-left: none;
+}
+
+.how-step-num {
+  display: block;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 44px;
+  line-height: 1;
+  color: var(--green-dark);
+  margin-bottom: 12px;
+}
+
+.how-step-title {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 19px;
+  margin: 0 0 8px;
+  color: var(--ink);
+}
+
+.how-step-desc {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--ink);
+  opacity: 0.7;
+  margin: 0;
+}
+
 /* ---------- listing panel ---------- */
 
 /* Wraps a listing's heading + list in its own shaded block so it reads as
@@ -1373,6 +1418,27 @@ body.menu-open {
 
   .section-head--topic h2 {
     font-size: 23px;
+  }
+
+  .how-it-works {
+    flex-direction: column;
+    gap: 28px;
+    margin-bottom: 32px;
+  }
+
+  .how-step {
+    padding: 22px 0 0;
+    border-left: none;
+    border-top: 1px solid var(--line);
+  }
+
+  .how-step:first-child {
+    padding-top: 0;
+    border-top: none;
+  }
+
+  .how-step-num {
+    font-size: 38px;
   }
 
   .agent-row {
