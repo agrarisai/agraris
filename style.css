@@ -131,6 +131,46 @@ select:focus-visible {
   line-height: 1.3;
 }
 
+.chain-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  width: fit-content;
+  margin-top: 5px;
+  padding: 3px 8px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--panel);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  line-height: 1.4;
+  color: var(--green-dark);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.chain-badge:hover {
+  border-color: var(--green);
+}
+
+.chain-badge-dot {
+  width: 6px;
+  height: 6px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: var(--green);
+  animation: chain-badge-pulse 2.2s ease-in-out infinite;
+}
+
+@keyframes chain-badge-pulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(47, 107, 63, 0.45);
+  }
+  50% {
+    box-shadow: 0 0 0 3px rgba(47, 107, 63, 0);
+  }
+}
+
 .brand {
   display: flex;
   align-items: center;
@@ -1219,6 +1259,11 @@ body.menu-open {
   .brand img {
     width: 34px;
     height: 34px;
+  }
+
+  .chain-badge {
+    font-size: 9px;
+    padding: 2px 7px;
   }
 }
 
