@@ -1240,14 +1240,14 @@ body.menu-open {
 }
 
 .report-link {
-  font-size: 11px;
-  color: var(--ink);
-  opacity: 0.55;
-  text-decoration: none;
+  font-size: 13px;
+  color: var(--green-dark);
+  text-decoration: underline;
+  text-underline-offset: 2px;
 }
 
 .report-link:hover {
-  text-decoration: underline;
+  color: var(--ink);
 }
 
 .report-form {
