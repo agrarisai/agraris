@@ -802,6 +802,35 @@ body.menu-open {
   margin: 0;
 }
 
+/* ---------- trending ---------- */
+
+.trending-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin: 8px 0 18px;
+}
+
+.trending-card {
+  padding-right: 54px;
+}
+
+.trending-rank {
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 2;
+  pointer-events: none;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1;
+  padding: 6px 10px;
+  border-radius: 0 7px 0 8px;
+  background: var(--green);
+  color: var(--cream);
+}
+
 /* ---------- listing panel ---------- */
 
 /* Wraps a listing's heading + list in its own shaded block so it reads as
@@ -1519,6 +1548,10 @@ body.menu-open {
 
   .agent-row {
     padding: 18px 12px;
+  }
+
+  .trending-card {
+    padding-right: 46px;
   }
 
   .detail-head {
