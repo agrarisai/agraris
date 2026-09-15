@@ -117,6 +117,7 @@ function initReportAgent(root, agentId) {
               : ""
           }
           <button type="button" class="btn" id="copy-link-btn">Copy link</button>
+          ${renderWatchlistButton(agent.id, { variant: "lg" })}
         </div>
       </div>
 

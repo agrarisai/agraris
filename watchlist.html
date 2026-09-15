@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Agent — Agraris</title>
-  <meta name="description" content="Agent detail on the Agraris registry." />
+  <title>Watchlist — Agraris</title>
+  <meta name="description" content="Agents you've bookmarked to revisit on the Agraris registry." />
 
   <link rel="icon" href="logo.svg" type="image/svg+xml" />
   <link rel="alternate" type="application/rss+xml" title="Agraris — Recently published agents" href="/agraris/rss.xml" />
@@ -47,7 +47,7 @@
       <a href="index.html">Home</a>
       <a href="search.html">Search</a>
       <a href="publish.html">Publish</a>
-      <a href="watchlist.html">Watchlist</a>
+      <a href="watchlist.html" class="active">Watchlist</a>
       <a href="index.html#how-it-works">How It Works</a>
       <hr class="menu-sep" />
       <a href="index.html#about" data-hash="#about">About</a>
@@ -65,22 +65,33 @@
       </div>
     </nav>
 
-    <div id="agent-detail" aria-busy="true">
-      <div class="skeleton-detail-head" aria-hidden="true">
-        <div class="skeleton-block skeleton-detail-name"></div>
-        <div class="skeleton-tags" style="margin-bottom: 18px;">
-          <div class="skeleton-block skeleton-tag"></div>
-          <div class="skeleton-block skeleton-tag"></div>
-        </div>
-        <div class="skeleton-block skeleton-detail-line"></div>
-        <div class="skeleton-block skeleton-detail-line"></div>
-        <div class="skeleton-block skeleton-detail-line skeleton-line--short"></div>
-        <div class="detail-links">
-          <div class="skeleton-block skeleton-detail-btn"></div>
-          <div class="skeleton-block skeleton-detail-btn"></div>
-        </div>
+    <div class="listing-panel">
+      <div class="section-head section-head--first">
+        <h2>Your watchlist</h2>
+        <span class="section-count" id="agent-count"></span>
       </div>
-      <span class="sr-only">Loading agent…</span>
+
+      <div class="agent-list" id="agent-list" aria-busy="true">
+        <div class="skeleton-row" aria-hidden="true">
+          <div class="skeleton-block skeleton-name"></div>
+          <div class="skeleton-block skeleton-line"></div>
+          <div class="skeleton-block skeleton-line skeleton-line--short"></div>
+          <div class="skeleton-tags">
+            <div class="skeleton-block skeleton-tag"></div>
+            <div class="skeleton-block skeleton-tag"></div>
+          </div>
+        </div>
+        <div class="skeleton-row" aria-hidden="true">
+          <div class="skeleton-block skeleton-name"></div>
+          <div class="skeleton-block skeleton-line"></div>
+          <div class="skeleton-block skeleton-line skeleton-line--short"></div>
+          <div class="skeleton-tags">
+            <div class="skeleton-block skeleton-tag"></div>
+            <div class="skeleton-block skeleton-tag"></div>
+          </div>
+        </div>
+        <span class="sr-only">Loading watchlist…</span>
+      </div>
     </div>
 
     <footer class="site-footer">
@@ -121,6 +132,6 @@
   <script src="supabase-client.js"></script>
   <script src="app.js"></script>
   <script src="scroll-reveal.js"></script>
-  <script src="agent.js"></script>
+  <script src="watchlist.js"></script>
 </body>
 </html>

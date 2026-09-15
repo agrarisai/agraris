@@ -83,6 +83,7 @@ function renderTrendingCard(agent, rank) {
     <div class="agent-row trending-card reveal" data-reveal-stagger>
       <span class="trending-rank" aria-hidden="true">#${rank}</span>
       <a class="agent-row-link" href="agent.html?id=${encodeURIComponent(agent.id)}" aria-label="${escapeHtml(agent.name)}"></a>
+      ${renderWatchlistButton(agent.id)}
       <div class="agent-row-top">
         <span class="agent-name">${escapeHtml(agent.name)}</span>
       </div>
