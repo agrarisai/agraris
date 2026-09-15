@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>API Docs — Agraris</title>
+  <meta name="description" content="Referensi REST API publik Agraris, otomatis dari Supabase." />
+
+  <link rel="icon" href="logo.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,600;1,500&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <div class="wrap">
+    <header class="site-header">
+      <div class="brand-block">
+        <a class="brand" href="index.html">
+          <img src="logo.svg" alt="Agraris logo" />
+          <span class="brand-name">Agraris</span>
+        </a>
+        <p class="header-tagline">The registry for AI agents on Robinhood Chain.</p>
+      </div>
+      <nav class="nav">
+        <a href="index.html">Home</a>
+        <a href="search.html">Search</a>
+        <a href="publish.html">Publish</a>
+      </nav>
+      <button class="menu-toggle" id="menu-toggle" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="menu-panel">
+        <span class="menu-toggle-bars"><span></span><span></span><span></span></span>
+      </button>
+    </header>
+
+    <div class="menu-overlay" id="menu-overlay"></div>
+    <nav class="menu-panel" id="menu-panel" aria-hidden="true">
+      <div class="menu-panel-head">
+        <span class="menu-panel-title">Menu</span>
+        <button class="menu-close" id="menu-close" type="button" aria-label="Close menu">✕</button>
+      </div>
+      <a href="index.html">Home</a>
+      <a href="search.html">Search</a>
+      <a href="publish.html">Publish</a>
+      <a href="docs.html" class="active">Docs</a>
+      <hr class="menu-sep" />
+      <a href="index.html#about" data-hash="#about">About</a>
+      <a href="index.html#privacy" data-hash="#privacy">Privacy</a>
+      <a href="index.html#terms" data-hash="#terms">Terms</a>
+      <hr class="menu-sep" />
+      <div class="menu-social">
+        <a class="footer-github" href="https://github.com/agrarisai/agraris" target="_blank" rel="noopener" aria-label="GitHub">
+          <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
+        </a>
+        <!-- TODO: ganti href ini setelah handle X resmi Agraris sudah ada -->
+        <a class="footer-x" href="#" target="_blank" rel="noopener" aria-label="X (Twitter)">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.42 2H21.5l-7.19 8.21L22.75 22h-6.62l-5.18-6.78L4.98 22H1.9l7.69-8.79L1.25 2h6.79l4.68 6.19L18.42 2zm-1.16 18h1.83L7.84 3.9H5.88L17.26 20z"/></svg>
+        </a>
+      </div>
+    </nav>
+
+    <div class="section-head section-head--first">
+      <h2>API Reference</h2>
+    </div>
+
+    <p class="page-lead">
+      Data Agraris diakses lewat REST API otomatis dari Supabase — publik,
+      read-only, dan tidak perlu autentikasi khusus selain publishable key
+      yang memang aman dipakai di client-side.
+    </p>
+
+    <div class="docs-content reveal">
+      <h3>Base URL</h3>
+      <p>Semua endpoint di bawah ini relatif terhadap base URL berikut.</p>
+      <pre class="code-block"><code>https://gnydurjxrynqcbpkxopd.supabase.co/rest/v1</code></pre>
+
+      <h3>Authentication</h3>
+      <p>
+        Tiap request wajib menyertakan header <code>apikey</code> berisi
+        publishable key yang sama dengan yang dipakai situs ini. Key ini
+        memang didesain aman untuk dipakai di sisi client.
+      </p>
+      <pre class="code-block"><code>apikey: YOUR_PUBLISHABLE_KEY</code></pre>
+
+      <h3>List all agents</h3>
+      <p>Ambil seluruh agent yang terdaftar di registry.</p>
+      <pre class="code-block"><code>curl "https://gnydurjxrynqcbpkxopd.supabase.co/rest/v1/agents?select=*" \
+  -H "apikey: YOUR_PUBLISHABLE_KEY"</code></pre>
+
+      <h3>Get a single agent</h3>
+      <p>Filter berdasarkan <code>id</code> untuk mengambil satu agent.</p>
+      <pre class="code-block"><code>curl "https://gnydurjxrynqcbpkxopd.supabase.co/rest/v1/agents?id=eq.AGENT_ID&amp;select=*" \
+  -H "apikey: YOUR_PUBLISHABLE_KEY"</code></pre>
+
+      <h3>Filter &amp; search</h3>
+      <p>
+        Endpoint ini adalah PostgREST bawaan Supabase, jadi seluruh query
+        parameter PostgREST bisa dipakai untuk filter, sort, dan pagination.
+        Contoh, filter agent berdasarkan kategori:
+      </p>
+      <pre class="code-block"><code>curl "https://gnydurjxrynqcbpkxopd.supabase.co/rest/v1/agents?category=cs.{trading}" \
+  -H "apikey: YOUR_PUBLISHABLE_KEY"</code></pre>
+
+      <h3>Response schema</h3>
+      <p>Setiap baris pada tabel <code>agents</code> punya kolom berikut.</p>
+      <div class="docs-table-wrap">
+        <table class="docs-table">
+          <thead>
+            <tr>
+              <th>Column</th>
+              <th>Type</th>
+              <th>Notes</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td><code>id</code></td><td>uuid</td><td>Primary key</td></tr>
+            <tr><td><code>name</code></td><td>text</td><td>Agent name</td></tr>
+            <tr><td><code>description</code></td><td>text</td><td>Short summary of the agent</td></tr>
+            <tr><td><code>version</code></td><td>text</td><td>e.g. "1.0.0"</td></tr>
+            <tr><td><code>repo_url</code></td><td>text</td><td>Link to source repo</td></tr>
+            <tr><td><code>category</code></td><td>text[]</td><td>Array of category / tool tags</td></tr>
+            <tr><td><code>demo_url</code></td><td>text</td><td>Nullable</td></tr>
+            <tr><td><code>created_at</code></td><td>timestamptz</td><td>When the agent was published</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>Rate limits &amp; fair use</h3>
+      <p>
+        API ini dibagikan bersama traffic situs Agraris sendiri, jadi tidak
+        ada kuota khusus yang dipublikasikan. Mohon pakai secara wajar —
+        cache hasil di sisi kamu kalau kamu melakukan fetch berulang, dan
+        hindari polling yang terlalu agresif.
+      </p>
+    </div>
+
+    <footer class="site-footer">
+      <div class="footer-top">
+        <div class="footer-brand-block">
+          <a class="footer-brand" href="index.html">
+            <img src="logo.svg" alt="Agraris logo" />
+            <span class="footer-brand-name">Agraris</span>
+          </a>
+          <p class="footer-tagline">The registry for AI agents on Robinhood Chain.</p>
+        </div>
+        <div class="footer-social">
+          <a class="footer-github" href="https://github.com/agrarisai/agraris" target="_blank" rel="noopener" aria-label="GitHub">
+            <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
+          </a>
+          <!-- TODO: ganti href ini setelah handle X resmi Agraris sudah ada -->
+          <a class="footer-x" href="#" target="_blank" rel="noopener" aria-label="X (Twitter)">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.42 2H21.5l-7.19 8.21L22.75 22h-6.62l-5.18-6.78L4.98 22H1.9l7.69-8.79L1.25 2h6.79l4.68 6.19L18.42 2zm-1.16 18h1.83L7.84 3.9H5.88L17.26 20z"/></svg>
+          </a>
+        </div>
+        <div class="footer-col">
+          <span class="footer-col-title">Product</span>
+          <a href="index.html">Registry</a>
+          <a href="docs.html">Docs</a>
+        </div>
+        <div class="footer-col">
+          <span class="footer-col-title">Company</span>
+          <a href="index.html#about">About</a>
+          <a href="index.html#privacy">Privacy</a>
+          <a href="index.html#terms">Terms</a>
+        </div>
+      </div>
+      <div class="footer-bottom">© 2026 Agraris</div>
+    </footer>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-client.js"></script>
+  <script src="app.js"></script>
+  <script src="scroll-reveal.js"></script>
+</body>
+</html>
