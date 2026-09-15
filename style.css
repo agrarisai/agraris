@@ -556,10 +556,104 @@ body.menu-open {
   max-width: 50ch;
 }
 
+.hero-cta {
+  display: flex;
+  justify-content: center;
+  margin: 4px 0 20px;
+}
+
+.btn-cta {
+  min-height: 56px;
+  padding: 16px 44px;
+  font-size: 15px;
+  letter-spacing: 0.02em;
+  box-shadow: 0 6px 16px rgba(31, 74, 44, 0.22);
+}
+
 .hero-actions {
   display: flex;
   gap: 12px;
   flex-wrap: wrap;
+}
+
+/* ---------- hero banner (SVG illustration) ---------- */
+
+.hero-banner {
+  max-width: 480px;
+  margin: 0 auto 20px;
+}
+
+.hero-banner svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.hb-node {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.hb-animate .hb-logo {
+  opacity: 0;
+  transform: scale(0.8);
+  transform-origin: 300px 140px;
+  animation: hb-logo-in 0.7s cubic-bezier(0.22, 0.61, 0.36, 1) 0.05s forwards;
+}
+
+.hb-animate .hb-node {
+  opacity: 0;
+  transform: scale(0.35);
+  animation-name: hb-node-in, hb-idle;
+  animation-duration: 0.45s, var(--did, 4s);
+  animation-timing-function: ease-out, ease-in-out;
+  animation-fill-mode: forwards, none;
+  animation-iteration-count: 1, infinite;
+  animation-delay: var(--d, 0s), var(--di, 2s);
+}
+
+.hb-animate .hb-line {
+  stroke-dasharray: 100;
+  stroke-dashoffset: 100;
+  animation: hb-line-draw 0.5s ease-out var(--ld, 0s) forwards;
+}
+
+@keyframes hb-logo-in {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes hb-node-in {
+  from {
+    opacity: 0;
+    transform: scale(0.35);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes hb-idle {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+@keyframes hb-line-draw {
+  to {
+    stroke-dashoffset: 0;
+  }
 }
 
 /* ---------- stats bar ---------- */
@@ -1235,6 +1329,15 @@ body.menu-open {
 
   .hero-actions .btn {
     flex: 1 1 auto;
+  }
+
+  .hero-banner {
+    margin-bottom: 14px;
+  }
+
+  .btn-cta {
+    width: 100%;
+    padding: 14px 24px;
   }
 
   .stats-bar {
