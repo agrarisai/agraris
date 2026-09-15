@@ -53,10 +53,10 @@ function renderAgentRow(agent) {
     <a class="agent-row reveal" data-reveal-stagger href="agent.html?id=${encodeURIComponent(agent.id)}">
       <div class="agent-row-top">
         <span class="agent-name">${escapeHtml(agent.name)}</span>
-        <span class="agent-version-group">
-          <span class="agent-version">v${escapeHtml(agent.version)}</span>
-          ${renderGithubBadgePlaceholder(agent)}
-        </span>
+      </div>
+      <div class="agent-meta-row">
+        <span class="agent-version">v${escapeHtml(agent.version)}</span>
+        ${renderGithubBadgePlaceholder(agent)}
       </div>
       <p class="agent-desc">${escapeHtml(agent.description)}</p>
       <div class="agent-meta">${tags}</div>

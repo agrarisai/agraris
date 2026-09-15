@@ -615,11 +615,6 @@ body.menu-open {
 }
 
 .agent-row-top {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 4px 10px;
   margin-bottom: 4px;
 }
 
@@ -630,23 +625,27 @@ body.menu-open {
   overflow-wrap: anywhere;
 }
 
+.agent-meta-row {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  row-gap: 6px;
+  column-gap: 14px;
+  margin-bottom: 8px;
+}
+
 .agent-version {
   font-size: 12px;
   color: var(--green-dark);
   white-space: nowrap;
 }
 
-.agent-version-group {
-  display: flex;
-  align-items: baseline;
-  gap: 8px;
-  flex-wrap: wrap;
+.github-badge {
+  display: contents;
 }
 
-.github-badge {
-  display: flex;
-  align-items: baseline;
-  gap: 6px;
+.github-stat,
+.github-updated {
   font-size: 11px;
   opacity: 0.6;
   white-space: nowrap;
@@ -662,10 +661,6 @@ body.menu-open {
   width: 10px;
   height: 10px;
   flex-shrink: 0;
-}
-
-.github-updated {
-  font-size: 11px;
 }
 
 .agent-desc {
