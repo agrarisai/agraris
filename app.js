@@ -147,6 +147,29 @@ async function fetchAgentsByCategory(category) {
   return data || [];
 }
 
+// Fetch up to `limit` other agents that share at least one category
+// with `categories` (used for the "Similar agents" section on the
+// agent detail page). Newest first — simpler than randomizing and
+// good enough for a handful of suggestions.
+async function fetchSimilarAgents(categories, excludeId, limit = 3) {
+  if (!categories || categories.length === 0) return [];
+
+  const { data, error } = await supabaseClient
+    .from("agents")
+    .select("*")
+    .overlaps("category", categories)
+    .neq("id", excludeId)
+    .order("created_at", { ascending: false })
+    .limit(limit);
+
+  if (error) {
+    console.error("Gagal mengambil agent serupa:", error);
+    return [];
+  }
+
+  return data || [];
+}
+
 // Fetch the total number of agents in the registry without
 // downloading any rows.
 async function fetchAgentCount() {

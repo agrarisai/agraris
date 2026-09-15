@@ -757,6 +757,16 @@ body.menu-open {
   opacity: 0.65;
 }
 
+/* Smaller variant for secondary sections (e.g. "Similar agents" on the
+   agent detail page) that shouldn't compete with the page's main heading. */
+.section-head--sub h2 {
+  font-size: 17px;
+}
+
+.similar-agents-section {
+  margin-top: 8px;
+}
+
 /* ---------- how it works ---------- */
 
 .how-it-works {
