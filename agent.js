@@ -97,6 +97,7 @@ function initReportAgent(root, agentId) {
     const tags = categories
       .map((c) => `<span class="tag">${escapeHtml(c)}</span>`)
       .join("");
+    const similarAgents = await fetchSimilarAgents(categories, agent.id, 3);
 
     container.innerHTML = `
       <div class="detail-head reveal">
@@ -148,9 +149,24 @@ function initReportAgent(root, agentId) {
           </div>
         </form>
       </div>
+
+      ${
+        similarAgents.length > 0
+          ? `
+            <div class="similar-agents-section reveal">
+              <div class="section-head section-head--sub">
+                <h2>Similar agents</h2>
+              </div>
+              <div class="agent-list">
+                ${similarAgents.map(renderAgentRow).join("")}
+              </div>
+            </div>
+          `
+          : ""
+      }
     `;
     observeReveal(container);
-    loadGithubBadges([agent], container);
+    loadGithubBadges([agent, ...similarAgents], container);
     initCopyLinkButton(container);
     initReportAgent(container, agent.id);
   } catch (err) {
