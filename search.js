@@ -59,6 +59,7 @@
 
     listEl.innerHTML = agents.map(renderAgentRow).join("");
     observeReveal(listEl);
+    loadGithubBadges(agents, listEl);
   }
 
   try {
