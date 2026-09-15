@@ -16,10 +16,15 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: "22"
 
       - name: Install dependencies
         run: npm install @supabase/supabase-js
+
+      # Debug sementara: pastikan Node.js yang benar-benar dipakai di
+      # runner ini sudah versi 22 (hapus step ini setelah dikonfirmasi).
+      - name: Debug Node.js version
+        run: node --version
 
       - name: Run agent suggestion fetcher
         env:
