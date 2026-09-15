@@ -2,6 +2,30 @@
 // Agraris — agent detail page logic
 // ============================================
 
+function initCopyLinkButton(root) {
+  const btn = root.querySelector("#copy-link-btn");
+  if (!btn) return;
+
+  const defaultLabel = btn.textContent;
+
+  btn.addEventListener("click", () => {
+    if (!navigator.clipboard?.writeText) return;
+
+    navigator.clipboard
+      .writeText(window.location.href)
+      .then(() => {
+        btn.textContent = "Copied!";
+        setTimeout(() => {
+          btn.textContent = defaultLabel;
+        }, 2000);
+      })
+      .catch(() => {
+        // clipboard write failed (permissions, insecure context, etc.) —
+        // fail silently, no error shown to the user
+      });
+  });
+}
+
 (async function () {
   const container = document.getElementById("agent-detail");
   const params = new URLSearchParams(window.location.search);
@@ -41,6 +65,7 @@
               ? `<a class="btn" href="${escapeHtml(agent.demo_url)}" target="_blank" rel="noopener noreferrer">View demo</a>`
               : ""
           }
+          <button type="button" class="btn" id="copy-link-btn">Copy link</button>
         </div>
       </div>
 
@@ -51,6 +76,7 @@
     `;
     observeReveal(container);
     loadGithubBadges([agent], container);
+    initCopyLinkButton(container);
   } catch (err) {
     container.innerHTML = renderEmptyState(
       "Agent not found",
