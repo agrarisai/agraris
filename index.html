@@ -66,10 +66,73 @@
     </nav>
 
     <section class="hero reveal">
+      <div class="hero-banner" aria-hidden="true">
+        <svg id="hero-banner-svg" viewBox="0 0 600 300" xmlns="http://www.w3.org/2000/svg" focusable="false">
+          <defs>
+            <pattern id="hbGrid" width="30" height="30" patternUnits="userSpaceOnUse">
+              <path d="M30 0 L0 0 0 30" fill="none" stroke="var(--green)" stroke-width="1" stroke-opacity="0.07" />
+            </pattern>
+          </defs>
+
+          <rect x="0" y="0" width="600" height="300" fill="url(#hbGrid)" />
+
+          <g class="hb-lines" fill="none" stroke="var(--green-dark)" stroke-width="1.4" stroke-opacity="0.4" stroke-linecap="round">
+            <path class="hb-line" style="--d:0.50s;--ld:0.50s" pathLength="100" d="M300.0 45.0 Q320.0 92.5 300 140" />
+            <path class="hb-line" style="--d:0.58s;--ld:0.58s" pathLength="100" d="M385.0 57.7 Q325.2 88.9 300 140" />
+            <path class="hb-line" style="--d:0.66s;--ld:0.66s" pathLength="100" d="M447.2 92.5 Q383.6 133.6 300 140" />
+            <path class="hb-line" style="--d:0.74s;--ld:0.74s" pathLength="100" d="M470.0 140.0 Q385.0 120.0 300 140" />
+            <path class="hb-line" style="--d:0.82s;--ld:0.82s" pathLength="100" d="M447.2 187.5 Q363.6 181.1 300 140" />
+            <path class="hb-line" style="--d:0.90s;--ld:0.90s" pathLength="100" d="M385.0 222.3 Q359.8 171.2 300 140" />
+            <path class="hb-line" style="--d:0.98s;--ld:0.98s" pathLength="100" d="M300.0 235.0 Q280.0 187.5 300 140" />
+            <path class="hb-line" style="--d:1.06s;--ld:1.06s" pathLength="100" d="M215.0 222.3 Q274.8 191.2 300 140" />
+            <path class="hb-line" style="--d:1.14s;--ld:1.14s" pathLength="100" d="M152.8 187.5 Q216.4 146.5 300 140" />
+            <path class="hb-line" style="--d:1.22s;--ld:1.22s" pathLength="100" d="M130.0 140.0 Q215.0 160.0 300 140" />
+            <path class="hb-line" style="--d:1.30s;--ld:1.30s" pathLength="100" d="M152.8 92.5 Q236.4 99.0 300 140" />
+            <path class="hb-line" style="--d:1.38s;--ld:1.38s" pathLength="100" d="M215.0 57.7 Q240.2 108.9 300 140" />
+          </g>
+
+          <g class="hb-logo">
+            <circle cx="300" cy="140" r="100" fill="var(--green)" opacity="0.06" />
+            <g transform="translate(220.2 64.4) scale(0.42)">
+              <path d="M100 220 C130 140 165 140 190 180 C215 220 250 220 280 140" fill="none" stroke="var(--green)" stroke-width="22" stroke-linecap="round" />
+            </g>
+          </g>
+
+          <g class="hb-nodes" fill="var(--cream)" stroke="var(--green)" stroke-width="1.5">
+            <rect class="hb-node" style="--d:0.50s;--di:2.00s;--did:3.6s" x="293.0" y="38.0" width="14" height="14" rx="2" />
+            <rect class="hb-node" style="--d:0.58s;--di:2.30s;--did:4.0s" x="378.0" y="50.7" width="14" height="14" rx="2" />
+            <rect class="hb-node" style="--d:0.66s;--di:2.60s;--did:4.4s" x="440.2" y="85.5" width="14" height="14" rx="2" />
+            <rect class="hb-node" style="--d:0.74s;--di:2.90s;--did:4.8s" x="463.0" y="133.0" width="14" height="14" rx="2" />
+            <rect class="hb-node" style="--d:0.82s;--di:3.20s;--did:3.6s" x="440.2" y="180.5" width="14" height="14" rx="2" />
+            <rect class="hb-node" style="--d:0.90s;--di:3.50s;--did:4.0s" x="378.0" y="215.3" width="14" height="14" rx="2" />
+            <rect class="hb-node" style="--d:0.98s;--di:3.80s;--did:4.4s" x="293.0" y="228.0" width="14" height="14" rx="2" />
+            <rect class="hb-node" style="--d:1.06s;--di:4.10s;--did:4.8s" x="208.0" y="215.3" width="14" height="14" rx="2" />
+            <rect class="hb-node" style="--d:1.14s;--di:4.40s;--did:3.6s" x="145.8" y="180.5" width="14" height="14" rx="2" />
+            <rect class="hb-node" style="--d:1.22s;--di:4.70s;--did:4.0s" x="123.0" y="133.0" width="14" height="14" rx="2" />
+            <rect class="hb-node" style="--d:1.30s;--di:5.00s;--did:4.4s" x="145.8" y="85.5" width="14" height="14" rx="2" />
+            <rect class="hb-node" style="--d:1.38s;--di:5.30s;--did:4.8s" x="208.0" y="50.7" width="14" height="14" rx="2" />
+          </g>
+        </svg>
+        <script>
+          (function () {
+            var reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+            if (!reduceMotion) {
+              var svg = document.getElementById("hero-banner-svg");
+              if (svg) svg.classList.add("hb-animate");
+            }
+          })();
+        </script>
+      </div>
+
       <h1>The registry for AI agents</h1>
       <p class="tagline">A living catalog of every AI agent shipping on Robinhood Chain — publish yours, or see what builders have already launched.</p>
+
+      <div class="hero-cta">
+        <a class="btn btn-solid btn-cta" href="search.html">Get Started</a>
+      </div>
+
       <div class="hero-actions">
-        <a class="btn btn-solid" href="publish.html">Publish an agent</a>
+        <a class="btn" href="publish.html">Publish an agent</a>
         <a class="btn" href="search.html">Search agents</a>
       </div>
     </section>
