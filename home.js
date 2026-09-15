@@ -20,8 +20,9 @@
 
     if (agents.length === 0) {
       listEl.innerHTML = renderEmptyState(
-        "No agents yet",
-        "Be the first to publish one."
+        "No agents published yet",
+        "The registry is empty right now — be the first to publish an agent and put it in front of builders on Robinhood Chain.",
+        { href: "publish.html", label: "Publish an agent" }
       );
       return;
     }
@@ -33,5 +34,7 @@
       "Couldn't load agents",
       "Check your Supabase connection and try again."
     );
+  } finally {
+    listEl.removeAttribute("aria-busy");
   }
 })();

@@ -428,6 +428,18 @@ body.menu-open {
   padding-top: 36px;
 }
 
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
 .page-lead {
   font-size: 13px;
   opacity: 0.8;
@@ -659,6 +671,109 @@ body.menu-open {
   font-size: 17px;
   font-weight: 600;
   margin-bottom: 6px;
+}
+
+.empty-state-cta {
+  display: flex;
+  width: fit-content;
+  margin-top: 18px;
+}
+
+.empty-state-cta:not(.btn-solid) {
+  min-height: 36px;
+  padding: 8px 14px;
+  font-size: 12px;
+}
+
+/* ---------- skeleton loading ---------- */
+
+@keyframes skeleton-pulse {
+  0%,
+  100% {
+    opacity: 0.55;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.skeleton-block {
+  background: var(--line-soft);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  animation: skeleton-pulse 1.5s ease-in-out infinite;
+}
+
+.skeleton-row {
+  background: var(--cream);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 20px 18px;
+}
+
+.skeleton-name {
+  width: 40%;
+  height: 17px;
+  margin-bottom: 12px;
+}
+
+.skeleton-line {
+  width: 100%;
+  height: 11px;
+  margin-bottom: 8px;
+}
+
+.skeleton-line--short {
+  width: 65%;
+  margin-bottom: 14px;
+}
+
+.skeleton-tags {
+  display: flex;
+  gap: 8px;
+}
+
+.skeleton-tag {
+  width: 64px;
+  height: 20px;
+}
+
+.skeleton-row:nth-child(2) .skeleton-block,
+.skeleton-row:nth-child(2n) .skeleton-block {
+  animation-delay: 0.15s;
+}
+
+.skeleton-row:nth-child(3) .skeleton-block {
+  animation-delay: 0.3s;
+}
+
+.skeleton-row:nth-child(4) .skeleton-block {
+  animation-delay: 0.45s;
+}
+
+/* ---------- skeleton — agent detail ---------- */
+
+.skeleton-detail-head {
+  padding: 40px 0 20px;
+  border-bottom: 1px solid var(--line);
+}
+
+.skeleton-detail-name {
+  width: 55%;
+  height: 30px;
+  margin-bottom: 14px;
+}
+
+.skeleton-detail-line {
+  width: 100%;
+  height: 13px;
+  margin-bottom: 10px;
+}
+
+.skeleton-detail-btn {
+  width: 130px;
+  height: 44px;
+  border-radius: 3px;
 }
 
 /* ---------- forms ---------- */

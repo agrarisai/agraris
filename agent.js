@@ -8,6 +8,7 @@
   const id = params.get("id");
 
   if (!id) {
+    container.removeAttribute("aria-busy");
     container.innerHTML = renderEmptyState(
       "No agent specified",
       "Go back to the registry and pick an agent to view."
@@ -49,7 +50,10 @@
   } catch (err) {
     container.innerHTML = renderEmptyState(
       "Agent not found",
-      "This agent may have been removed, or the link is incorrect."
+      "This agent may have been removed, or the link is incorrect.",
+      { href: "index.html", label: "Back to registry", variant: "outline" }
     );
+  } finally {
+    container.removeAttribute("aria-busy");
   }
 })();

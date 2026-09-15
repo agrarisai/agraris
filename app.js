@@ -61,11 +61,17 @@ function renderAgentRow(agent) {
   `;
 }
 
-function renderEmptyState(title, body) {
+function renderEmptyState(title, body, cta = null) {
+  const ctaClass = cta?.variant === "outline" ? "btn" : "btn btn-solid";
+  const ctaHtml = cta
+    ? `<a class="${ctaClass} empty-state-cta" href="${escapeHtml(cta.href)}">${escapeHtml(cta.label)}</a>`
+    : "";
+
   return `
     <div class="empty-state">
       <strong>${escapeHtml(title)}</strong>
       <span>${escapeHtml(body)}</span>
+      ${ctaHtml}
     </div>
   `;
 }

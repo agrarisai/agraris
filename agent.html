@@ -48,8 +48,22 @@
       <a href="index.html#terms" data-hash="#terms">Terms</a>
     </nav>
 
-    <div id="agent-detail">
-      <p class="loading-text loading-text--standalone">Loading agent…</p>
+    <div id="agent-detail" aria-busy="true">
+      <div class="skeleton-detail-head" aria-hidden="true">
+        <div class="skeleton-block skeleton-detail-name"></div>
+        <div class="skeleton-tags" style="margin-bottom: 18px;">
+          <div class="skeleton-block skeleton-tag"></div>
+          <div class="skeleton-block skeleton-tag"></div>
+        </div>
+        <div class="skeleton-block skeleton-detail-line"></div>
+        <div class="skeleton-block skeleton-detail-line"></div>
+        <div class="skeleton-block skeleton-detail-line skeleton-line--short"></div>
+        <div class="detail-links">
+          <div class="skeleton-block skeleton-detail-btn"></div>
+          <div class="skeleton-block skeleton-detail-btn"></div>
+        </div>
+      </div>
+      <span class="sr-only">Loading agent…</span>
     </div>
 
     <footer class="site-footer">
