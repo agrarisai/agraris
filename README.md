@@ -48,3 +48,49 @@ supabase/migration.sql → run this in Supabase SQL Editor first
 
 - The publish form has **no auth** by design — Row Level Security policies in `migration.sql` allow public insert + select, but block update/delete from the client, so published entries can't be edited or removed except from the Supabase dashboard.
 - Out of scope for this MVP (per the brief): agent runtime, tool marketplace. Don't add these yet.
+
+## Agent suggestion system (semi-automatic discovery)
+
+To help find new agents to list without opening up public submissions to
+spam, there's a semi-automatic pipeline that searches GitHub on a schedule
+and drops candidates into a **private** staging table for manual review —
+nothing here ever reaches the public site automatically.
+
+**How it works**
+
+1. `.github/workflows/find-agents.yml` runs every Monday at 09:00 UTC (and
+   can be triggered manually from the Actions tab).
+2. It runs `scripts/fetch-agent-suggestions.js`, which searches the GitHub
+   Search API for public repos mentioning `robinhood-chain` together with
+   `agent` or `mcp`.
+3. Repos matching an obvious blacklist (sniper bots, bundlers,
+   volume/pump bots, honeypots, etc.) are skipped, as are repos whose
+   `repo_url` already exists in either the public `agents` table or the
+   `agent_suggestions` table (no duplicates).
+4. Everything else is inserted into `agent_suggestions` using the
+   Supabase **service_role** key (from the `SUPABASE_SERVICE_ROLE_KEY`
+   GitHub Actions secret) — this table has RLS enabled with **no**
+   anon/public policies at all, so it cannot be read or written from the
+   public site, only from the Actions workflow or the Supabase dashboard.
+
+**How to review candidates**
+
+1. Open the Supabase Dashboard → **Table Editor** → `agent_suggestions`.
+2. Go through the rows one by one (`status = 'pending'`):
+   - **Looks legit and worth listing** → copy its `name`, `description`
+     and `repo_url` into the normal Publish form on the site (or insert a
+     row into `agents` directly via the SQL Editor), then mark the
+     suggestion row `status = 'approved'` (or just delete it).
+   - **Not worth listing / spam / irrelevant** → delete the row, or set
+     `status = 'rejected'` to keep a record.
+3. Nothing in `agent_suggestions` ever shows up on the public site —
+   moving a candidate to `agents` is always a manual, deliberate step.
+
+**Setup**
+
+- Run `supabase/migration-suggestions.sql` in the Supabase SQL Editor once
+  (in addition to `migration.sql`) to create the `agent_suggestions` table.
+- Add two repo secrets under **Settings → Secrets and variables →
+  Actions**: `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` (found under
+  Supabase **Settings → API** — the service_role key, *not* the anon key).
+  Never put the service_role key in client-side code.
