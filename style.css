@@ -562,6 +562,39 @@ body.menu-open {
   flex-wrap: wrap;
 }
 
+/* ---------- stats bar ---------- */
+
+.stats-bar {
+  display: flex;
+  justify-content: space-around;
+  gap: 16px;
+  padding: 22px 4px;
+}
+
+.stats-bar-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.stats-bar-value {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 28px;
+  color: var(--green-dark);
+  line-height: 1.2;
+}
+
+.stats-bar-label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  text-transform: lowercase;
+  color: var(--ink);
+  opacity: 0.65;
+  margin-top: 4px;
+}
+
 /* ---------- buttons ---------- */
 
 .btn {
@@ -1202,6 +1235,15 @@ body.menu-open {
 
   .hero-actions .btn {
     flex: 1 1 auto;
+  }
+
+  .stats-bar {
+    padding: 16px 0;
+    gap: 8px;
+  }
+
+  .stats-bar-value {
+    font-size: 22px;
   }
 
   .nav {

@@ -126,6 +126,22 @@ async function fetchAgentCount() {
   return count || 0;
 }
 
+// Fetch just the columns needed for registry-wide stats (unique
+// categories, total GitHub stars) — lighter than fetchAgents() since it
+// skips description/version/etc for every row.
+async function fetchAgentsLite() {
+  const { data, error } = await supabaseClient
+    .from("agents")
+    .select("id, category, repo_url");
+
+  if (error) {
+    console.error("Gagal mengambil data ringkas agent:", error);
+    throw error;
+  }
+
+  return data || [];
+}
+
 async function fetchAgentById(id) {
   const { data, error } = await supabaseClient
     .from("agents")
