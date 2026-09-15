@@ -21,6 +21,11 @@ jobs:
       - name: Install dependencies
         run: npm install @supabase/supabase-js
 
+      # Debug sementara: pastikan Node.js yang benar-benar dipakai di
+      # runner ini sudah versi 22 (hapus step ini setelah dikonfirmasi).
+      - name: Debug Node.js version
+        run: node --version
+
       - name: Run agent suggestion fetcher
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
