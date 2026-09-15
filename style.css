@@ -636,6 +636,38 @@ body.menu-open {
   white-space: nowrap;
 }
 
+.agent-version-group {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.github-badge {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  font-size: 11px;
+  opacity: 0.6;
+  white-space: nowrap;
+}
+
+.github-stat {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.github-star-icon {
+  width: 10px;
+  height: 10px;
+  flex-shrink: 0;
+}
+
+.github-updated {
+  font-size: 11px;
+}
+
 .agent-desc {
   font-size: 13px;
   line-height: 1.55;
