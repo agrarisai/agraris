@@ -949,6 +949,65 @@ body.menu-open {
   flex-shrink: 0;
 }
 
+/* ---------- watchlist bookmark ---------- */
+
+/* Small icon-only bookmark button pinned to an agent-row card's
+   top-right corner, aligned with the version number below it.
+   z-index: 2 keeps it clickable above .agent-row-link (z-index: 1). */
+.watchlist-btn {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--ink);
+  opacity: 0.4;
+  cursor: pointer;
+  transition: opacity 0.15s ease, background 0.15s ease, color 0.15s ease;
+}
+
+.watchlist-btn svg {
+  width: 15px;
+  height: 15px;
+}
+
+.watchlist-btn:hover {
+  opacity: 1;
+  background: rgba(47, 107, 63, 0.08);
+}
+
+.watchlist-btn.is-active {
+  opacity: 1;
+  color: var(--green);
+}
+
+/* Trending cards already reserve their top-right corner for the
+   #1/#2/#3 ranking ribbon, so the bookmark sits just below it. */
+.trending-card .watchlist-btn {
+  top: 32px;
+}
+
+/* Larger, labeled variant used on the agent detail page next to
+   "View repo" / "View demo" — inherits .btn's border/padding. */
+.watchlist-btn-lg.is-active {
+  background: var(--green);
+  border-color: var(--green);
+  color: var(--cream);
+}
+
+.watchlist-btn-lg svg {
+  width: 14px;
+  height: 14px;
+}
+
 .agent-desc {
   font-size: 13px;
   line-height: 1.55;

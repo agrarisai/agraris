@@ -52,7 +52,9 @@ function formatDate(isoString) {
 // "stretched link" (.agent-row-link) supplies the card-wide click
 // target, while the tags sit above it (z-index) as their own real
 // links — event.stopPropagation() on a tag click just keeps that
-// click from also reaching the stretched link underneath it.
+// click from also reaching the stretched link underneath it. The
+// watchlist button sits above it the same way (z-index), but its
+// click handling is delegated (see toggleWatchlist's listener below).
 function renderAgentRow(agent) {
   const categories = normalizeCategories(agent.category);
   const tags = categories
@@ -65,6 +67,7 @@ function renderAgentRow(agent) {
   return `
     <div class="agent-row reveal" data-reveal-stagger>
       <a class="agent-row-link" href="agent.html?id=${encodeURIComponent(agent.id)}" aria-label="${escapeHtml(agent.name)}"></a>
+      ${renderWatchlistButton(agent.id)}
       <div class="agent-row-top">
         <span class="agent-name">${escapeHtml(agent.name)}</span>
       </div>
@@ -188,6 +191,24 @@ async function fetchAgentById(id) {
   }
 
   return data;
+}
+
+// Fetch every agent whose id is in the given list, in one round trip
+// (used by watchlist.html instead of calling fetchAgentById per id).
+async function fetchAgentsByIds(ids) {
+  if (!ids || ids.length === 0) return [];
+
+  const { data, error } = await supabaseClient
+    .from("agents")
+    .select("*")
+    .in("id", ids);
+
+  if (error) {
+    console.error("Gagal mengambil data watchlist:", error);
+    throw error;
+  }
+
+  return data || [];
 }
 
 // ============================================
@@ -322,6 +343,109 @@ function loadGithubBadges(agents, root = document) {
 
   return Promise.all(tasks);
 }
+
+// ============================================
+// Watchlist (local bookmarks, no login)
+// ============================================
+//
+// Stored as a plain array of agent id strings in localStorage. Every
+// access is wrapped in try/catch so a blocked/unavailable
+// localStorage (private browsing, browser settings, etc.) just makes
+// the watchlist a no-op instead of breaking the page.
+
+const WATCHLIST_STORAGE_KEY = "agraris_watchlist";
+
+function getWatchlist() {
+  try {
+    const raw = localStorage.getItem(WATCHLIST_STORAGE_KEY);
+    const parsed = raw ? JSON.parse(raw) : [];
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+
+function isInWatchlist(agentId) {
+  return getWatchlist().includes(String(agentId));
+}
+
+function toggleWatchlist(agentId) {
+  const id = String(agentId);
+
+  try {
+    const list = getWatchlist();
+    const idx = list.indexOf(id);
+
+    if (idx === -1) {
+      list.push(id);
+    } else {
+      list.splice(idx, 1);
+    }
+
+    localStorage.setItem(WATCHLIST_STORAGE_KEY, JSON.stringify(list));
+  } catch {
+    // localStorage unavailable/blocked — fail silently
+  }
+}
+
+function renderWatchlistIcon(active) {
+  return active
+    ? `<svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M2 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v13.5a.5.5 0 0 1-.74.44L8 13.06l-5.26 2.88A.5.5 0 0 1 2 15.5V2z"/></svg>`
+    : `<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" aria-hidden="true"><path d="M4 1a1 1 0 0 0-1 1v12.566l4.723-2.482a.5.5 0 0 1 .554 0L13 14.566V2a1 1 0 0 0-1-1H4z"/></svg>`;
+}
+
+// Small icon-only button (used on agent-row cards) or a larger
+// labeled button (used on the agent detail page). Either way it
+// renders the current watchlist state for `agent.id` and is wired up
+// by the delegated click handler below.
+function renderWatchlistButton(agentId, { variant = "sm" } = {}) {
+  const active = isInWatchlist(agentId);
+  const label = active ? "In watchlist" : "Add to watchlist";
+
+  if (variant === "lg") {
+    return `
+      <button type="button" class="btn watchlist-btn-lg${active ? " is-active" : ""}" data-watchlist-btn data-agent-id="${escapeHtml(agentId)}" aria-pressed="${active}">
+        ${renderWatchlistIcon(active)}<span class="watchlist-btn-label">${label}</span>
+      </button>
+    `;
+  }
+
+  return `
+    <button type="button" class="watchlist-btn${active ? " is-active" : ""}" data-watchlist-btn data-agent-id="${escapeHtml(agentId)}" aria-pressed="${active}" aria-label="${label}" title="${label}">
+      ${renderWatchlistIcon(active)}
+    </button>
+  `;
+}
+
+// Delegated click handler so watchlist buttons keep working after any
+// page re-renders its list (search filters, sort, etc.) without
+// needing to rebind listeners every time.
+document.addEventListener("click", (e) => {
+  const btn = e.target.closest("[data-watchlist-btn]");
+  if (!btn) return;
+
+  e.preventDefault();
+  e.stopPropagation();
+
+  const agentId = btn.dataset.agentId;
+  toggleWatchlist(agentId);
+  const active = isInWatchlist(agentId);
+  const label = active ? "In watchlist" : "Add to watchlist";
+
+  btn.classList.toggle("is-active", active);
+  btn.setAttribute("aria-pressed", String(active));
+
+  const icon = btn.querySelector("svg");
+  if (icon) icon.outerHTML = renderWatchlistIcon(active);
+
+  const labelEl = btn.querySelector(".watchlist-btn-label");
+  if (labelEl) {
+    labelEl.textContent = label;
+  } else {
+    btn.setAttribute("aria-label", label);
+    btn.setAttribute("title", label);
+  }
+});
 
 // ============================================
 // Hamburger menu (shared header, all pages)
