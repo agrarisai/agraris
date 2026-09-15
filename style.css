@@ -727,6 +727,12 @@ body.menu-open {
   cursor: not-allowed;
 }
 
+.btn-sm {
+  min-height: 32px;
+  padding: 6px 14px;
+  font-size: 12px;
+}
+
 /* ---------- section headings ---------- */
 
 .section-head {
@@ -1224,6 +1230,60 @@ body.menu-open {
   font-size: 11px;
   opacity: 0.65;
   margin-bottom: 6px;
+}
+
+/* ---------- report agent ---------- */
+
+.report-agent-block {
+  margin-top: 26px;
+  padding-top: 16px;
+}
+
+.report-link {
+  font-size: 11px;
+  color: var(--ink);
+  opacity: 0.55;
+  text-decoration: none;
+}
+
+.report-link:hover {
+  text-decoration: underline;
+}
+
+.report-form {
+  max-width: 320px;
+  margin-top: 12px;
+}
+
+.report-form .field {
+  margin-bottom: 10px;
+}
+
+.report-form .field label {
+  font-size: 11px;
+  margin-bottom: 4px;
+}
+
+.report-form .field select,
+.report-form .field textarea {
+  font-size: 13px;
+  padding: 7px 9px;
+}
+
+.report-form .field textarea {
+  min-height: 56px;
+}
+
+.report-form .form-actions {
+  margin-top: 8px;
+  gap: 10px;
+}
+
+.report-confirm {
+  font-size: 11px;
+  color: var(--green-dark);
+  margin-top: 12px;
+  opacity: 0.85;
 }
 
 /* ---------- static content pages ---------- */
