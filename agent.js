@@ -26,6 +26,57 @@ function initCopyLinkButton(root) {
   });
 }
 
+function initReportAgent(root, agentId) {
+  const link = root.querySelector("#report-link");
+  const form = root.querySelector("#report-form");
+  if (!link || !form) return;
+
+  const msgEl = form.querySelector("#report-msg");
+  const submitBtn = form.querySelector("#report-submit-btn");
+
+  link.addEventListener("click", (e) => {
+    e.preventDefault();
+    const expanded = !form.hidden;
+    form.hidden = expanded;
+    link.setAttribute("aria-expanded", String(!expanded));
+  });
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const reason = form.reason.value;
+    const details = form.details.value.trim();
+
+    submitBtn.disabled = true;
+    msgEl.textContent = "";
+    msgEl.className = "form-msg";
+
+    try {
+      const { error } = await supabaseClient.from("agent_reports").insert([
+        {
+          agent_id: agentId,
+          reason,
+          details: details || null,
+        },
+      ]);
+
+      if (error) throw error;
+
+      form.hidden = true;
+      link.hidden = true;
+      const confirm = document.createElement("p");
+      confirm.className = "report-confirm";
+      confirm.textContent = "Thanks — we'll take a look.";
+      form.insertAdjacentElement("afterend", confirm);
+    } catch (err) {
+      console.error("Gagal mengirim report:", err);
+      msgEl.textContent = "Something went wrong. Please try again.";
+      msgEl.className = "form-msg error";
+      submitBtn.disabled = false;
+    }
+  });
+}
+
 (async function () {
   const container = document.getElementById("agent-detail");
   const params = new URLSearchParams(window.location.search);
@@ -73,10 +124,34 @@ function initCopyLinkButton(root) {
         <div class="detail-row-label">Published</div>
         <div>${escapeHtml(formatDate(agent.created_at))}</div>
       </div>
+
+      <div class="report-agent-block reveal">
+        <a href="#" class="report-link" id="report-link" aria-expanded="false">Report this agent</a>
+        <form class="report-form" id="report-form" hidden>
+          <div class="field">
+            <label for="report-reason">Reason</label>
+            <select id="report-reason" name="reason" required>
+              <option value="spam">Spam</option>
+              <option value="misleading">Misleading information</option>
+              <option value="illegal">Illegal content</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="report-details">Details</label>
+            <textarea id="report-details" name="details" maxlength="1000" placeholder="Anything else we should know? (optional)"></textarea>
+          </div>
+          <div class="form-actions">
+            <button type="submit" class="btn btn-sm" id="report-submit-btn">Submit report</button>
+            <span class="form-msg" id="report-msg"></span>
+          </div>
+        </form>
+      </div>
     `;
     observeReveal(container);
     loadGithubBadges([agent], container);
     initCopyLinkButton(container);
+    initReportAgent(container, agent.id);
   } catch (err) {
     container.innerHTML = renderEmptyState(
       "Agent not found",
