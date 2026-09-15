@@ -42,15 +42,29 @@ function formatDate(isoString) {
 }
 
 // Renders one row for the ledger-style agent list used on
-// index.html and search.html
+// index.html, search.html and category.html.
+//
+// The row itself is no longer an <a> — a tag needs to be a real,
+// crawlable <a href="category.html?..."> too, and nesting an <a>
+// inside an <a> gets silently un-nested by the HTML parser (the
+// browser closes the outer anchor early, pulling everything after
+// the nested one outside of it). Instead, an invisible full-cover
+// "stretched link" (.agent-row-link) supplies the card-wide click
+// target, while the tags sit above it (z-index) as their own real
+// links — event.stopPropagation() on a tag click just keeps that
+// click from also reaching the stretched link underneath it.
 function renderAgentRow(agent) {
   const categories = normalizeCategories(agent.category);
   const tags = categories
-    .map((c) => `<span class="tag">${escapeHtml(c)}</span>`)
+    .map(
+      (c) =>
+        `<a class="tag" href="category.html?slug=${encodeURIComponent(c)}" onclick="event.stopPropagation()">${escapeHtml(c)}</a>`
+    )
     .join("");
 
   return `
-    <a class="agent-row reveal" data-reveal-stagger href="agent.html?id=${encodeURIComponent(agent.id)}">
+    <div class="agent-row reveal" data-reveal-stagger>
+      <a class="agent-row-link" href="agent.html?id=${encodeURIComponent(agent.id)}" aria-label="${escapeHtml(agent.name)}"></a>
       <div class="agent-row-top">
         <span class="agent-name">${escapeHtml(agent.name)}</span>
       </div>
@@ -60,7 +74,7 @@ function renderAgentRow(agent) {
       </div>
       <p class="agent-desc">${escapeHtml(agent.description)}</p>
       <div class="agent-meta">${tags}</div>
-    </a>
+    </div>
   `;
 }
 
@@ -105,6 +119,25 @@ async function fetchAgents({ search = "", category = "", limit = null } = {}) {
 
   if (error) {
     console.error("Gagal mengambil data agent:", error);
+    throw error;
+  }
+
+  return data || [];
+}
+
+// Fetch every agent whose category array contains an exact match for
+// `category` (used by category.html?slug=...). Uses Postgres array
+// containment instead of fetchAgents()'s ilike substring match, since
+// a category page needs an exact tag match rather than a loose search.
+async function fetchAgentsByCategory(category) {
+  const { data, error } = await supabaseClient
+    .from("agents")
+    .select("*")
+    .contains("category", [category])
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    console.error("Gagal mengambil data agent berdasarkan kategori:", error);
     throw error;
   }
 

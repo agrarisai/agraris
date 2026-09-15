@@ -830,6 +830,7 @@ body.menu-open {
 }
 
 .agent-row {
+  position: relative;
   display: block;
   text-decoration: none;
   color: var(--ink);
@@ -837,7 +838,19 @@ body.menu-open {
   border: 1px solid var(--line);
   border-radius: 8px;
   padding: 20px 18px;
+  cursor: pointer;
   transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
+}
+
+/* Invisible full-cover link that makes the whole card clickable
+   without nesting a real <a> (the tags below) inside another <a>.
+   z-index: 1 because .agent-desc/.github-stat use opacity < 1, which
+   (per spec) gives them their own stacking context at level 0 too —
+   without this they'd paint above the overlay and swallow its clicks. */
+.agent-row-link {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
 }
 
 .agent-row:hover {
@@ -915,12 +928,15 @@ body.menu-open {
 }
 
 .tag {
+  position: relative;
+  z-index: 2;
   font-size: 11px;
   padding: 3px 8px;
   border: 1px solid var(--line);
   border-radius: 2px;
   color: var(--ink);
   background: var(--panel);
+  text-decoration: none;
 }
 
 .empty-state {
