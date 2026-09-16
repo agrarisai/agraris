@@ -14,6 +14,7 @@
   if (!header) return;
 
   const menuToggle = document.getElementById("menu-toggle");
+  const headerActions = document.getElementById("header-actions");
 
   // ---------- trigger button (header, next to hamburger) ----------
 
@@ -26,7 +27,12 @@
   trigger.innerHTML =
     '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><circle cx="6.75" cy="6.75" r="5"/><path d="M10.5 10.5L14.5 14.5" stroke-linecap="round"/></svg>';
 
-  if (menuToggle) {
+  // keep the trigger grouped with the hamburger so the two stay on one
+  // row; fall back to inserting directly into the header if a page is
+  // missing the .header-actions wrapper.
+  if (headerActions && menuToggle) {
+    headerActions.insertBefore(trigger, menuToggle);
+  } else if (menuToggle) {
     header.insertBefore(trigger, menuToggle);
   } else {
     header.appendChild(trigger);
