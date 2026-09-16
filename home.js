@@ -100,9 +100,18 @@ function renderTrendingCard(agent, rank) {
 // Populates the "Trending" section: fetches every agent, resolves each
 // one's GitHub star count (reusing the same cached GitHub fetch used for
 // the agent-row badges), sorts by stars descending, and renders the top 3
-// using the .agent-row card style with a ranking badge. An agent whose
-// stars fail to resolve (no repo, network error, rate limit, ...) sorts
-// as 0 stars but still gets its GitHub badge hidden like everywhere else.
+// using the .agent-row card style with a ranking badge.
+//
+// An agent whose stars fail to resolve (no repo_url, network error, GitHub
+// rate limit, ...) must never outrank one whose star count is known — so
+// resolved and unresolved agents are ranked as two separate groups instead
+// of treating "unresolved" and "confirmed 0 stars" as the same value. That
+// distinction matters because fetchGithubRepoInfo() is called for every agent
+// on every page load: once the number of agents exceeds GitHub's unauthenticated
+// rate limit (60 req/hour/IP), most/all of those calls fail together, which
+// would otherwise make every agent tie at a fallback of 0 and fall back to
+// insertion order (newest-created first) instead of an unknown-stars agent
+// simply sorting to the bottom.
 async function loadTrending() {
   const sectionEl = document.getElementById("trending-section");
   const listEl = document.getElementById("trending-list");
@@ -123,26 +132,27 @@ async function loadTrending() {
     await Promise.all(
       agents.map(async (agent) => {
         const parsed = parseGithubRepo(agent.repo_url);
-        if (!parsed) {
-          starsById.set(agent.id, 0);
-          return;
-        }
+        if (!parsed) return; // no repo — leave unresolved
 
         try {
           const data = await fetchGithubRepoInfo(parsed.owner, parsed.repo);
-          starsById.set(
-            agent.id,
-            typeof data.stars === "number" ? data.stars : 0
-          );
+          if (typeof data.stars === "number") {
+            starsById.set(agent.id, data.stars);
+          }
         } catch {
-          starsById.set(agent.id, 0);
+          // network error, rate limit, 404 — leave unresolved rather than
+          // assuming 0, so it can't tie with (and lose to) another agent
+          // that also failed to resolve but happens to be newer
         }
       })
     );
 
-    const topAgents = [...agents]
-      .sort((a, b) => (starsById.get(b.id) || 0) - (starsById.get(a.id) || 0))
-      .slice(0, TRENDING_COUNT);
+    const resolved = agents
+      .filter((agent) => starsById.has(agent.id))
+      .sort((a, b) => starsById.get(b.id) - starsById.get(a.id));
+    const unresolved = agents.filter((agent) => !starsById.has(agent.id));
+
+    const topAgents = [...resolved, ...unresolved].slice(0, TRENDING_COUNT);
 
     listEl.innerHTML = topAgents
       .map((agent, i) => renderTrendingCard(agent, i + 1))
