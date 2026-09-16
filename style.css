@@ -214,6 +214,18 @@ select:focus-visible {
   border-bottom-color: var(--green);
 }
 
+/* ---------- header actions (search + hamburger, always one row) ---------- */
+
+.header-actions {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  flex-shrink: 0;
+  margin-left: auto;
+}
+
 /* ---------- hamburger menu ---------- */
 
 .menu-toggle {
@@ -1760,6 +1772,14 @@ body.cmdk-open {
 
   .nav {
     display: none;
+  }
+
+  .site-header {
+    flex-wrap: nowrap;
+  }
+
+  .brand-block {
+    flex-shrink: 1;
   }
 
   .section-head {
