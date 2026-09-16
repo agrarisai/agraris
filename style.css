@@ -1016,11 +1016,26 @@ body.cmdk-open {
 
 /* ---------- trending ---------- */
 
+/* Mirrors .listing-panel below so Trending reads as the same kind of
+   bounded panel as Recently published, rather than bare content. */
+.trending-section {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  margin: 8px 0 18px;
+  padding: 26px 22px 20px;
+}
+
+.trending-section .section-head {
+  margin-top: 0;
+  padding-top: 0;
+  border-top: none;
+}
+
 .trending-list {
   display: flex;
   flex-direction: column;
   gap: 14px;
-  margin: 8px 0 18px;
 }
 
 .trending-card {
@@ -1786,7 +1801,8 @@ body.cmdk-open {
     padding-top: 22px;
   }
 
-  .listing-panel {
+  .listing-panel,
+  .trending-section {
     padding: 20px 16px 16px;
   }
 
