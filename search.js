@@ -130,7 +130,14 @@
   try {
     allAgents = await fetchAgents();
     populateCategoryChips(allAgents);
-    renderResults(sortAgents(allAgents));
+
+    const initialQuery = new URLSearchParams(window.location.search).get("q");
+    if (initialQuery) {
+      searchInput.value = initialQuery;
+      applyFilters();
+    } else {
+      renderResults(sortAgents(allAgents));
+    }
   } catch (err) {
     listEl.innerHTML = renderEmptyState(
       "Couldn't load agents",
