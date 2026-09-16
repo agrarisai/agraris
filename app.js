@@ -55,6 +55,11 @@ function formatDate(isoString) {
 // click from also reaching the stretched link underneath it. The
 // watchlist button sits above it the same way (z-index), but its
 // click handling is delegated (see toggleWatchlist's listener below).
+function renderVerifiedBadge(agent, { lg = false } = {}) {
+  if (agent?.verified !== true) return "";
+  return `<span class="verified-badge${lg ? " verified-badge-lg" : ""}">✓ Verified</span>`;
+}
+
 function renderAgentRow(agent) {
   const categories = normalizeCategories(agent.category);
   const tags = categories
@@ -70,6 +75,7 @@ function renderAgentRow(agent) {
       ${renderWatchlistButton(agent.id)}
       <div class="agent-row-top">
         <span class="agent-name">${escapeHtml(agent.name)}</span>
+        ${renderVerifiedBadge(agent)}
       </div>
       <div class="agent-meta-row">
         <span class="agent-version">v${escapeHtml(agent.version)}</span>
