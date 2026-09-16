@@ -128,6 +128,7 @@ function initReportAgent(root, agentId) {
       <div class="detail-head reveal">
         <div class="agent-row-top">
           <span class="agent-name">${escapeHtml(agent.name)}</span>
+          ${renderVerifiedBadge(agent, { lg: true })}
         </div>
         <div class="agent-meta-row">
           <span class="agent-version">v${escapeHtml(agent.version)}</span>

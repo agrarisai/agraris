@@ -1138,6 +1138,27 @@ body.cmdk-open {
   overflow-wrap: anywhere;
 }
 
+.verified-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 2px 7px;
+  border-radius: 999px;
+  background: var(--green);
+  color: var(--cream);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  line-height: 1.6;
+  white-space: nowrap;
+  vertical-align: middle;
+}
+
+.verified-badge-lg {
+  padding: 3px 9px;
+  font-size: 12px;
+}
+
 .agent-meta-row {
   display: flex;
   align-items: baseline;
@@ -1471,6 +1492,26 @@ body.cmdk-open {
   border-radius: 3px;
   background: #fff;
   color: var(--ink);
+}
+
+.verified-filter {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex: 0 0 auto;
+  padding: 10px 12px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--ink);
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.verified-filter input[type="checkbox"] {
+  accent-color: var(--green);
+  width: 15px;
+  height: 15px;
+  cursor: pointer;
 }
 
 .category-chips {

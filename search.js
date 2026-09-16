@@ -7,6 +7,7 @@
   const countEl = document.getElementById("agent-count");
   const searchInput = document.getElementById("search-input");
   const sortInput = document.getElementById("sort-input");
+  const verifiedFilterInput = document.getElementById("verified-filter-input");
   const categoryChipsEl = document.getElementById("category-chips");
 
   let allAgents = [];
@@ -103,7 +104,9 @@
         activeCategories.size === 0 ||
         normalizeCategories(a.category).some((c) => activeCategories.has(c));
 
-      return matchesSearch && matchesCategory;
+      const matchesVerified = !verifiedFilterInput.checked || a.verified === true;
+
+      return matchesSearch && matchesCategory && matchesVerified;
     });
 
     renderResults(sortAgents(filtered));
@@ -153,6 +156,8 @@
   });
 
   sortInput.addEventListener("change", applyFilters);
+
+  verifiedFilterInput.addEventListener("change", applyFilters);
 
   categoryChipsEl.addEventListener("click", (e) => {
     const chip = e.target.closest(".category-chip");
