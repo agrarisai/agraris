@@ -19,6 +19,16 @@ function setMetaDescription(content) {
   meta.setAttribute("content", content);
 }
 
+function setMetaProperty(property, content) {
+  let meta = document.querySelector(`meta[property="${property}"]`);
+  if (!meta) {
+    meta = document.createElement("meta");
+    meta.setAttribute("property", property);
+    document.head.appendChild(meta);
+  }
+  meta.setAttribute("content", content);
+}
+
 (async function () {
   const headingEl = document.getElementById("category-heading");
   const countEl = document.getElementById("agent-count");
@@ -33,6 +43,11 @@ function setMetaDescription(content) {
     setMetaDescription(
       "Browse AI agents by category in the Agraris registry for Robinhood Chain."
     );
+    setMetaProperty("og:title", "Category — Agraris");
+    setMetaProperty(
+      "og:description",
+      "Browse AI agents by category in the Agraris registry for Robinhood Chain."
+    );
     headingEl.textContent = "Category not found";
     countEl.textContent = "";
     listEl.removeAttribute("aria-busy");
@@ -45,14 +60,15 @@ function setMetaDescription(content) {
   }
 
   document.title = `${label} agents — Agraris`;
+  setMetaProperty("og:title", `${label} agents — Agraris`);
   headingEl.textContent = `${label} agents on Robinhood Chain`;
 
   try {
     const agents = await fetchAgentsByCategory(slug);
 
-    setMetaDescription(
-      `Browse ${agents.length} AI agents tagged '${label}' in the Agraris registry for Robinhood Chain.`
-    );
+    const description = `Browse ${agents.length} AI agents tagged '${label}' in the Agraris registry for Robinhood Chain.`;
+    setMetaDescription(description);
+    setMetaProperty("og:description", description);
 
     countEl.textContent = agents.length
       ? `${agents.length} agent${agents.length === 1 ? "" : "s"} found`

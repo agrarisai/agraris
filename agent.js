@@ -2,6 +2,26 @@
 // Agraris — agent detail page logic
 // ============================================
 
+function setMetaDescription(content) {
+  let meta = document.querySelector('meta[name="description"]');
+  if (!meta) {
+    meta = document.createElement("meta");
+    meta.setAttribute("name", "description");
+    document.head.appendChild(meta);
+  }
+  meta.setAttribute("content", content);
+}
+
+function setMetaProperty(property, content) {
+  let meta = document.querySelector(`meta[property="${property}"]`);
+  if (!meta) {
+    meta = document.createElement("meta");
+    meta.setAttribute("property", property);
+    document.head.appendChild(meta);
+  }
+  meta.setAttribute("content", content);
+}
+
 function initCopyLinkButton(root) {
   const btn = root.querySelector("#copy-link-btn");
   if (!btn) return;
@@ -98,6 +118,11 @@ function initReportAgent(root, agentId) {
       .map((c) => `<span class="tag">${escapeHtml(c)}</span>`)
       .join("");
     const similarAgents = await fetchSimilarAgents(categories, agent.id, 3);
+
+    document.title = `${agent.name} — Agraris`;
+    setMetaDescription(agent.description);
+    setMetaProperty("og:title", `${agent.name} — Agraris`);
+    setMetaProperty("og:description", agent.description);
 
     container.innerHTML = `
       <div class="detail-head reveal">
