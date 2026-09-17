@@ -450,6 +450,14 @@ document.addEventListener("click", (e) => {
   closeBtn?.addEventListener("click", closeMenu);
   overlay.addEventListener("click", closeMenu);
 
+  // Close the panel whenever a nav link inside it is clicked. This matters
+  // most for same-page hash links (About/Privacy/Terms/FAQ/How It Works),
+  // which scroll within the current page instead of triggering a full
+  // navigation that would otherwise reset the menu state on its own.
+  panel.querySelectorAll("a").forEach((a) => {
+    a.addEventListener("click", closeMenu);
+  });
+
   document.addEventListener("keydown", (e) => {
     if (e.key === "Escape" && panel.classList.contains("is-open")) {
       closeMenu();
