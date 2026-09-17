@@ -23,6 +23,13 @@ jobs:
       - name: Install dependencies
         run: npm install @supabase/supabase-js
 
+      - name: Update GitHub stats
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: node scripts/update-github-stats.js
+
       - name: Generate rss.xml
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}

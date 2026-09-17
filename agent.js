@@ -132,7 +132,7 @@ function initReportAgent(root, agentId) {
         </div>
         <div class="agent-meta-row">
           <span class="agent-version">v${escapeHtml(agent.version)}</span>
-          ${renderGithubBadgePlaceholder(agent)}
+          ${renderGithubBadge(agent)}
         </div>
         <div class="agent-meta">${tags}</div>
         <p class="detail-desc">${escapeHtml(agent.description)}</p>
@@ -192,7 +192,6 @@ function initReportAgent(root, agentId) {
       }
     `;
     observeReveal(container);
-    loadGithubBadges([agent, ...similarAgents], container);
     initCopyLinkButton(container);
     initReportAgent(container, agent.id);
   } catch (err) {

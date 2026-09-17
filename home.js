@@ -6,9 +6,9 @@
 // categories, total GitHub stars). The agent count is passed in since
 // it's already been fetched for the "Recently published" heading;
 // categories and stars need a lightweight fetch of every agent's
-// category/repo_url. Star totals fill in incrementally as each
-// GitHub API call resolves, reusing the same cache as the agent
-// list's GitHub badges.
+// category/github_stars. Stars are populated daily by GitHub Actions
+// (see scripts/update-github-stats.js), so this is just a sum over
+// already-fetched data — no GitHub API calls happen here.
 async function loadStatsBar(agentCount) {
   const agentsEl = document.getElementById("stat-agents");
   const categoriesEl = document.getElementById("stat-categories");
@@ -34,36 +34,12 @@ async function loadStatsBar(agentCount) {
   }
 
   if (starsEl) {
-    const repos = liteAgents
-      .map((agent) => parseGithubRepo(agent.repo_url))
-      .filter(Boolean);
-
-    if (repos.length === 0) {
-      starsEl.textContent = "0";
-      return;
-    }
-
-    let totalStars = 0;
-    let gotAny = false;
-
-    await Promise.all(
-      repos.map(async ({ owner, repo }) => {
-        try {
-          const data = await fetchGithubRepoInfo(owner, repo);
-          if (typeof data.stars === "number") {
-            totalStars += data.stars;
-            gotAny = true;
-            starsEl.textContent = totalStars.toLocaleString("en-US");
-          }
-        } catch {
-          // network error, rate limit, 404 — skip this repo's stars
-        }
-      })
+    const totalStars = liteAgents.reduce(
+      (sum, agent) =>
+        typeof agent.github_stars === "number" ? sum + agent.github_stars : sum,
+      0
     );
-
-    if (!gotAny) {
-      starsEl.textContent = "0";
-    }
+    starsEl.textContent = totalStars.toLocaleString("en-US");
   }
 }
 
@@ -89,7 +65,7 @@ function renderTrendingCard(agent, rank) {
       </div>
       <div class="agent-meta-row">
         <span class="agent-version">v${escapeHtml(agent.version)}</span>
-        ${renderGithubBadgePlaceholder(agent)}
+        ${renderGithubBadge(agent)}
       </div>
       <p class="agent-desc">${escapeHtml(agent.description)}</p>
       <div class="agent-meta">${tags}</div>
@@ -97,21 +73,15 @@ function renderTrendingCard(agent, rank) {
   `;
 }
 
-// Populates the "Trending" section: fetches every agent, resolves each
-// one's GitHub star count (reusing the same cached GitHub fetch used for
-// the agent-row badges), sorts by stars descending, and renders the top 3
-// using the .agent-row card style with a ranking badge.
+// Populates the "Trending" section: sorts agents by GitHub stars
+// (descending) and renders the top 3 using the .agent-row card style
+// with a ranking badge. github_stars comes back as part of
+// fetchAgents() itself — populated daily by GitHub Actions (see
+// scripts/update-github-stats.js) — so no extra fetch is needed here.
 //
-// An agent whose stars fail to resolve (no repo_url, network error, GitHub
-// rate limit, ...) must never outrank one whose star count is known — so
-// resolved and unresolved agents are ranked as two separate groups instead
-// of treating "unresolved" and "confirmed 0 stars" as the same value. That
-// distinction matters because fetchGithubRepoInfo() is called for every agent
-// on every page load: once the number of agents exceeds GitHub's unauthenticated
-// rate limit (60 req/hour/IP), most/all of those calls fail together, which
-// would otherwise make every agent tie at a fallback of 0 and fall back to
-// insertion order (newest-created first) instead of an unknown-stars agent
-// simply sorting to the bottom.
+// An agent whose github_stars is still null (not yet processed by the
+// daily job) must never outrank one whose star count is known, so it
+// always sorts to the bottom rather than tying at 0.
 async function loadTrending() {
   const sectionEl = document.getElementById("trending-section");
   const listEl = document.getElementById("trending-list");
@@ -127,38 +97,21 @@ async function loadTrending() {
       return;
     }
 
-    const starsById = new Map();
+    const sorted = agents.slice().sort((a, b) => {
+      const av = typeof a.github_stars === "number" ? a.github_stars : null;
+      const bv = typeof b.github_stars === "number" ? b.github_stars : null;
+      if (av === null && bv === null) return 0;
+      if (av === null) return 1;
+      if (bv === null) return -1;
+      return bv - av;
+    });
 
-    await Promise.all(
-      agents.map(async (agent) => {
-        const parsed = parseGithubRepo(agent.repo_url);
-        if (!parsed) return; // no repo — leave unresolved
-
-        try {
-          const data = await fetchGithubRepoInfo(parsed.owner, parsed.repo);
-          if (typeof data.stars === "number") {
-            starsById.set(agent.id, data.stars);
-          }
-        } catch {
-          // network error, rate limit, 404 — leave unresolved rather than
-          // assuming 0, so it can't tie with (and lose to) another agent
-          // that also failed to resolve but happens to be newer
-        }
-      })
-    );
-
-    const resolved = agents
-      .filter((agent) => starsById.has(agent.id))
-      .sort((a, b) => starsById.get(b.id) - starsById.get(a.id));
-    const unresolved = agents.filter((agent) => !starsById.has(agent.id));
-
-    const topAgents = [...resolved, ...unresolved].slice(0, TRENDING_COUNT);
+    const topAgents = sorted.slice(0, TRENDING_COUNT);
 
     listEl.innerHTML = topAgents
       .map((agent, i) => renderTrendingCard(agent, i + 1))
       .join("");
     observeReveal(listEl);
-    loadGithubBadges(topAgents, listEl);
   } catch (err) {
     sectionEl.hidden = true;
   } finally {
@@ -196,7 +149,6 @@ async function loadTrending() {
 
     listEl.innerHTML = agents.map(renderAgentRow).join("");
     observeReveal(listEl);
-    loadGithubBadges(agents, listEl);
   } catch (err) {
     listEl.innerHTML = renderEmptyState(
       "Couldn't load agents",

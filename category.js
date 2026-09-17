@@ -85,7 +85,6 @@ function setMetaProperty(property, content) {
 
     listEl.innerHTML = agents.map(renderAgentRow).join("");
     observeReveal(listEl);
-    loadGithubBadges(agents, listEl);
   } catch (err) {
     listEl.innerHTML = renderEmptyState(
       "Couldn't load agents",
