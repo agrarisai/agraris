@@ -680,8 +680,21 @@ body.cmdk-open {
   margin-top: 36px;
   padding-top: 20px;
   border-top: 1px solid var(--line-soft);
+  text-align: center;
+}
+
+.footer-copyright {
+  margin: 0;
   font-size: 11px;
   opacity: 0.6;
+}
+
+.footer-disclaimer {
+  margin: 8px auto 0;
+  max-width: 560px;
+  font-size: 10px;
+  line-height: 1.5;
+  opacity: 0.5;
 }
 
 /* ---------- reusable page bits ---------- */
