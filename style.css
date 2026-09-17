@@ -1474,6 +1474,35 @@ body.cmdk-open {
   color: var(--green-dark);
 }
 
+/* ---------- publish success ---------- */
+
+.publish-success {
+  padding: 40px 0;
+  text-align: center;
+}
+
+.publish-success h2 {
+  font-family: var(--font-display);
+  font-size: 26px;
+  font-weight: 600;
+  color: var(--green-dark);
+  margin: 0 0 10px;
+}
+
+.publish-success p {
+  font-size: 14px;
+  opacity: 0.8;
+  margin: 0 0 24px;
+}
+
+.publish-success-actions {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
 /* ---------- search ---------- */
 
 .search-bar {
@@ -1599,6 +1628,43 @@ body.cmdk-open {
   font-size: 11px;
   opacity: 0.65;
   margin-bottom: 6px;
+}
+
+/* ---------- badge share ---------- */
+
+.badge-section {
+  padding: 22px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.badge-block {
+  margin-top: 10px;
+}
+
+.badge-preview {
+  display: block;
+  margin-bottom: 10px;
+}
+
+.badge-code-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.badge-code {
+  flex: 1 1 260px;
+  min-width: 0;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  padding: 8px 10px;
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  background: var(--panel);
+  color: var(--ink);
+  opacity: 0.8;
+  overflow-wrap: anywhere;
 }
 
 /* ---------- report agent ---------- */
