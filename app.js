@@ -55,8 +55,23 @@ function formatDate(isoString) {
 // click from also reaching the stretched link underneath it. The
 // watchlist button sits above it the same way (z-index), but its
 // click handling is delegated (see toggleWatchlist's listener below).
+// `verified` is a Postgres `boolean` column, so Supabase's REST API
+// should always hand back a real JS boolean — but this stays lenient
+// about "true"/1-ish values too, since anything that fetches this
+// column through a path other than straight select("*") (an RPC that
+// casts to text, a manually-built row, a CSV import) could hand us a
+// stringified/numeric truthy value instead, and a strict `!== true`
+// check would silently swallow it.
+function isVerified(agent) {
+  const v = agent?.verified;
+  if (typeof v === "boolean") return v;
+  if (typeof v === "string") return v.trim().toLowerCase() === "true";
+  if (typeof v === "number") return v === 1;
+  return false;
+}
+
 function renderVerifiedBadge(agent, { lg = false } = {}) {
-  if (agent?.verified !== true) return "";
+  if (!isVerified(agent)) return "";
   return `<span class="verified-badge${lg ? " verified-badge-lg" : ""}">✓ Verified</span>`;
 }
 
