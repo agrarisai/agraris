@@ -75,6 +75,9 @@
         .single();
 
       if (error) throw error;
+      if (!data || !data.id) {
+        throw new Error("Insert succeeded but no agent id was returned.");
+      }
 
       const listingUrl = `agent.html?id=${encodeURIComponent(data.id)}`;
       const listingAbsoluteUrl = new URL(listingUrl, window.location.href).href;
@@ -82,11 +85,11 @@
       form.hidden = true;
       setMessage("", "");
       viewListingBtn.href = listingUrl;
-      shareXBtn.addEventListener("click", () => {
+      shareXBtn.onclick = () => {
         const shareText = `Just published ${data.name} on @agrarisai — the registry for AI agents on Robinhood Chain.`;
         const tweetUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(listingAbsoluteUrl)}`;
         window.open(tweetUrl, "_blank", "noopener,noreferrer");
-      });
+      };
       successBlock.hidden = false;
     } catch (err) {
       console.error("Gagal publish agent:", err);
