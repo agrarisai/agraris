@@ -46,6 +46,31 @@ function initCopyLinkButton(root) {
   });
 }
 
+function initCopyBadgeButton(root) {
+  const btn = root.querySelector("#copy-badge-btn");
+  const codeEl = root.querySelector("#badge-markdown");
+  if (!btn || !codeEl) return;
+
+  const defaultLabel = btn.textContent;
+
+  btn.addEventListener("click", () => {
+    if (!navigator.clipboard?.writeText) return;
+
+    navigator.clipboard
+      .writeText(codeEl.textContent)
+      .then(() => {
+        btn.textContent = "Copied!";
+        setTimeout(() => {
+          btn.textContent = defaultLabel;
+        }, 2000);
+      })
+      .catch(() => {
+        // clipboard write failed (permissions, insecure context, etc.) —
+        // fail silently, no error shown to the user
+      });
+  });
+}
+
 function initReportAgent(root, agentId) {
   const link = root.querySelector("#report-link");
   const form = root.querySelector("#report-form");
@@ -153,6 +178,17 @@ function initReportAgent(root, agentId) {
         <div>${escapeHtml(formatDate(agent.created_at))}</div>
       </div>
 
+      <div class="badge-section reveal">
+        <div class="detail-row-label">Add this badge to your README</div>
+        <div class="badge-block">
+          <img class="badge-preview" src="badge.svg" width="150" height="24" alt="Listed on Agraris badge" />
+          <div class="badge-code-row">
+            <code class="badge-code" id="badge-markdown">[![Listed on Agraris](https://agraris.xyz/badge.svg)](https://agraris.xyz/agent.html?id=${escapeHtml(agent.id)})</code>
+            <button type="button" class="btn btn-sm" id="copy-badge-btn">Copy markdown</button>
+          </div>
+        </div>
+      </div>
+
       <div class="report-agent-block reveal">
         <a href="#" class="report-link" id="report-link" aria-expanded="false">Report this agent</a>
         <form class="report-form" id="report-form" hidden>
@@ -193,6 +229,7 @@ function initReportAgent(root, agentId) {
     `;
     observeReveal(container);
     initCopyLinkButton(container);
+    initCopyBadgeButton(container);
     initReportAgent(container, agent.id);
   } catch (err) {
     container.innerHTML = renderEmptyState(
