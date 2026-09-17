@@ -29,29 +29,6 @@
       .join("");
   }
 
-  // Reads whatever GitHub star count is already cached in sessionStorage
-  // (populated by loadGithubBadges as agent cards are rendered) without
-  // triggering a new network fetch. Returns null if not known yet.
-  function getCachedStars(agent) {
-    const parsed = parseGithubRepo(agent.repo_url);
-    if (!parsed) return null;
-
-    try {
-      const cached = sessionStorage.getItem(
-        `agraris:gh:${parsed.owner}/${parsed.repo}`
-      );
-      if (!cached) return null;
-
-      const entry = JSON.parse(cached);
-      if (Date.now() - entry.fetchedAt >= GITHUB_CACHE_TTL_MS) return null;
-
-      const stars = entry?.data?.stars;
-      return typeof stars === "number" ? stars : null;
-    } catch {
-      return null;
-    }
-  }
-
   function sortAgents(agents) {
     const sorted = agents.slice();
 
@@ -68,12 +45,13 @@
         sorted.sort((a, b) => b.name.localeCompare(a.name));
         break;
       case "stars":
-        // Agents whose star count is already known sort by stars
-        // (descending); agents still waiting on GitHub data stay below
-        // them, in their existing order.
+        // Agents whose star count is known sort by stars (descending);
+        // agents the daily GitHub Actions job hasn't processed yet
+        // (github_stars is null) stay below them, in their existing
+        // order.
         sorted.sort((a, b) => {
-          const av = getCachedStars(a);
-          const bv = getCachedStars(b);
+          const av = typeof a.github_stars === "number" ? a.github_stars : null;
+          const bv = typeof b.github_stars === "number" ? b.github_stars : null;
           if (av === null && bv === null) return 0;
           if (av === null) return 1;
           if (bv === null) return -1;
@@ -127,7 +105,6 @@
 
     listEl.innerHTML = agents.map(renderAgentRow).join("");
     observeReveal(listEl);
-    loadGithubBadges(agents, listEl);
   }
 
   try {
