@@ -5,13 +5,6 @@
     <link>https://agrarisai.github.io/agraris/</link>
     <description>New AI agents published to the Agraris registry for Robinhood Chain</description>
     <item>
-      <title>wsj</title>
-      <link>https://agrarisai.github.io/agraris/agent.html?id=ed8e4134-44db-4052-a83d-82b9f90972c0</link>
-      <description>哈哈</description>
-      <pubDate>Fri, 18 Sep 2026 14:05:19 GMT</pubDate>
-      <guid isPermaLink="true">https://agrarisai.github.io/agraris/agent.html?id=ed8e4134-44db-4052-a83d-82b9f90972c0</guid>
-    </item>
-    <item>
       <title>GENIUS</title>
       <link>https://agrarisai.github.io/agraris/agent.html?id=aef7bd7e-a7d9-469d-8454-56a530970bc0</link>
       <description>A trading desk run by six AI agent roles on Robinhood Chain, built in public — hard risk limits written in code, every decision journaled, and losses published next to wins. Live market data, a paper broker with realistic costs, and a daily GitHub Actions run keep the desk operating and auditable.</description>

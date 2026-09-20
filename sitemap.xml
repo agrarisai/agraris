@@ -21,12 +21,6 @@
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://agrarisai.github.io/agraris/agent.html?id=ed8e4134-44db-4052-a83d-82b9f90972c0</loc>
-    <lastmod>2026-09-18</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
     <loc>https://agrarisai.github.io/agraris/agent.html?id=aef7bd7e-a7d9-469d-8454-56a530970bc0</loc>
     <lastmod>2026-09-17</lastmod>
     <changefreq>monthly</changefreq>
@@ -174,11 +168,6 @@
   </url>
   <url>
     <loc>https://agrarisai.github.io/agraris/category.html?slug=fund-management</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://agrarisai.github.io/agraris/category.html?slug=http%3A%2F%2Fbaidu.com</loc>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
