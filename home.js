@@ -2,6 +2,35 @@
 // Agraris — home page logic
 // ============================================
 
+// Copy button for the official $AGRARIS contract address in the token
+// block under the hero. Same pattern as the Copy link button on agent pages.
+function initCopyTokenAddress() {
+  const btn = document.getElementById("copy-token-address-btn");
+  const addrEl = document.getElementById("official-token-address");
+  if (!btn || !addrEl) return;
+
+  const defaultLabel = btn.textContent;
+
+  btn.addEventListener("click", () => {
+    if (!navigator.clipboard?.writeText) return;
+
+    navigator.clipboard
+      .writeText(addrEl.textContent.trim())
+      .then(() => {
+        btn.textContent = "Copied!";
+        setTimeout(() => {
+          btn.textContent = defaultLabel;
+        }, 2000);
+      })
+      .catch(() => {
+        // clipboard write failed (permissions, insecure context, etc.) —
+        // fail silently, no error shown to the user
+      });
+  });
+}
+
+initCopyTokenAddress();
+
 // Populates the small stats bar under the hero (total agents, unique
 // categories, total GitHub stars). The agent count is passed in since
 // it's already been fetched for the "Recently published" heading;
