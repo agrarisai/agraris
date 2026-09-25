@@ -683,6 +683,15 @@ body.cmdk-open {
   text-align: center;
 }
 
+.footer-token {
+  margin: 0 0 8px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  line-height: 1.5;
+  opacity: 0.6;
+  overflow-wrap: anywhere;
+}
+
 .footer-copyright {
   margin: 0;
   font-size: 11px;
@@ -869,6 +878,62 @@ body.cmdk-open {
   to {
     stroke-dashoffset: 0;
   }
+}
+
+/* ---------- official token ---------- */
+
+.official-token {
+  margin: 8px 0 4px;
+  padding: 16px 18px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 3px;
+}
+
+.official-token-label {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--green-dark);
+}
+
+.official-token-ticker {
+  margin: 6px 0 10px;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 20px;
+  color: var(--ink);
+}
+
+.official-token-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.official-token-address {
+  flex: 1 1 260px;
+  min-width: 0;
+  font-family: var(--font-mono);
+  font-size: clamp(10px, 2.8vw, 12px);
+  padding: 8px 10px;
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  background: var(--cream);
+  color: var(--ink);
+  overflow-wrap: anywhere;
+}
+
+.official-token-note {
+  margin: 10px 0 0;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--ink);
+  opacity: 0.65;
 }
 
 /* ---------- stats bar ---------- */
