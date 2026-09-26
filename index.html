@@ -158,6 +158,27 @@
         <code class="official-token-address" id="official-token-address">0x467b7a85f55bd716cb16d59f63b8ccac08852a6c</code>
         <button type="button" class="btn btn-sm" id="copy-token-address-btn">Copy address</button>
       </div>
+      <div class="token-price" id="token-price">
+        <div class="token-price-stats">
+          <div class="token-price-item">
+            <span class="token-price-value" id="token-price-value">—</span>
+            <span class="token-price-label">price</span>
+          </div>
+          <div class="token-price-item">
+            <span class="token-price-value" id="token-mcap-value">—</span>
+            <span class="token-price-label">market cap</span>
+          </div>
+          <div class="token-price-item">
+            <span class="token-price-value" id="token-change-value">—</span>
+            <span class="token-price-label">24h</span>
+          </div>
+          <div class="token-price-item">
+            <span class="token-price-value" id="token-volume-value">—</span>
+            <span class="token-price-label">volume</span>
+          </div>
+        </div>
+        <p class="token-price-source">Live from DEX Screener · <span id="token-price-updated">loading…</span></p>
+      </div>
       <p class="official-token-note">This is the only official contract. Verify here before trading anywhere else.</p>
     </section>
 
@@ -565,5 +586,6 @@
   <script src="command-palette.js"></script>
   <script src="scroll-reveal.js"></script>
   <script src="home.js"></script>
+  <script src="dex-price.js"></script>
 </body>
 </html>
