@@ -486,3 +486,34 @@ document.addEventListener("click", (e) => {
   highlightHashLinks();
   window.addEventListener("hashchange", highlightHashLinks);
 })();
+
+// ============================================
+// Drop in-page section hashes from the URL
+// ============================================
+// Menu links like "How It Works" point at index.html#how-it-works. If
+// that hash stays in the address bar, the browser keeps jumping to the
+// section every time the URL is reopened (tab restore, address-bar
+// autocomplete, bookmarks), so the home page seems to scroll down on
+// its own. Once the browser has jumped to the section, swap the URL
+// back to the bare page. replaceState doesn't fire "hashchange", so the
+// menu highlight above keeps its state for this visit.
+
+(function initSectionHashCleanup() {
+  function clearSectionHash() {
+    const id = decodeURIComponent(window.location.hash.slice(1));
+    if (!id || !document.getElementById(id)) return;
+    history.replaceState(
+      history.state,
+      "",
+      window.location.pathname + window.location.search
+    );
+  }
+
+  // Wait for "load" so the browser has already scrolled to the target.
+  if (document.readyState === "complete") {
+    setTimeout(clearSectionHash, 0);
+  } else {
+    window.addEventListener("load", () => setTimeout(clearSectionHash, 0));
+  }
+  window.addEventListener("hashchange", clearSectionHash);
+})();
