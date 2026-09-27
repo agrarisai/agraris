@@ -2,8 +2,8 @@
 // Agraris — live $AGRARIS price (DEX Screener)
 // ============================================
 
-// Fills the price row inside the "Official Token" block on the home
-// page from DEX Screener's public API (no key needed). Fetched once per
+// Fills the price row inside the "Official Token" block (home page and
+// token.html) from DEX Screener's public API (no key needed). Fetched once per
 // page load, straight from the visitor's browser. Any failure — network
 // error, token not indexed yet, empty/odd response — hides the price
 // row and leaves the rest of the block untouched.
@@ -130,3 +130,32 @@ async function loadTokenPrice() {
 }
 
 loadTokenPrice();
+
+// Copy button for the official $AGRARIS contract address in the token
+// block (home page and token.html). Same pattern as the Copy link button on agent pages.
+function initCopyTokenAddress() {
+  const btn = document.getElementById("copy-token-address-btn");
+  const addrEl = document.getElementById("official-token-address");
+  if (!btn || !addrEl) return;
+
+  const defaultLabel = btn.textContent;
+
+  btn.addEventListener("click", () => {
+    if (!navigator.clipboard?.writeText) return;
+
+    navigator.clipboard
+      .writeText(addrEl.textContent.trim())
+      .then(() => {
+        btn.textContent = "Copied!";
+        setTimeout(() => {
+          btn.textContent = defaultLabel;
+        }, 2000);
+      })
+      .catch(() => {
+        // clipboard write failed (permissions, insecure context, etc.) —
+        // fail silently, no error shown to the user
+      });
+  });
+}
+
+initCopyTokenAddress();
