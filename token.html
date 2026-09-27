@@ -3,15 +3,15 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Agent — Agraris</title>
-  <meta name="description" content="Agent detail on the Agraris registry." />
+  <title>$AGRARIS — Agraris</title>
+  <meta name="description" content="The official $AGRARIS token: live price, contract address, how to verify it, and where to trade." />
 
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Agraris" />
-  <meta property="og:title" content="Agent — Agraris" />
-  <meta property="og:description" content="Agent detail on the Agraris registry." />
+  <meta property="og:title" content="$AGRARIS — Agraris" />
+  <meta property="og:description" content="The official $AGRARIS token: live price, contract address, how to verify it, and where to trade." />
   <meta property="og:image" content="https://agraris.xyz/og-image.png" />
-  <meta property="og:url" content="https://agraris.xyz/agent.html" />
+  <meta property="og:url" content="https://agraris.xyz/token.html" />
   <meta property="twitter:card" content="summary_large_image" />
   <meta property="twitter:image" content="https://agraris.xyz/og-image.png" />
 
@@ -59,7 +59,7 @@
       <a href="search.html">Search</a>
       <a href="publish.html">Publish</a>
       <a href="watchlist.html">Watchlist</a>
-      <a href="token.html">Token</a>
+      <a href="token.html" class="active">Token</a>
       <a href="index.html#how-it-works">How It Works</a>
       <hr class="menu-sep" />
       <a href="index.html#about" data-hash="#about">About</a>
@@ -76,22 +76,82 @@
       </div>
     </nav>
 
-    <div id="agent-detail" aria-busy="true">
-      <div class="skeleton-detail-head" aria-hidden="true">
-        <div class="skeleton-block skeleton-detail-name"></div>
-        <div class="skeleton-tags" style="margin-bottom: 18px;">
-          <div class="skeleton-block skeleton-tag"></div>
-          <div class="skeleton-block skeleton-tag"></div>
-        </div>
-        <div class="skeleton-block skeleton-detail-line"></div>
-        <div class="skeleton-block skeleton-detail-line"></div>
-        <div class="skeleton-block skeleton-detail-line skeleton-line--short"></div>
-        <div class="detail-links">
-          <div class="skeleton-block skeleton-detail-btn"></div>
-          <div class="skeleton-block skeleton-detail-btn"></div>
-        </div>
+    <section class="token-hero reveal">
+      <h1 class="token-hero-title">$AGRARIS</h1>
+      <p class="token-hero-tagline">The official token of Agraris.</p>
+    </section>
+
+    <section class="official-token reveal" aria-labelledby="official-token-label">
+      <span class="official-token-label" id="official-token-label">Contract address</span>
+      <div class="official-token-row">
+        <code class="official-token-address" id="official-token-address">0x467b7a85f55bd716cb16d59f63b8ccac08852a6c</code>
+        <button type="button" class="btn btn-sm" id="copy-token-address-btn">Copy address</button>
       </div>
-      <span class="sr-only">Loading agent…</span>
+      <div class="token-price" id="token-price">
+        <div class="token-price-stats">
+          <div class="token-price-item">
+            <span class="token-price-value" id="token-price-value">—</span>
+            <span class="token-price-label">price</span>
+          </div>
+          <div class="token-price-item">
+            <span class="token-price-value" id="token-mcap-value">—</span>
+            <span class="token-price-label">market cap</span>
+          </div>
+          <div class="token-price-item">
+            <span class="token-price-value" id="token-change-value">—</span>
+            <span class="token-price-label">24h</span>
+          </div>
+          <div class="token-price-item">
+            <span class="token-price-value" id="token-volume-value">—</span>
+            <span class="token-price-label">volume</span>
+          </div>
+        </div>
+        <p class="token-price-source">Live from DEX Screener · <span id="token-price-updated">loading…</span></p>
+      </div>
+    </section>
+
+    <div class="docs-content token-content">
+      <section class="reveal">
+        <h3>How to verify</h3>
+        <p>The only official contract address is the one shown above. Cross-check it against:</p>
+        <ul class="token-links">
+          <li><a href="https://x.com/agrarisai" target="_blank" rel="noopener noreferrer">x.com/agrarisai</a></li>
+          <li><a href="https://robinhoodchain.blockscout.com" target="_blank" rel="noopener noreferrer">robinhoodchain.blockscout.com</a></li>
+        </ul>
+        <p>If an address doesn't match exactly, it isn't us.</p>
+      </section>
+
+      <section class="reveal">
+        <h3>Where to trade</h3>
+        <p>
+          $AGRARIS launched on the Pons Family bonding curve. After it
+          graduated from the curve, liquidity migrated to Uniswap V4, where
+          it trades now.
+        </p>
+        <ul class="token-links">
+          <li><a href="https://ponsfamily.com" target="_blank" rel="noopener noreferrer">Pons Family</a></li>
+          <!-- TODO: isi link Uniswap V4 spesifik setelah tersedia -->
+          <li><a href="#">Uniswap V4</a></li>
+        </ul>
+      </section>
+
+      <section class="reveal">
+        <h3>Utility</h3>
+        <p>
+          Utility is still being built out. We'd rather ship it right than
+          promise it early. Updates will be posted on X (@agrarisai) and
+          here, nowhere else.
+        </p>
+      </section>
+
+      <section class="reveal">
+        <h3>Disclaimer</h3>
+        <p class="token-disclaimer">
+          This is not financial advice. Token prices are volatile. Agraris
+          the registry and $AGRARIS the token are related but distinct — the
+          registry works the same whether or not you hold the token.
+        </p>
+      </section>
     </div>
 
     <footer class="site-footer">
@@ -137,6 +197,6 @@
   <script src="app.js"></script>
   <script src="command-palette.js"></script>
   <script src="scroll-reveal.js"></script>
-  <script src="agent.js"></script>
+  <script src="dex-price.js"></script>
 </body>
 </html>

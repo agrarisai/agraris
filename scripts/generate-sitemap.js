@@ -35,6 +35,7 @@ const STATIC_PAGES = [
   { file: "search.html", changefreq: "weekly", priority: "0.8" },
   { file: "publish.html", changefreq: "weekly", priority: "0.8" },
   { file: "docs.html", changefreq: "weekly", priority: "0.8" },
+  { file: "token.html", changefreq: "weekly", priority: "0.7" },
 ];
 
 function escapeXml(value) {

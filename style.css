@@ -2206,3 +2206,47 @@ body.cmdk-open {
     display: none;
   }
 }
+
+/* ---------- token page ---------- */
+
+.official-token-more {
+  margin-top: 12px;
+}
+
+.token-hero {
+  padding: 24px 0 16px;
+}
+
+.token-hero-title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: clamp(40px, 10vw, 64px);
+  line-height: 1.05;
+  color: var(--green-dark);
+}
+
+.token-hero-tagline {
+  margin: 8px 0 0;
+  font-size: 14px;
+  opacity: 0.75;
+}
+
+.token-content {
+  margin-top: 32px;
+}
+
+.token-links {
+  margin: 0 0 16px;
+  padding-left: 18px;
+  font-size: 14px;
+  line-height: 1.8;
+}
+
+.token-links a {
+  color: var(--green-dark);
+}
+
+.token-disclaimer {
+  opacity: 0.75;
+}
