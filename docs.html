@@ -9,7 +9,7 @@
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Agraris" />
   <meta property="og:title" content="API Reference — Agraris" />
-  <meta property="og:description" content="Public, read-only REST API for the Agraris agent registry." />
+  <meta property="og:description" content="Public REST API reference for the Agraris agent registry." />
   <meta property="og:image" content="https://agraris.xyz/og-image.png" />
   <meta property="og:url" content="https://agraris.xyz/docs.html" />
   <meta property="twitter:card" content="summary_large_image" />
@@ -82,9 +82,9 @@
     </div>
 
     <p class="page-lead">
-      Data Agraris diakses lewat REST API otomatis dari Supabase — publik,
-      read-only (GET saja), dan tidak perlu autentikasi khusus selain publishable key
-      yang memang aman dipakai di client-side.
+      Data Agraris diakses lewat REST API otomatis dari Supabase (PostgREST).
+      This page documents read queries (GET). To publish an agent, use the
+      form at <a href="publish.html">publish.html</a>.
     </p>
 
     <div class="docs-content reveal">
@@ -94,66 +94,92 @@
         yang di-expose oleh PostgREST bawaan Supabase.
       </p>
       <pre class="code-block"><code>https://gnydurjxrynqcbpkxopd.supabase.co/rest/v1/agents</code></pre>
-
-      <h3>Read-only</h3>
       <p>
-        <strong>Endpoint publik ini hanya untuk membaca data (<code>GET</code>).</strong>
-        Jangan kirim <code>POST</code>, <code>PATCH</code>, atau <code>DELETE</code>
-        ke API ini. Publish agent baru dan submit report
-        <strong>tetap harus lewat form di situs</strong> —
-        <a href="publish.html">publish.html</a> untuk agent baru, dan tombol
-        report di halaman detail agent — bukan langsung lewat API.
+        Hanya tabel <code>agents</code> yang didokumentasikan di sini. Tabel
+        lain di database Agraris tidak tersedia untuk dibaca publik.
       </p>
 
       <h3>Authentication</h3>
       <p>
-        Tiap request wajib menyertakan publishable (anon) key Supabase. Key
-        ini memang didesain aman dipakai di sisi client. Ganti
-        <code>YOUR_API_KEY</code> di semua contoh dengan key kamu. Ada dua
-        cara mengirimnya — pilih salah satu.
+        Tiap request wajib menyertakan publishable key Supabase milik
+        Agraris. Request tanpa key akan ditolak. Semua contoh di halaman ini
+        sudah memakai key tersebut, jadi bisa langsung disalin-tempel:
       </p>
-      <p>Lewat header <code>apikey</code> (disarankan):</p>
-      <pre class="code-block"><code>curl "https://gnydurjxrynqcbpkxopd.supabase.co/rest/v1/agents" \
-  -H "apikey: YOUR_API_KEY"</code></pre>
-      <p>Atau lewat query string <code>?apikey=</code>:</p>
-      <pre class="code-block"><code>curl "https://gnydurjxrynqcbpkxopd.supabase.co/rest/v1/agents?apikey=YOUR_API_KEY"</code></pre>
+      <pre class="code-block"><code>sb_publishable_4roHAzTOTw9P0_8NXKt2IA_kXniR9pm</code></pre>
+      <p>
+        This is a publishable key, designed to be used in browsers. It only
+        grants what the database's access rules allow. Please don't hammer
+        the API; cache results on your side.
+      </p>
+      <p>Ada dua cara mengirim key — pilih salah satu. Lewat header <code>apikey</code> (disarankan):</p>
+      <pre class="code-block"><code>curl "https://gnydurjxrynqcbpkxopd.supabase.co/rest/v1/agents?select=*" \
+  -H "apikey: sb_publishable_4roHAzTOTw9P0_8NXKt2IA_kXniR9pm"</code></pre>
+      <p>
+        Atau lewat query string <code>?apikey=</code> — praktis untuk dibuka
+        langsung di browser:
+      </p>
+      <pre class="code-block"><code>https://gnydurjxrynqcbpkxopd.supabase.co/rest/v1/agents?select=*&amp;apikey=sb_publishable_4roHAzTOTw9P0_8NXKt2IA_kXniR9pm</code></pre>
       <p>Versi <code>fetch</code> di JavaScript:</p>
       <pre class="code-block"><code>const res = await fetch(
-  "https://gnydurjxrynqcbpkxopd.supabase.co/rest/v1/agents",
-  { headers: { apikey: "YOUR_API_KEY" } }
+  "https://gnydurjxrynqcbpkxopd.supabase.co/rest/v1/agents?select=*",
+  { headers: { apikey: "sb_publishable_4roHAzTOTw9P0_8NXKt2IA_kXniR9pm" } }
 );
 const agents = await res.json();</code></pre>
 
+      <h3>Catatan untuk curl: kurung kurawal</h3>
+      <p>
+        Filter array memakai kurung kurawal, misalnya <code>cs.{trading}</code>.
+        curl menganggap <code>{}</code> sebagai pola glob, jadi URL seperti ini
+        perlu salah satu dari: ditulis dalam tanda kutip <strong>dan</strong>
+        diberi flag <code>-g</code> (<code>--globoff</code>), atau kurung
+        kurawalnya di-encode menjadi <code>%7B</code> dan <code>%7D</code>
+        (<code>cs.%7Btrading%7D</code>). Selalu beri tanda kutip pada URL
+        supaya shell tidak memproses <code>&amp;</code>, <code>*</code>, dan
+        <code>{}</code>. Browser dan <code>fetch</code> meng-encode kurung
+        kurawal secara otomatis.
+      </p>
+
       <h3>List all agents</h3>
       <p>
-        Ambil seluruh agent yang terdaftar di registry. Tanpa parameter
-        <code>select</code>, semua kolom dikembalikan.
+        Ambil seluruh agent yang terdaftar di registry beserta semua kolom.
       </p>
       <pre class="code-block"><code>curl "https://gnydurjxrynqcbpkxopd.supabase.co/rest/v1/agents?select=*" \
-  -H "apikey: YOUR_API_KEY"</code></pre>
+  -H "apikey: sb_publishable_4roHAzTOTw9P0_8NXKt2IA_kXniR9pm"
+
+# versi query string
+curl "https://gnydurjxrynqcbpkxopd.supabase.co/rest/v1/agents?select=*&amp;apikey=sb_publishable_4roHAzTOTw9P0_8NXKt2IA_kXniR9pm"</code></pre>
 
       <h3>Get a single agent</h3>
-      <p>Filter berdasarkan <code>id</code> untuk mengambil satu agent.</p>
-      <pre class="code-block"><code>curl "https://gnydurjxrynqcbpkxopd.supabase.co/rest/v1/agents?id=eq.AGENT_ID&amp;select=*" \
-  -H "apikey: YOUR_API_KEY"</code></pre>
-
-      <h3>Filter</h3>
       <p>
-        Filter ditulis sebagai <code>kolom=operator.nilai</code>. Untuk kolom
-        biasa pakai <code>eq</code> (sama dengan), misalnya hanya agent
-        yang sudah terverifikasi:
+        Filter berdasarkan <code>id</code> (uuid) untuk mengambil satu agent.
+        Ganti <code>AGENT_ID</code> dengan id agent yang kamu cari.
       </p>
-      <pre class="code-block"><code>curl "https://gnydurjxrynqcbpkxopd.supabase.co/rest/v1/agents?verified=eq.true" \
-  -H "apikey: YOUR_API_KEY"</code></pre>
+      <pre class="code-block"><code>curl "https://gnydurjxrynqcbpkxopd.supabase.co/rest/v1/agents?id=eq.AGENT_ID&amp;select=*" \
+  -H "apikey: sb_publishable_4roHAzTOTw9P0_8NXKt2IA_kXniR9pm"</code></pre>
+
+      <h3>Filter by category</h3>
       <p>
         Kolom <code>category</code> berupa array (<code>text[]</code>), jadi
         <code>?category=eq.trading</code> tidak akan cocok. Pakai operator
         <code>cs</code> (contains) untuk mencari agent yang punya tag
-        tertentu. Flag <code>-g</code> mencegah curl membaca kurung kurawal
-        sebagai glob.
+        tertentu.
       </p>
       <pre class="code-block"><code>curl -g "https://gnydurjxrynqcbpkxopd.supabase.co/rest/v1/agents?category=cs.{trading}" \
-  -H "apikey: YOUR_API_KEY"</code></pre>
+  -H "apikey: sb_publishable_4roHAzTOTw9P0_8NXKt2IA_kXniR9pm"
+
+# versi query string, kurung kurawal di-encode (tanpa -g)
+curl "https://gnydurjxrynqcbpkxopd.supabase.co/rest/v1/agents?category=cs.%7Btrading%7D&amp;apikey=sb_publishable_4roHAzTOTw9P0_8NXKt2IA_kXniR9pm"</code></pre>
+
+      <h3>Verified agents only</h3>
+      <p>
+        Untuk kolom biasa pakai <code>eq</code> (sama dengan). Contoh, hanya
+        agent yang sudah ditandai Verified:
+      </p>
+      <pre class="code-block"><code>curl "https://gnydurjxrynqcbpkxopd.supabase.co/rest/v1/agents?verified=eq.true" \
+  -H "apikey: sb_publishable_4roHAzTOTw9P0_8NXKt2IA_kXniR9pm"
+
+# versi query string
+curl "https://gnydurjxrynqcbpkxopd.supabase.co/rest/v1/agents?verified=eq.true&amp;apikey=sb_publishable_4roHAzTOTw9P0_8NXKt2IA_kXniR9pm"</code></pre>
       <p>
         Operator PostgREST lain seperti <code>neq</code>, <code>gt</code>,
         <code>lt</code>, <code>ilike</code>, dan <code>is</code> juga bisa
@@ -167,7 +193,10 @@ const agents = await res.json();</code></pre>
         dipisah koma. Response jadi lebih kecil dan cepat.
       </p>
       <pre class="code-block"><code>curl "https://gnydurjxrynqcbpkxopd.supabase.co/rest/v1/agents?select=name,category,github_stars" \
-  -H "apikey: YOUR_API_KEY"</code></pre>
+  -H "apikey: sb_publishable_4roHAzTOTw9P0_8NXKt2IA_kXniR9pm"
+
+# versi query string
+curl "https://gnydurjxrynqcbpkxopd.supabase.co/rest/v1/agents?select=name,category,github_stars&amp;apikey=sb_publishable_4roHAzTOTw9P0_8NXKt2IA_kXniR9pm"</code></pre>
 
       <h3>Sort</h3>
       <p>
@@ -177,7 +206,10 @@ const agents = await res.json();</code></pre>
         ditaruh di akhir):
       </p>
       <pre class="code-block"><code>curl "https://gnydurjxrynqcbpkxopd.supabase.co/rest/v1/agents?order=github_stars.desc.nullslast" \
-  -H "apikey: YOUR_API_KEY"</code></pre>
+  -H "apikey: sb_publishable_4roHAzTOTw9P0_8NXKt2IA_kXniR9pm"
+
+# versi query string
+curl "https://gnydurjxrynqcbpkxopd.supabase.co/rest/v1/agents?order=github_stars.desc.nullslast&amp;apikey=sb_publishable_4roHAzTOTw9P0_8NXKt2IA_kXniR9pm"</code></pre>
 
       <h3>Limit &amp; pagination</h3>
       <p>
@@ -185,31 +217,37 @@ const agents = await res.json();</code></pre>
         <code>offset</code> untuk halaman berikutnya.
       </p>
       <pre class="code-block"><code>curl "https://gnydurjxrynqcbpkxopd.supabase.co/rest/v1/agents?limit=10" \
-  -H "apikey: YOUR_API_KEY"
+  -H "apikey: sb_publishable_4roHAzTOTw9P0_8NXKt2IA_kXniR9pm"
+
+# versi query string
+curl "https://gnydurjxrynqcbpkxopd.supabase.co/rest/v1/agents?limit=10&amp;apikey=sb_publishable_4roHAzTOTw9P0_8NXKt2IA_kXniR9pm"
 
 # halaman kedua
 curl "https://gnydurjxrynqcbpkxopd.supabase.co/rest/v1/agents?limit=10&amp;offset=10" \
-  -H "apikey: YOUR_API_KEY"</code></pre>
+  -H "apikey: sb_publishable_4roHAzTOTw9P0_8NXKt2IA_kXniR9pm"</code></pre>
 
       <h3>Combining parameters</h3>
       <p>
         Semua parameter di atas bisa digabung dalam satu request dengan
-        <code>&amp;</code>. Contoh: 10 agent trading dengan GitHub stars
+        <code>&amp;</code>. Contoh: 5 agent trading dengan GitHub stars
         terbanyak, hanya kolom yang dibutuhkan.
       </p>
-      <pre class="code-block"><code>curl -g "https://gnydurjxrynqcbpkxopd.supabase.co/rest/v1/agents?category=cs.{trading}&amp;select=name,category,github_stars&amp;order=github_stars.desc.nullslast&amp;limit=10" \
-  -H "apikey: YOUR_API_KEY"</code></pre>
+      <pre class="code-block"><code>curl -g "https://gnydurjxrynqcbpkxopd.supabase.co/rest/v1/agents?select=name,category,github_stars&amp;category=cs.{trading}&amp;order=github_stars.desc.nullslast&amp;limit=5" \
+  -H "apikey: sb_publishable_4roHAzTOTw9P0_8NXKt2IA_kXniR9pm"
+
+# versi query string, kurung kurawal di-encode (tanpa -g)
+curl "https://gnydurjxrynqcbpkxopd.supabase.co/rest/v1/agents?select=name,category,github_stars&amp;category=cs.%7Btrading%7D&amp;order=github_stars.desc.nullslast&amp;limit=5&amp;apikey=sb_publishable_4roHAzTOTw9P0_8NXKt2IA_kXniR9pm"</code></pre>
       <p>Request yang sama dengan <code>fetch</code>:</p>
       <pre class="code-block"><code>const params = new URLSearchParams({
-  category: "cs.{trading}",
   select: "name,category,github_stars",
+  category: "cs.{trading}",
   order: "github_stars.desc.nullslast",
-  limit: "10",
+  limit: "5",
 });
 
 const res = await fetch(
   `https://gnydurjxrynqcbpkxopd.supabase.co/rest/v1/agents?${params}`,
-  { headers: { apikey: "YOUR_API_KEY" } }
+  { headers: { apikey: "sb_publishable_4roHAzTOTw9P0_8NXKt2IA_kXniR9pm" } }
 );
 const topTradingAgents = await res.json();</code></pre>
 
