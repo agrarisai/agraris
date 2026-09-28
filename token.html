@@ -143,6 +143,57 @@
         </p>
       </section>
 
+      <section class="priority-section" id="priority">
+        <div class="reveal">
+          <h3>Priority review for $AGRARIS holders</h3>
+          <p>
+            Wallets holding at least 0.5% of the $AGRARIS supply
+            (5,000,000 tokens) can have an agent moved to the front of the
+            Verified review queue.
+          </p>
+          <p>
+            Priority changes the order, not the outcome. Every agent is
+            still checked by hand, and Verified is never for sale.
+          </p>
+          <p>
+            Your balance is checked at the time of review, not when you
+            submit. No timeline is promised. Holding the token does not
+            guarantee a badge, and this program may change or stop at any
+            time.
+          </p>
+          <p>Your wallet address and X handle are not shown publicly.</p>
+          <p class="priority-note">Not financial advice. Token prices are volatile.</p>
+
+          <div class="priority-form" id="priority-form">
+            <div class="field">
+              <label for="priority-agent-link">Agent page link</label>
+              <input type="url" id="priority-agent-link" autocomplete="off" placeholder="https://agraris.xyz/agent.html?id=..." />
+            </div>
+
+            <div class="field">
+              <label for="priority-wallet">Wallet address</label>
+              <input type="text" id="priority-wallet" autocomplete="off" spellcheck="false" maxlength="42" placeholder="0x..." />
+            </div>
+
+            <div class="field">
+              <label for="priority-x-handle">X handle</label>
+              <input type="text" id="priority-x-handle" autocomplete="off" spellcheck="false" maxlength="16" placeholder="@yourhandle" />
+              <span class="hint">With or without @.</span>
+            </div>
+
+            <div class="field priority-hp" aria-hidden="true">
+              <label for="priority-website">Website</label>
+              <input type="text" id="priority-website" tabindex="-1" autocomplete="off" />
+            </div>
+
+            <div class="form-actions">
+              <button type="button" class="btn btn-solid" id="priority-submit-btn">Request priority review</button>
+              <span class="form-msg" id="priority-msg" role="status" aria-live="polite"></span>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <section class="reveal">
         <h3>Disclaimer</h3>
         <p class="token-disclaimer">
@@ -197,5 +248,6 @@
   <script src="command-palette.js"></script>
   <script src="scroll-reveal.js"></script>
   <script src="dex-price.js"></script>
+  <script src="priority.js"></script>
 </body>
 </html>
