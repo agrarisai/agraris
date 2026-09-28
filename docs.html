@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>API Docs — Agraris</title>
-  <meta name="description" content="Referensi REST API publik Agraris, otomatis dari Supabase." />
+  <meta name="description" content="Public REST API reference for Agraris, served automatically by Supabase." />
 
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Agraris" />
@@ -82,7 +82,7 @@
     </div>
 
     <p class="page-lead">
-      Data Agraris diakses lewat REST API otomatis dari Supabase (PostgREST).
+      Agraris data is available through Supabase's auto-generated REST API (PostgREST).
       This page documents read queries (GET). To publish an agent, use the
       form at <a href="publish.html">publish.html</a>.
     </p>
@@ -90,20 +90,20 @@
     <div class="docs-content reveal">
       <h3>Base URL</h3>
       <p>
-        Seluruh data agent ada di satu endpoint — tabel <code>agents</code> —
-        yang di-expose oleh PostgREST bawaan Supabase.
+        All agent data lives behind a single endpoint — the <code>agents</code> table —
+        exposed by Supabase's built-in PostgREST.
       </p>
       <pre class="code-block"><code>https://gnydurjxrynqcbpkxopd.supabase.co/rest/v1/agents</code></pre>
       <p>
-        Hanya tabel <code>agents</code> yang didokumentasikan di sini. Tabel
-        lain di database Agraris tidak tersedia untuk dibaca publik.
+        Only the <code>agents</code> table is documented here. Other tables
+        in the Agraris database are not publicly readable.
       </p>
 
       <h3>Authentication</h3>
       <p>
-        Tiap request wajib menyertakan publishable key Supabase milik
-        Agraris. Request tanpa key akan ditolak. Semua contoh di halaman ini
-        sudah memakai key tersebut, jadi bisa langsung disalin-tempel:
+        Every request must include Agraris's Supabase publishable key.
+        Requests without a key are rejected. All examples on this page
+        already use this key, so you can copy and paste them as-is:
       </p>
       <pre class="code-block"><code>sb_publishable_4roHAzTOTw9P0_8NXKt2IA_kXniR9pm</code></pre>
       <p>
@@ -111,133 +111,133 @@
         grants what the database's access rules allow. Please don't hammer
         the API; cache results on your side.
       </p>
-      <p>Ada dua cara mengirim key — pilih salah satu. Lewat header <code>apikey</code> (disarankan):</p>
+      <p>There are two ways to send the key — pick one. Via the <code>apikey</code> header (recommended):</p>
       <pre class="code-block"><code>curl "https://gnydurjxrynqcbpkxopd.supabase.co/rest/v1/agents?select=*" \
   -H "apikey: sb_publishable_4roHAzTOTw9P0_8NXKt2IA_kXniR9pm"</code></pre>
       <p>
-        Atau lewat query string <code>?apikey=</code> — praktis untuk dibuka
-        langsung di browser:
+        Or via the <code>?apikey=</code> query string — handy for opening
+        directly in a browser:
       </p>
       <pre class="code-block"><code>https://gnydurjxrynqcbpkxopd.supabase.co/rest/v1/agents?select=*&amp;apikey=sb_publishable_4roHAzTOTw9P0_8NXKt2IA_kXniR9pm</code></pre>
-      <p>Versi <code>fetch</code> di JavaScript:</p>
+      <p>The <code>fetch</code> version in JavaScript:</p>
       <pre class="code-block"><code>const res = await fetch(
   "https://gnydurjxrynqcbpkxopd.supabase.co/rest/v1/agents?select=*",
   { headers: { apikey: "sb_publishable_4roHAzTOTw9P0_8NXKt2IA_kXniR9pm" } }
 );
 const agents = await res.json();</code></pre>
 
-      <h3>Catatan untuk curl: kurung kurawal</h3>
+      <h3>Note for curl: curly braces</h3>
       <p>
-        Filter array memakai kurung kurawal, misalnya <code>cs.{trading}</code>.
-        curl menganggap <code>{}</code> sebagai pola glob, jadi URL seperti ini
-        perlu salah satu dari: ditulis dalam tanda kutip <strong>dan</strong>
-        diberi flag <code>-g</code> (<code>--globoff</code>), atau kurung
-        kurawalnya di-encode menjadi <code>%7B</code> dan <code>%7D</code>
-        (<code>cs.%7Btrading%7D</code>). Selalu beri tanda kutip pada URL
-        supaya shell tidak memproses <code>&amp;</code>, <code>*</code>, dan
-        <code>{}</code>. Browser dan <code>fetch</code> meng-encode kurung
-        kurawal secara otomatis.
+        Array filters use curly braces, e.g. <code>cs.{trading}</code>.
+        curl treats <code>{}</code> as a glob pattern, so URLs like this need
+        one of the following: wrap the URL in quotes <strong>and</strong>
+        pass the <code>-g</code> flag (<code>--globoff</code>), or encode the
+        braces as <code>%7B</code> and <code>%7D</code>
+        (<code>cs.%7Btrading%7D</code>). Always quote the URL so the shell
+        doesn't interpret <code>&amp;</code>, <code>*</code>, and
+        <code>{}</code>. Browsers and <code>fetch</code> encode curly braces
+        automatically.
       </p>
 
       <h3>List all agents</h3>
       <p>
-        Ambil seluruh agent yang terdaftar di registry beserta semua kolom.
+        Fetch every agent in the registry, with all columns.
       </p>
       <pre class="code-block"><code>curl "https://gnydurjxrynqcbpkxopd.supabase.co/rest/v1/agents?select=*" \
   -H "apikey: sb_publishable_4roHAzTOTw9P0_8NXKt2IA_kXniR9pm"
 
-# versi query string
+# query string version
 curl "https://gnydurjxrynqcbpkxopd.supabase.co/rest/v1/agents?select=*&amp;apikey=sb_publishable_4roHAzTOTw9P0_8NXKt2IA_kXniR9pm"</code></pre>
 
       <h3>Get a single agent</h3>
       <p>
-        Filter berdasarkan <code>id</code> (uuid) untuk mengambil satu agent.
-        Ganti <code>AGENT_ID</code> dengan id agent yang kamu cari.
+        Filter by <code>id</code> (uuid) to fetch a single agent.
+        Replace <code>AGENT_ID</code> with the id of the agent you want.
       </p>
       <pre class="code-block"><code>curl "https://gnydurjxrynqcbpkxopd.supabase.co/rest/v1/agents?id=eq.AGENT_ID&amp;select=*" \
   -H "apikey: sb_publishable_4roHAzTOTw9P0_8NXKt2IA_kXniR9pm"</code></pre>
 
       <h3>Filter by category</h3>
       <p>
-        Kolom <code>category</code> berupa array (<code>text[]</code>), jadi
-        <code>?category=eq.trading</code> tidak akan cocok. Pakai operator
-        <code>cs</code> (contains) untuk mencari agent yang punya tag
-        tertentu.
+        The <code>category</code> column is an array (<code>text[]</code>), so
+        <code>?category=eq.trading</code> won't match. Use the
+        <code>cs</code> (contains) operator to find agents with a given
+        tag.
       </p>
       <pre class="code-block"><code>curl -g "https://gnydurjxrynqcbpkxopd.supabase.co/rest/v1/agents?category=cs.{trading}" \
   -H "apikey: sb_publishable_4roHAzTOTw9P0_8NXKt2IA_kXniR9pm"
 
-# versi query string, kurung kurawal di-encode (tanpa -g)
+# query string version, braces encoded (no -g)
 curl "https://gnydurjxrynqcbpkxopd.supabase.co/rest/v1/agents?category=cs.%7Btrading%7D&amp;apikey=sb_publishable_4roHAzTOTw9P0_8NXKt2IA_kXniR9pm"</code></pre>
 
       <h3>Verified agents only</h3>
       <p>
-        Untuk kolom biasa pakai <code>eq</code> (sama dengan). Contoh, hanya
-        agent yang sudah ditandai Verified:
+        For regular columns, use <code>eq</code> (equals). For example, only
+        agents marked Verified:
       </p>
       <pre class="code-block"><code>curl "https://gnydurjxrynqcbpkxopd.supabase.co/rest/v1/agents?verified=eq.true" \
   -H "apikey: sb_publishable_4roHAzTOTw9P0_8NXKt2IA_kXniR9pm"
 
-# versi query string
+# query string version
 curl "https://gnydurjxrynqcbpkxopd.supabase.co/rest/v1/agents?verified=eq.true&amp;apikey=sb_publishable_4roHAzTOTw9P0_8NXKt2IA_kXniR9pm"</code></pre>
       <p>
-        Operator PostgREST lain seperti <code>neq</code>, <code>gt</code>,
-        <code>lt</code>, <code>ilike</code>, dan <code>is</code> juga bisa
-        dipakai — misalnya <code>?name=ilike.*bot*</code> untuk pencarian
-        nama tanpa peduli huruf besar/kecil.
+        Other PostgREST operators such as <code>neq</code>, <code>gt</code>,
+        <code>lt</code>, <code>ilike</code>, and <code>is</code> work too —
+        for example <code>?name=ilike.*bot*</code> for a case-insensitive
+        name search.
       </p>
 
       <h3>Select columns</h3>
       <p>
-        Pakai <code>select</code> untuk mengambil kolom tertentu saja,
-        dipisah koma. Response jadi lebih kecil dan cepat.
+        Use <code>select</code> to fetch only specific columns,
+        comma-separated. Responses get smaller and faster.
       </p>
       <pre class="code-block"><code>curl "https://gnydurjxrynqcbpkxopd.supabase.co/rest/v1/agents?select=name,category,github_stars" \
   -H "apikey: sb_publishable_4roHAzTOTw9P0_8NXKt2IA_kXniR9pm"
 
-# versi query string
+# query string version
 curl "https://gnydurjxrynqcbpkxopd.supabase.co/rest/v1/agents?select=name,category,github_stars&amp;apikey=sb_publishable_4roHAzTOTw9P0_8NXKt2IA_kXniR9pm"</code></pre>
 
       <h3>Sort</h3>
       <p>
-        Pakai <code>order=kolom.asc</code> atau <code>order=kolom.desc</code>.
-        Contoh, urutkan dari GitHub stars terbanyak (tambahkan
-        <code>.nullslast</code> supaya agent yang belum punya data stars
-        ditaruh di akhir):
+        Use <code>order=column.asc</code> or <code>order=column.desc</code>.
+        For example, sort by most GitHub stars (add
+        <code>.nullslast</code> so agents without star data yet
+        go at the end):
       </p>
       <pre class="code-block"><code>curl "https://gnydurjxrynqcbpkxopd.supabase.co/rest/v1/agents?order=github_stars.desc.nullslast" \
   -H "apikey: sb_publishable_4roHAzTOTw9P0_8NXKt2IA_kXniR9pm"
 
-# versi query string
+# query string version
 curl "https://gnydurjxrynqcbpkxopd.supabase.co/rest/v1/agents?order=github_stars.desc.nullslast&amp;apikey=sb_publishable_4roHAzTOTw9P0_8NXKt2IA_kXniR9pm"</code></pre>
 
       <h3>Limit &amp; pagination</h3>
       <p>
-        Pakai <code>limit</code> untuk membatasi jumlah baris, dan
-        <code>offset</code> untuk halaman berikutnya.
+        Use <code>limit</code> to cap the number of rows, and
+        <code>offset</code> for the next page.
       </p>
       <pre class="code-block"><code>curl "https://gnydurjxrynqcbpkxopd.supabase.co/rest/v1/agents?limit=10" \
   -H "apikey: sb_publishable_4roHAzTOTw9P0_8NXKt2IA_kXniR9pm"
 
-# versi query string
+# query string version
 curl "https://gnydurjxrynqcbpkxopd.supabase.co/rest/v1/agents?limit=10&amp;apikey=sb_publishable_4roHAzTOTw9P0_8NXKt2IA_kXniR9pm"
 
-# halaman kedua
+# second page
 curl "https://gnydurjxrynqcbpkxopd.supabase.co/rest/v1/agents?limit=10&amp;offset=10" \
   -H "apikey: sb_publishable_4roHAzTOTw9P0_8NXKt2IA_kXniR9pm"</code></pre>
 
       <h3>Combining parameters</h3>
       <p>
-        Semua parameter di atas bisa digabung dalam satu request dengan
-        <code>&amp;</code>. Contoh: 5 agent trading dengan GitHub stars
-        terbanyak, hanya kolom yang dibutuhkan.
+        All of the parameters above can be combined in a single request with
+        <code>&amp;</code>. Example: the 5 trading agents with the most
+        GitHub stars, with only the columns you need.
       </p>
       <pre class="code-block"><code>curl -g "https://gnydurjxrynqcbpkxopd.supabase.co/rest/v1/agents?select=name,category,github_stars&amp;category=cs.{trading}&amp;order=github_stars.desc.nullslast&amp;limit=5" \
   -H "apikey: sb_publishable_4roHAzTOTw9P0_8NXKt2IA_kXniR9pm"
 
-# versi query string, kurung kurawal di-encode (tanpa -g)
+# query string version, braces encoded (no -g)
 curl "https://gnydurjxrynqcbpkxopd.supabase.co/rest/v1/agents?select=name,category,github_stars&amp;category=cs.%7Btrading%7D&amp;order=github_stars.desc.nullslast&amp;limit=5&amp;apikey=sb_publishable_4roHAzTOTw9P0_8NXKt2IA_kXniR9pm"</code></pre>
-      <p>Request yang sama dengan <code>fetch</code>:</p>
+      <p>The same request with <code>fetch</code>:</p>
       <pre class="code-block"><code>const params = new URLSearchParams({
   select: "name,category,github_stars",
   category: "cs.{trading}",
@@ -252,7 +252,7 @@ const res = await fetch(
 const topTradingAgents = await res.json();</code></pre>
 
       <h3>Response schema</h3>
-      <p>Setiap baris pada tabel <code>agents</code> punya kolom berikut.</p>
+      <p>Each row in the <code>agents</code> table has the following columns.</p>
       <div class="docs-table-wrap">
         <table class="docs-table">
           <thead>
@@ -280,10 +280,10 @@ const topTradingAgents = await res.json();</code></pre>
 
       <h3>Rate limits &amp; fair use</h3>
       <p>
-        API ini dibagikan bersama traffic situs Agraris sendiri, jadi tidak
-        ada kuota khusus yang dipublikasikan. Mohon pakai secara wajar —
-        cache hasil di sisi kamu kalau kamu melakukan fetch berulang, dan
-        hindari polling yang terlalu agresif.
+        This API shares capacity with the Agraris site's own traffic, so
+        there is no published quota. Please use it fairly — cache results
+        on your side if you fetch repeatedly, and avoid aggressive
+        polling.
       </p>
     </div>
 
