@@ -88,8 +88,27 @@
       form at <a href="publish.html">publish.html</a>.
     </p>
 
-    <div class="docs-content reveal">
-      <h3>Base URL</h3>
+    <nav class="docs-toc" aria-label="On this page">
+      <span class="docs-toc-title">On this page</span>
+      <ol>
+        <li><a href="#base-url">Base URL</a></li>
+        <li><a href="#authentication">Authentication</a></li>
+        <li><a href="#curl-braces">Note for curl: curly braces</a></li>
+        <li><a href="#list-agents">List all agents</a></li>
+        <li><a href="#single-agent">Get a single agent</a></li>
+        <li><a href="#filter-category">Filter by category</a></li>
+        <li><a href="#verified-only">Verified agents only</a></li>
+        <li><a href="#select-columns">Select columns</a></li>
+        <li><a href="#sort">Sort</a></li>
+        <li><a href="#pagination">Limit &amp; pagination</a></li>
+        <li><a href="#combining">Combining parameters</a></li>
+        <li><a href="#response-schema">Response schema</a></li>
+        <li><a href="#rate-limits">Rate limits &amp; fair use</a></li>
+      </ol>
+    </nav>
+
+    <div class="docs-content">
+      <h3 id="base-url">Base URL</h3>
       <p>
         All agent data lives behind a single endpoint — the <code>agents</code> table —
         exposed by Supabase's built-in PostgREST.
@@ -100,7 +119,7 @@
         in the Agraris database are not publicly readable.
       </p>
 
-      <h3>Authentication</h3>
+      <h3 id="authentication">Authentication</h3>
       <p>
         Every request must include Agraris's Supabase publishable key.
         Requests without a key are rejected. All examples on this page
@@ -127,7 +146,7 @@
 );
 const agents = await res.json();</code></pre>
 
-      <h3>Note for curl: curly braces</h3>
+      <h3 id="curl-braces">Note for curl: curly braces</h3>
       <p>
         Array filters use curly braces, e.g. <code>cs.{trading}</code>.
         curl treats <code>{}</code> as a glob pattern, so URLs like this need
@@ -140,7 +159,7 @@ const agents = await res.json();</code></pre>
         automatically.
       </p>
 
-      <h3>List all agents</h3>
+      <h3 id="list-agents">List all agents</h3>
       <p>
         Fetch every agent in the registry, with all columns.
       </p>
@@ -150,7 +169,7 @@ const agents = await res.json();</code></pre>
 # query string version
 curl "https://gnydurjxrynqcbpkxopd.supabase.co/rest/v1/agents?select=*&amp;apikey=sb_publishable_4roHAzTOTw9P0_8NXKt2IA_kXniR9pm"</code></pre>
 
-      <h3>Get a single agent</h3>
+      <h3 id="single-agent">Get a single agent</h3>
       <p>
         Filter by <code>id</code> (uuid) to fetch a single agent.
         Replace <code>AGENT_ID</code> with the id of the agent you want.
@@ -158,7 +177,7 @@ curl "https://gnydurjxrynqcbpkxopd.supabase.co/rest/v1/agents?select=*&amp;apike
       <pre class="code-block"><code>curl "https://gnydurjxrynqcbpkxopd.supabase.co/rest/v1/agents?id=eq.AGENT_ID&amp;select=*" \
   -H "apikey: sb_publishable_4roHAzTOTw9P0_8NXKt2IA_kXniR9pm"</code></pre>
 
-      <h3>Filter by category</h3>
+      <h3 id="filter-category">Filter by category</h3>
       <p>
         The <code>category</code> column is an array (<code>text[]</code>), so
         <code>?category=eq.trading</code> won't match. Use the
@@ -171,7 +190,7 @@ curl "https://gnydurjxrynqcbpkxopd.supabase.co/rest/v1/agents?select=*&amp;apike
 # query string version, braces encoded (no -g)
 curl "https://gnydurjxrynqcbpkxopd.supabase.co/rest/v1/agents?category=cs.%7Btrading%7D&amp;apikey=sb_publishable_4roHAzTOTw9P0_8NXKt2IA_kXniR9pm"</code></pre>
 
-      <h3>Verified agents only</h3>
+      <h3 id="verified-only">Verified agents only</h3>
       <p>
         For regular columns, use <code>eq</code> (equals). For example, only
         agents marked Verified:
@@ -188,7 +207,7 @@ curl "https://gnydurjxrynqcbpkxopd.supabase.co/rest/v1/agents?verified=eq.true&a
         name search.
       </p>
 
-      <h3>Select columns</h3>
+      <h3 id="select-columns">Select columns</h3>
       <p>
         Use <code>select</code> to fetch only specific columns,
         comma-separated. Responses get smaller and faster.
@@ -199,7 +218,7 @@ curl "https://gnydurjxrynqcbpkxopd.supabase.co/rest/v1/agents?verified=eq.true&a
 # query string version
 curl "https://gnydurjxrynqcbpkxopd.supabase.co/rest/v1/agents?select=name,category,github_stars&amp;apikey=sb_publishable_4roHAzTOTw9P0_8NXKt2IA_kXniR9pm"</code></pre>
 
-      <h3>Sort</h3>
+      <h3 id="sort">Sort</h3>
       <p>
         Use <code>order=column.asc</code> or <code>order=column.desc</code>.
         For example, sort by most GitHub stars (add
@@ -212,7 +231,7 @@ curl "https://gnydurjxrynqcbpkxopd.supabase.co/rest/v1/agents?select=name,catego
 # query string version
 curl "https://gnydurjxrynqcbpkxopd.supabase.co/rest/v1/agents?order=github_stars.desc.nullslast&amp;apikey=sb_publishable_4roHAzTOTw9P0_8NXKt2IA_kXniR9pm"</code></pre>
 
-      <h3>Limit &amp; pagination</h3>
+      <h3 id="pagination">Limit &amp; pagination</h3>
       <p>
         Use <code>limit</code> to cap the number of rows, and
         <code>offset</code> for the next page.
@@ -227,7 +246,7 @@ curl "https://gnydurjxrynqcbpkxopd.supabase.co/rest/v1/agents?limit=10&amp;apike
 curl "https://gnydurjxrynqcbpkxopd.supabase.co/rest/v1/agents?limit=10&amp;offset=10" \
   -H "apikey: sb_publishable_4roHAzTOTw9P0_8NXKt2IA_kXniR9pm"</code></pre>
 
-      <h3>Combining parameters</h3>
+      <h3 id="combining">Combining parameters</h3>
       <p>
         All of the parameters above can be combined in a single request with
         <code>&amp;</code>. Example: the 5 trading agents with the most
@@ -252,7 +271,7 @@ const res = await fetch(
 );
 const topTradingAgents = await res.json();</code></pre>
 
-      <h3>Response schema</h3>
+      <h3 id="response-schema">Response schema</h3>
       <p>Each row in the <code>agents</code> table has the following columns.</p>
       <div class="docs-table-wrap">
         <table class="docs-table">
@@ -279,7 +298,7 @@ const topTradingAgents = await res.json();</code></pre>
         </table>
       </div>
 
-      <h3>Rate limits &amp; fair use</h3>
+      <h3 id="rate-limits">Rate limits &amp; fair use</h3>
       <p>
         This API shares capacity with the Agraris site's own traffic, so
         there is no published quota. Please use it fairly — cache results
