@@ -2250,3 +2250,44 @@ body.cmdk-open {
 .token-disclaimer {
   opacity: 0.75;
 }
+
+/* Priority review request (token.html#priority). scroll-margin keeps the
+   heading clear of the sticky header when the page is opened at #priority.
+   The id sits on a non-animated wrapper so the reveal slide-in (translateY)
+   doesn't shift the heading after the anchor scroll lands. */
+.priority-section {
+  scroll-margin-top: 140px;
+}
+
+.docs-content .priority-note {
+  font-size: 12px;
+  opacity: 0.65;
+}
+
+.priority-form {
+  margin-top: 20px;
+  padding: 18px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 3px;
+}
+
+.priority-form .form-actions {
+  margin-top: 8px;
+  flex-wrap: wrap;
+}
+
+/* Honeypot — hidden from people via CSS (not type=hidden) so naive bots
+   still fill it in. */
+.priority-hp {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+.priority-confirm {
+  margin-top: 20px;
+  font-size: 13px;
+}
