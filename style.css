@@ -1991,6 +1991,62 @@ body.cmdk-open {
   margin-top: 0;
 }
 
+/* Offset in-page jumps so the sticky header (up to ~125px tall on phones)
+   doesn't cover the heading. */
+.docs-content h3[id] {
+  scroll-margin-top: 160px;
+}
+
+/* "On this page" index — shows every docs section up front so the page
+   doesn't read as a single API Reference block until you scroll. */
+.docs-toc {
+  max-width: 720px;
+  margin: 0 0 32px;
+  padding: 16px 18px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--green);
+  border-radius: 4px;
+}
+
+.docs-toc-title {
+  display: block;
+  margin-bottom: 10px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.7;
+}
+
+.docs-toc ol {
+  margin: 0;
+  padding-left: 22px;
+  columns: 2;
+  column-gap: 32px;
+}
+
+.docs-toc li {
+  font-size: 13.5px;
+  line-height: 1.5;
+  padding: 3px 0;
+  break-inside: avoid;
+}
+
+.docs-toc a {
+  text-decoration: none;
+}
+
+.docs-toc a:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 560px) {
+  .docs-toc ol {
+    columns: 1;
+  }
+}
+
 .code-block {
   display: block;
   margin: 0 0 16px;
