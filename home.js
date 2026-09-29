@@ -126,6 +126,8 @@ async function loadTrending() {
 
   const RECENT_LIMIT = 4;
 
+  enableCompareSelection();
+
   try {
     const [agents, totalCount] = await Promise.all([
       fetchAgents({ limit: RECENT_LIMIT }),

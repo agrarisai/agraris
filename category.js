@@ -38,6 +38,8 @@ function setMetaProperty(property, content) {
   const slug = (params.get("slug") || "").trim();
   const label = formatCategoryLabel(slug);
 
+  enableCompareSelection();
+
   if (!slug) {
     document.title = "Category — Agraris";
     setMetaDescription(

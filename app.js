@@ -84,10 +84,14 @@ function renderAgentRow(agent) {
     )
     .join("");
 
+  const compareSelected =
+    compareState.enabled && compareState.selected.has(String(agent.id));
+
   return `
-    <div class="agent-row reveal" data-reveal-stagger>
+    <div class="agent-row reveal${compareState.enabled ? " has-compare" : ""}${compareSelected ? " is-compare-selected" : ""}" data-reveal-stagger>
       <a class="agent-row-link" href="agent.html?id=${encodeURIComponent(agent.id)}" aria-label="${escapeHtml(agent.name)}"></a>
       ${renderWatchlistButton(agent.id)}
+      ${renderCompareCheckbox(agent)}
       <div class="agent-row-top">
         <span class="agent-name">${escapeHtml(agent.name)}</span>
         ${renderVerifiedBadge(agent)}
@@ -290,6 +294,10 @@ function formatRelativeTime(isoString) {
   return "Updated just now";
 }
 
+function formatGithubStars(stars) {
+  return stars.toLocaleString("en-US");
+}
+
 function renderGithubBadge(agent) {
   if (typeof agent.github_stars !== "number") {
     return `<span class="github-badge" hidden></span>`;
@@ -302,7 +310,7 @@ function renderGithubBadge(agent) {
   return `
     <span class="github-badge">
       <span class="github-stat" title="GitHub stars">
-        <svg class="github-star-icon" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 .25a.75.75 0 0 1 .673.418l1.882 3.815 4.21.612a.75.75 0 0 1 .416 1.279l-3.046 2.97.719 4.192a.75.75 0 0 1-1.088.791L8 12.347l-3.766 1.98a.75.75 0 0 1-1.088-.79l.72-4.194L.818 6.374a.75.75 0 0 1 .416-1.28l4.21-.611L7.327.668A.75.75 0 0 1 8 .25z"/></svg>${agent.github_stars.toLocaleString("en-US")}
+        <svg class="github-star-icon" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 .25a.75.75 0 0 1 .673.418l1.882 3.815 4.21.612a.75.75 0 0 1 .416 1.279l-3.046 2.97.719 4.192a.75.75 0 0 1-1.088.791L8 12.347l-3.766 1.98a.75.75 0 0 1-1.088-.79l.72-4.194L.818 6.374a.75.75 0 0 1 .416-1.28l4.21-.611L7.327.668A.75.75 0 0 1 8 .25z"/></svg>${formatGithubStars(agent.github_stars)}
       </span>${relative ? `<span class="github-updated">${escapeHtml(relative)}</span>` : ""}
     </span>
   `;
@@ -410,6 +418,131 @@ document.addEventListener("click", (e) => {
     btn.setAttribute("title", label);
   }
 });
+
+// ============================================
+// Compare agents (pick 2–3 cards, open compare.html)
+// ============================================
+//
+// Opt-in per page: index/search/category call enableCompareSelection()
+// before rendering their list, so renderAgentRow() only draws the
+// checkbox there (watchlist.html and the "Similar agents" block on
+// agent.html reuse renderAgentRow without it). The selection lives in
+// this in-memory Map only — no localStorage — so it resets on every
+// page load. Keeping the agent name alongside the id lets the floating
+// bar list the picks even after a search filter re-renders the list
+// and hides a selected card.
+
+const COMPARE_MAX = 3;
+const COMPARE_MIN = 2;
+
+const compareState = {
+  enabled: false,
+  selected: new Map(), // agent id (string) -> agent name
+};
+
+function enableCompareSelection() {
+  if (compareState.enabled) return;
+  compareState.enabled = true;
+
+  const bar = document.createElement("div");
+  bar.className = "compare-bar";
+  bar.id = "compare-bar";
+  bar.setAttribute("aria-hidden", "true");
+  bar.innerHTML = `
+    <div class="compare-bar-inner">
+      <div class="compare-bar-info">
+        <span class="compare-bar-names" id="compare-bar-names"></span>
+        <span class="compare-bar-msg" id="compare-bar-msg" role="status" aria-live="polite"></span>
+      </div>
+      <div class="compare-bar-actions">
+        <button type="button" class="compare-bar-clear" id="compare-bar-clear">Clear</button>
+        <a class="btn btn-solid btn-sm compare-bar-go" id="compare-bar-go" href="compare.html">Compare</a>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(bar);
+
+  bar.querySelector("#compare-bar-clear").addEventListener("click", () => {
+    compareState.selected.clear();
+    document.querySelectorAll("[data-compare-checkbox]").forEach((input) => {
+      input.checked = false;
+      input.closest(".agent-row")?.classList.remove("is-compare-selected");
+    });
+    updateCompareBar();
+  });
+
+  // Delegated so it keeps working after search/sort re-renders the list.
+  document.addEventListener("change", (e) => {
+    const input = e.target.closest("[data-compare-checkbox]");
+    if (!input) return;
+
+    const id = input.dataset.agentId;
+
+    if (input.checked) {
+      if (compareState.selected.size >= COMPARE_MAX) {
+        input.checked = false;
+        showCompareMessage(`You can compare up to ${COMPARE_MAX} agents`);
+        return;
+      }
+      compareState.selected.set(id, input.dataset.agentName);
+    } else {
+      compareState.selected.delete(id);
+    }
+
+    input.closest(".agent-row")?.classList.toggle("is-compare-selected", input.checked);
+    updateCompareBar();
+  });
+}
+
+function renderCompareCheckbox(agent) {
+  if (!compareState.enabled) return "";
+
+  const id = String(agent.id);
+  const checked = compareState.selected.has(id);
+
+  return `
+    <label class="compare-check" title="Select to compare" onclick="event.stopPropagation()">
+      <input type="checkbox" data-compare-checkbox data-agent-id="${escapeHtml(id)}" data-agent-name="${escapeHtml(agent.name)}"${checked ? " checked" : ""} />
+      <span class="sr-only">Select ${escapeHtml(agent.name)} to compare</span>
+    </label>
+  `;
+}
+
+let compareMessageTimer = null;
+
+function showCompareMessage(text) {
+  const msgEl = document.getElementById("compare-bar-msg");
+  if (!msgEl) return;
+
+  msgEl.textContent = text;
+  clearTimeout(compareMessageTimer);
+  compareMessageTimer = setTimeout(() => {
+    msgEl.textContent = "";
+  }, 2500);
+}
+
+function updateCompareBar() {
+  const bar = document.getElementById("compare-bar");
+  if (!bar) return;
+
+  const count = compareState.selected.size;
+  const visible = count >= COMPARE_MIN;
+
+  bar.classList.toggle("is-visible", visible);
+  bar.setAttribute("aria-hidden", String(!visible));
+  document.body.classList.toggle("has-compare-bar", visible);
+
+  const ids = [...compareState.selected.keys()];
+  const names = [...compareState.selected.values()];
+
+  const namesEl = bar.querySelector("#compare-bar-names");
+  namesEl.textContent = names.join(" · ");
+  namesEl.title = names.join(", ");
+
+  const go = bar.querySelector("#compare-bar-go");
+  go.textContent = `Compare (${count})`;
+  go.href = `compare.html?ids=${ids.map(encodeURIComponent).join(",")}`;
+}
 
 // ============================================
 // Hamburger menu (shared header, all pages)
