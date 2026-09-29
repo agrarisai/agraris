@@ -2097,6 +2097,224 @@ body.cmdk-open {
   opacity: 0.75;
 }
 
+/* ---------- compare: card checkbox ---------- */
+
+/* Sits just left of the watchlist bookmark (right: 14px, 28px wide),
+   above .agent-row-link (z-index: 1) like the bookmark does. */
+.compare-check {
+  position: absolute;
+  top: 14px;
+  right: 46px;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  cursor: pointer;
+  opacity: 0.55;
+  transition: opacity 0.15s ease, background 0.15s ease;
+}
+
+.compare-check:hover,
+.compare-check:has(input:checked),
+.compare-check:has(input:focus-visible) {
+  opacity: 1;
+}
+
+.compare-check:hover {
+  background: rgba(47, 107, 63, 0.08);
+}
+
+.compare-check input {
+  width: 15px;
+  height: 15px;
+  margin: 0;
+  accent-color: var(--green);
+  cursor: pointer;
+}
+
+/* Keep long names clear of the two corner controls. */
+.agent-row.has-compare .agent-row-top {
+  padding-right: 64px;
+}
+
+.agent-row.is-compare-selected {
+  border-color: var(--green);
+  background: var(--panel);
+  box-shadow: inset 0 0 0 1px var(--green);
+}
+
+/* ---------- compare: floating bar ---------- */
+
+.compare-bar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 40;
+  background: var(--cream);
+  border-top: 2px solid var(--green);
+  box-shadow: 0 -6px 18px rgba(74, 51, 32, 0.14);
+  transform: translateY(100%);
+  visibility: hidden;
+  transition: transform 0.3s ease-out, visibility 0s linear 0.3s;
+}
+
+.compare-bar.is-visible {
+  transform: translateY(0);
+  visibility: visible;
+  transition: transform 0.3s ease-out, visibility 0s;
+}
+
+.compare-bar-inner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 12px 16px calc(12px + env(safe-area-inset-bottom, 0px));
+}
+
+.compare-bar-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.compare-bar-names {
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.compare-bar-msg {
+  font-size: 11px;
+  color: var(--danger);
+}
+
+.compare-bar-msg:empty {
+  display: none;
+}
+
+.compare-bar-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.compare-bar-clear {
+  padding: 6px 4px;
+  border: none;
+  background: none;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--ink);
+  opacity: 0.7;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.compare-bar-clear:hover {
+  opacity: 1;
+}
+
+.compare-bar-go {
+  white-space: nowrap;
+}
+
+/* Room so the bar never covers the footer's last lines. */
+body.has-compare-bar {
+  padding-bottom: 72px;
+}
+
+/* ---------- compare page ---------- */
+
+.compare-toolbar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.compare-table-wrap {
+  max-width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--cream);
+  margin-bottom: 40px;
+}
+
+.compare-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.compare-table th,
+.compare-table td {
+  padding: 14px 16px;
+  text-align: left;
+  vertical-align: top;
+  border-bottom: 1px solid var(--line-soft);
+}
+
+.compare-table tr:last-child th,
+.compare-table tr:last-child td {
+  border-bottom: none;
+}
+
+.compare-table td {
+  min-width: 190px;
+  line-height: 1.55;
+}
+
+/* Row labels stay pinned while the agent columns scroll sideways. */
+.compare-table th[scope="row"] {
+  position: sticky;
+  left: 0;
+  z-index: 1;
+  width: 120px;
+  min-width: 110px;
+  background: var(--panel);
+  border-right: 1px solid var(--line-soft);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+
+.compare-name {
+  font-family: var(--font-display);
+  font-size: 17px;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.compare-muted {
+  opacity: 0.5;
+}
+
+.compare-table .agent-meta {
+  gap: 6px;
+}
+
+.compare-read-more {
+  white-space: nowrap;
+}
+
 /* ---------- scroll reveal ---------- */
 
 .reveal {

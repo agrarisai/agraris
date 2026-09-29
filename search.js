@@ -14,6 +14,8 @@
   let debounceTimer = null;
   const activeCategories = new Set();
 
+  enableCompareSelection();
+
   function populateCategoryChips(agents) {
     const seen = new Set();
     agents.forEach((a) => {
