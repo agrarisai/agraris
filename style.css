@@ -2097,6 +2097,41 @@ body.cmdk-open {
   opacity: 0.75;
 }
 
+/* ---------- changelog page ---------- */
+
+.changelog {
+  max-width: 720px;
+  padding-bottom: 40px;
+}
+
+.changelog-group + .changelog-group {
+  margin-top: 32px;
+}
+
+.changelog-group h3 {
+  font-family: var(--font-display);
+  font-size: 17px;
+  font-weight: 600;
+  margin: 0 0 10px;
+}
+
+.changelog-list {
+  margin: 0;
+  padding-left: 20px;
+  list-style: disc;
+  font-family: var(--font-mono);
+}
+
+.changelog-list li {
+  font-size: 14px;
+  line-height: 1.7;
+  margin-bottom: 6px;
+}
+
+.changelog-list li::marker {
+  color: var(--green);
+}
+
 /* ---------- compare: card checkbox ---------- */
 
 /* Sits just left of the watchlist bookmark (right: 14px, 28px wide),
