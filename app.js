@@ -545,6 +545,66 @@ function updateCompareBar() {
 }
 
 // ============================================
+// Theme toggle (light / dark)
+// ============================================
+//
+// The inline script in every page's <head> already set
+// <html data-theme> before first paint (saved choice, else the OS
+// preference), so this only wires up the header button. An explicit
+// choice is saved under "agraris-theme"; until the visitor makes one,
+// the page keeps following OS-level light/dark changes.
+
+const THEME_STORAGE_KEY = "agraris-theme";
+
+(function initThemeToggle() {
+  const root = document.documentElement;
+  const btn = document.getElementById("theme-toggle");
+
+  function currentTheme() {
+    return root.getAttribute("data-theme") === "dark" ? "dark" : "light";
+  }
+
+  function syncButton() {
+    if (!btn) return;
+    const dark = currentTheme() === "dark";
+    const label = dark ? "Switch to light mode" : "Switch to dark mode";
+    btn.setAttribute("aria-pressed", String(dark));
+    btn.setAttribute("aria-label", label);
+    btn.title = label;
+  }
+
+  function hasSavedTheme() {
+    try {
+      const saved = localStorage.getItem(THEME_STORAGE_KEY);
+      return saved === "light" || saved === "dark";
+    } catch {
+      return false;
+    }
+  }
+
+  syncButton();
+
+  btn?.addEventListener("click", () => {
+    const next = currentTheme() === "dark" ? "light" : "dark";
+    root.setAttribute("data-theme", next);
+    try {
+      localStorage.setItem(THEME_STORAGE_KEY, next);
+    } catch {
+      // localStorage unavailable/blocked — the switch still applies
+      // for this page view, it just won't be remembered.
+    }
+    syncButton();
+  });
+
+  const media = window.matchMedia?.("(prefers-color-scheme: dark)");
+  media?.addEventListener?.("change", (e) => {
+    if (hasSavedTheme()) return;
+    root.setAttribute("data-theme", e.matches ? "dark" : "light");
+    syncButton();
+  });
+})();
+
+// ============================================
 // Hamburger menu (shared header, all pages)
 // ============================================
 

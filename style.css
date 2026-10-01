@@ -14,10 +14,57 @@
   --line-strong: rgba(74, 51, 32, 0.3);
   --danger: #8a3324;
 
+  /* Text/icons that sit on a solid --green fill. Kept light in both
+     themes: --cream turns dark in dark mode, so it can't double as
+     "text on green" there. */
+  --on-green: #e8dcc8;
+  /* Green used as text/link color directly on the page background.
+     Same as --green / --green-dark in light mode; dark mode swaps in a
+     lighter green for these only (buttons, fills, borders keep --green). */
+  --text-green: #2f6b3f;
+  --text-green-dark: #1f4a2c;
+  --field-bg: #fff;
+
+  /* RGB triplets for translucent tints, shadows and overlays, so they
+     can follow the theme via rgba(var(--x-rgb), alpha). */
+  --green-rgb: 47, 107, 63;
+  --on-green-rgb: 232, 220, 200;
+  --overlay-rgb: 31, 74, 44;
+  --shadow-rgb: 74, 51, 32;
+
+  color-scheme: light;
+
   --font-display: "Fraunces", Georgia, serif;
   --font-mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
 
   --max-width: 880px;
+}
+
+/* ---------- dark theme ----------
+   Set on <html> by the inline script in each page's <head> (saved
+   choice in localStorage "agraris-theme", else prefers-color-scheme)
+   and flipped by the header toggle. --green / --green-dark are the
+   same as light mode on purpose. */
+:root[data-theme="dark"] {
+  --cream: #1f2419;
+  --panel: #262c1f;
+  --ink: #e8dcc8;
+  --green: #2f6b3f;
+  --green-dark: #1f4a2c;
+  --line: #3a4230;
+  --line-soft: #31382a;
+  --line-strong: rgba(var(--on-green-rgb), 0.3);
+  --danger: #e07a62;
+
+  /* Text/links only — see --text-green in :root. */
+  --text-green: #8cc29a;
+  --text-green-dark: #8cc29a;
+
+  --field-bg: #262c1f;
+  --overlay-rgb: 0, 0, 0;
+  --shadow-rgb: 0, 0, 0;
+
+  color-scheme: dark;
 }
 
 * {
@@ -55,15 +102,15 @@ html::before {
   background-image:
     repeating-linear-gradient(
       to right,
-      rgba(47, 107, 63, 0.05) 0,
-      rgba(47, 107, 63, 0.05) 1px,
+      rgba(var(--green-rgb), 0.05) 0,
+      rgba(var(--green-rgb), 0.05) 1px,
       transparent 1px,
       transparent 28px
     ),
     repeating-linear-gradient(
       to bottom,
-      rgba(47, 107, 63, 0.05) 0,
-      rgba(47, 107, 63, 0.05) 1px,
+      rgba(var(--green-rgb), 0.05) 0,
+      rgba(var(--green-rgb), 0.05) 1px,
       transparent 1px,
       transparent 28px
     );
@@ -75,7 +122,7 @@ img {
 }
 
 a {
-  color: var(--green-dark);
+  color: var(--text-green-dark);
 }
 
 a:focus-visible,
@@ -144,7 +191,7 @@ select:focus-visible {
   font-family: var(--font-mono);
   font-size: 10px;
   line-height: 1.4;
-  color: var(--green-dark);
+  color: var(--text-green-dark);
   text-decoration: none;
   white-space: nowrap;
 }
@@ -164,10 +211,10 @@ select:focus-visible {
 
 @keyframes chain-badge-pulse {
   0%, 100% {
-    box-shadow: 0 0 0 0 rgba(47, 107, 63, 0.45);
+    box-shadow: 0 0 0 0 rgba(var(--green-rgb), 0.45);
   }
   50% {
-    box-shadow: 0 0 0 3px rgba(47, 107, 63, 0);
+    box-shadow: 0 0 0 3px rgba(var(--green-rgb), 0);
   }
 }
 
@@ -226,6 +273,43 @@ select:focus-visible {
   margin-left: auto;
 }
 
+/* ---------- theme toggle ---------- */
+
+/* Same 36px outlined square as .cmdk-trigger / .menu-toggle. Shows a
+   moon in light mode (switch to dark) and a sun in dark mode. */
+.theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  background: transparent;
+  color: var(--ink);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.theme-toggle:hover {
+  border-color: var(--green);
+}
+
+.theme-toggle svg {
+  width: 16px;
+  height: 16px;
+}
+
+.theme-toggle .theme-icon-sun,
+:root[data-theme="dark"] .theme-toggle .theme-icon-moon {
+  display: none;
+}
+
+:root[data-theme="dark"] .theme-toggle .theme-icon-sun {
+  display: block;
+}
+
 /* ---------- hamburger menu ---------- */
 
 .menu-toggle {
@@ -268,7 +352,7 @@ body.menu-open {
 .menu-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(31, 74, 44, 0.35);
+  background: rgba(var(--overlay-rgb), 0.35);
   z-index: 40;
   opacity: 0;
   visibility: hidden;
@@ -294,7 +378,7 @@ body.menu-open {
   padding: 18px 20px 24px;
   transform: translateX(100%);
   transition: transform 0.25s ease;
-  box-shadow: -8px 0 24px rgba(31, 74, 44, 0.15);
+  box-shadow: -8px 0 24px rgba(var(--overlay-rgb), 0.15);
   overflow-y: auto;
 }
 
@@ -368,7 +452,7 @@ body.cmdk-open {
   align-items: flex-start;
   justify-content: center;
   padding: 12vh 16px 16px;
-  background: rgba(31, 74, 44, 0.45);
+  background: rgba(var(--overlay-rgb), 0.45);
 }
 
 .cmdk-overlay.is-open {
@@ -383,7 +467,7 @@ body.cmdk-open {
   background: var(--cream);
   border: 1px solid var(--line);
   border-radius: 8px;
-  box-shadow: 0 16px 40px rgba(31, 74, 44, 0.28);
+  box-shadow: 0 16px 40px rgba(var(--overlay-rgb), 0.28);
   overflow: hidden;
 }
 
@@ -459,7 +543,7 @@ body.cmdk-open {
 .cmdk-result:hover,
 .cmdk-result.is-active {
   background: var(--green);
-  color: var(--cream);
+  color: var(--on-green);
 }
 
 .cmdk-result-name {
@@ -482,9 +566,9 @@ body.cmdk-open {
 
 .cmdk-result:hover .cmdk-result-cat,
 .cmdk-result.is-active .cmdk-result-cat {
-  background: rgba(232, 220, 200, 0.25);
-  border-color: rgba(232, 220, 200, 0.4);
-  color: var(--cream);
+  background: rgba(var(--on-green-rgb), 0.25);
+  border-color: rgba(var(--on-green-rgb), 0.4);
+  color: var(--on-green);
 }
 
 .cmdk-empty {
@@ -501,12 +585,12 @@ body.cmdk-open {
   padding-top: 12px;
   border-top: 1px solid var(--line-soft);
   font-weight: 600;
-  color: var(--green-dark);
+  color: var(--text-green-dark);
 }
 
 .cmdk-view-all:hover {
   background: var(--green);
-  color: var(--cream);
+  color: var(--on-green);
 }
 
 @media (max-width: 560px) {
@@ -529,7 +613,7 @@ body.cmdk-open {
 
 .menu-panel a:hover,
 .menu-panel a.active {
-  color: var(--green-dark);
+  color: var(--text-green-dark);
   font-weight: 500;
 }
 
@@ -672,7 +756,7 @@ body.cmdk-open {
 }
 
 .footer-col a:hover {
-  color: var(--green-dark);
+  color: var(--text-green-dark);
   opacity: 1;
 }
 
@@ -753,7 +837,7 @@ body.cmdk-open {
 
 .section-head--topic h2 {
   font-size: 30px;
-  color: var(--green-dark);
+  color: var(--text-green-dark);
 }
 
 /* ---------- hero ---------- */
@@ -775,7 +859,7 @@ body.cmdk-open {
   font-family: var(--font-display);
   font-style: italic;
   font-size: 19px;
-  color: var(--green-dark);
+  color: var(--text-green-dark);
   margin: 0 0 26px;
   max-width: 50ch;
 }
@@ -791,7 +875,7 @@ body.cmdk-open {
   padding: 16px 44px;
   font-size: 15px;
   letter-spacing: 0.02em;
-  box-shadow: 0 6px 16px rgba(31, 74, 44, 0.22);
+  box-shadow: 0 6px 16px rgba(var(--overlay-rgb), 0.22);
 }
 
 .hero-actions {
@@ -897,7 +981,7 @@ body.cmdk-open {
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--green-dark);
+  color: var(--text-green-dark);
 }
 
 .official-token-ticker {
@@ -969,7 +1053,7 @@ body.cmdk-open {
 }
 
 .token-price-value.is-up {
-  color: var(--green);
+  color: var(--text-green);
 }
 
 .token-price-value.is-down {
@@ -1013,7 +1097,7 @@ body.cmdk-open {
   font-family: var(--font-display);
   font-weight: 600;
   font-size: 28px;
-  color: var(--green-dark);
+  color: var(--text-green-dark);
   line-height: 1.2;
 }
 
@@ -1042,12 +1126,12 @@ body.cmdk-open {
   cursor: pointer;
   text-decoration: none;
   background: transparent;
-  color: var(--green-dark);
+  color: var(--text-green-dark);
 }
 
 .btn-solid {
   background: var(--green);
-  color: var(--cream);
+  color: var(--on-green);
 }
 
 .btn-solid:hover {
@@ -1056,7 +1140,7 @@ body.cmdk-open {
 }
 
 .btn:not(.btn-solid):hover {
-  background: rgba(47, 107, 63, 0.08);
+  background: rgba(var(--green-rgb), 0.08);
 }
 
 .btn:disabled {
@@ -1128,7 +1212,7 @@ body.cmdk-open {
   font-weight: 600;
   font-size: 44px;
   line-height: 1;
-  color: var(--green-dark);
+  color: var(--text-green-dark);
   margin-bottom: 12px;
 }
 
@@ -1190,7 +1274,7 @@ body.cmdk-open {
   padding: 6px 10px;
   border-radius: 0 7px 0 8px;
   background: var(--green);
-  color: var(--cream);
+  color: var(--on-green);
 }
 
 /* ---------- listing panel ---------- */
@@ -1252,13 +1336,13 @@ body.cmdk-open {
 
 .agent-row:hover {
   border-color: var(--green);
-  box-shadow: 0 4px 10px rgba(74, 51, 32, 0.12);
+  box-shadow: 0 4px 10px rgba(var(--shadow-rgb), 0.12);
   transform: translateY(-2px);
 }
 
 .agent-row:active {
   border-color: var(--green);
-  box-shadow: 0 1px 4px rgba(74, 51, 32, 0.15);
+  box-shadow: 0 1px 4px rgba(var(--shadow-rgb), 0.15);
   transform: translateY(0);
 }
 
@@ -1280,7 +1364,7 @@ body.cmdk-open {
   padding: 2px 7px;
   border-radius: 999px;
   background: var(--green);
-  color: var(--cream);
+  color: var(--on-green);
   font-family: var(--font-mono);
   font-size: 10px;
   font-weight: 500;
@@ -1305,7 +1389,7 @@ body.cmdk-open {
 
 .agent-version {
   font-size: 12px;
-  color: var(--green-dark);
+  color: var(--text-green-dark);
   white-space: nowrap;
 }
 
@@ -1364,7 +1448,7 @@ body.cmdk-open {
 
 .watchlist-btn:hover {
   opacity: 1;
-  background: rgba(47, 107, 63, 0.08);
+  background: rgba(var(--green-rgb), 0.08);
 }
 
 .watchlist-btn.is-active {
@@ -1383,7 +1467,7 @@ body.cmdk-open {
 .watchlist-btn-lg.is-active {
   background: var(--green);
   border-color: var(--green);
-  color: var(--cream);
+  color: var(--on-green);
 }
 
 .watchlist-btn-lg svg {
@@ -1564,7 +1648,7 @@ body.cmdk-open {
   padding: 10px 12px;
   border: 1px solid var(--line);
   border-radius: 3px;
-  background: #fff;
+  background: var(--field-bg);
   color: var(--ink);
 }
 
@@ -1593,7 +1677,7 @@ body.cmdk-open {
 }
 
 .form-msg.success {
-  color: var(--green-dark);
+  color: var(--text-green-dark);
 }
 
 /* ---------- publish success ---------- */
@@ -1607,7 +1691,7 @@ body.cmdk-open {
   font-family: var(--font-display);
   font-size: 26px;
   font-weight: 600;
-  color: var(--green-dark);
+  color: var(--text-green-dark);
   margin: 0 0 10px;
 }
 
@@ -1642,7 +1726,7 @@ body.cmdk-open {
   padding: 10px 12px;
   border: 1px solid var(--line);
   border-radius: 3px;
-  background: #fff;
+  background: var(--field-bg);
   color: var(--ink);
 }
 
@@ -1654,7 +1738,7 @@ body.cmdk-open {
   padding: 10px 12px;
   border: 1px solid var(--line);
   border-radius: 3px;
-  background: #fff;
+  background: var(--field-bg);
   color: var(--ink);
 }
 
@@ -1704,7 +1788,7 @@ body.cmdk-open {
 .category-chip.is-active {
   background: var(--green);
   border-color: var(--green);
-  color: var(--cream);
+  color: var(--on-green);
 }
 
 /* ---------- agent detail ---------- */
@@ -1798,7 +1882,7 @@ body.cmdk-open {
 
 .report-link {
   font-size: 13px;
-  color: var(--green-dark);
+  color: var(--text-green-dark);
   text-decoration: underline;
   text-underline-offset: 2px;
 }
@@ -1838,7 +1922,7 @@ body.cmdk-open {
 
 .report-confirm {
   font-size: 11px;
-  color: var(--green-dark);
+  color: var(--text-green-dark);
   margin-top: 12px;
   opacity: 0.85;
 }
@@ -1910,7 +1994,7 @@ body.cmdk-open {
   font-family: var(--font-mono);
   font-size: 13.5px;
   font-weight: 500;
-  color: var(--green-dark);
+  color: var(--text-green-dark);
   cursor: pointer;
   list-style: none;
   -webkit-tap-highlight-color: transparent;
@@ -1921,7 +2005,7 @@ body.cmdk-open {
 }
 
 .faq-question:hover {
-  background: rgba(47, 107, 63, 0.08);
+  background: rgba(var(--green-rgb), 0.08);
 }
 
 .faq-question:focus-visible {
@@ -2159,7 +2243,7 @@ body.cmdk-open {
 }
 
 .compare-check:hover {
-  background: rgba(47, 107, 63, 0.08);
+  background: rgba(var(--green-rgb), 0.08);
 }
 
 .compare-check input {
@@ -2191,7 +2275,7 @@ body.cmdk-open {
   z-index: 40;
   background: var(--cream);
   border-top: 2px solid var(--green);
-  box-shadow: 0 -6px 18px rgba(74, 51, 32, 0.14);
+  box-shadow: 0 -6px 18px rgba(var(--shadow-rgb), 0.14);
   transform: translateY(100%);
   visibility: hidden;
   transition: transform 0.3s ease-out, visibility 0s linear 0.3s;
@@ -2532,7 +2616,7 @@ body.has-compare-bar {
   font-weight: 600;
   font-size: clamp(40px, 10vw, 64px);
   line-height: 1.05;
-  color: var(--green-dark);
+  color: var(--text-green-dark);
 }
 
 .token-hero-tagline {
@@ -2553,7 +2637,7 @@ body.has-compare-bar {
 }
 
 .token-links a {
-  color: var(--green-dark);
+  color: var(--text-green-dark);
 }
 
 .token-disclaimer {
