@@ -23,6 +23,18 @@ jobs:
       - name: Install dependencies
         run: npm install @supabase/supabase-js
 
+      # Email the admin a summary of agents added in the last 24h.
+      # Never blocks the steps below: the script always exits 0, and
+      # continue-on-error covers anything unexpected (e.g. a crash).
+      - name: Notify admin of new agents
+        continue-on-error: true
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          NOTIFY_EMAIL: ${{ secrets.NOTIFY_EMAIL }}
+        run: node scripts/notify-new-agents.js
+
       - name: Update GitHub stats
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
