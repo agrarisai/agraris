@@ -623,6 +623,20 @@ body.cmdk-open {
   margin: 6px 0;
 }
 
+/* Small group headings in the hamburger menu, matching the footer's
+   PRODUCT / COMPANY column titles. */
+.menu-group-label {
+  display: block;
+  padding: 10px 4px 2px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink);
+  opacity: 0.55;
+}
+
 .menu-social {
   display: flex;
   align-items: center;
@@ -667,7 +681,7 @@ body.cmdk-open {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  margin-bottom: 32px;
+  margin-bottom: 20px;
 }
 
 .footer-brand {
@@ -703,7 +717,7 @@ body.cmdk-open {
   display: flex;
   align-items: center;
   gap: 16px;
-  margin-bottom: 32px;
+  margin-bottom: 24px;
 }
 
 .footer-social a {
@@ -724,7 +738,7 @@ body.cmdk-open {
 }
 
 .footer-col {
-  margin-bottom: 36px;
+  margin-bottom: 24px;
 }
 
 .footer-col:last-child {
@@ -739,7 +753,7 @@ body.cmdk-open {
   text-transform: uppercase;
   color: var(--ink);
   opacity: 0.55;
-  margin: 0 0 12px;
+  margin: 0 0 8px;
 }
 
 .footer-col a {
@@ -748,7 +762,8 @@ body.cmdk-open {
   opacity: 0.7;
   text-decoration: none;
   font-size: 13px;
-  margin-bottom: 10px;
+  line-height: 1.5;
+  margin-bottom: 6px;
 }
 
 .footer-col a:last-child {
@@ -760,11 +775,13 @@ body.cmdk-open {
   opacity: 1;
 }
 
+/* Left-aligned like the link columns above it, so the whole footer
+   shares one edge instead of switching to centered text here. */
 .footer-bottom {
-  margin-top: 36px;
-  padding-top: 20px;
+  margin-top: 24px;
+  padding-top: 16px;
   border-top: 1px solid var(--line-soft);
-  text-align: center;
+  text-align: left;
 }
 
 .footer-token {
@@ -783,7 +800,7 @@ body.cmdk-open {
 }
 
 .footer-disclaimer {
-  margin: 8px auto 0;
+  margin: 8px 0 0;
   max-width: 560px;
   font-size: 10px;
   line-height: 1.5;
@@ -1718,6 +1735,10 @@ body.cmdk-open {
   flex-wrap: wrap;
 }
 
+/* Search box and sort dropdown use the same bordered cream look as
+   the agent cards and category chips instead of a plain white field.
+   --cream sits one step darker than the surrounding .listing-panel
+   in both themes, so the fields read as inset. */
 .search-bar input[type="text"] {
   flex: 1 1 220px;
   min-width: 0;
@@ -1726,8 +1747,14 @@ body.cmdk-open {
   padding: 10px 12px;
   border: 1px solid var(--line);
   border-radius: 3px;
-  background: var(--field-bg);
+  background: var(--cream);
   color: var(--ink);
+  transition: border-color 0.15s ease;
+}
+
+.search-bar input[type="text"]::placeholder {
+  color: var(--ink);
+  opacity: 0.5;
 }
 
 .search-bar select {
@@ -1735,11 +1762,32 @@ body.cmdk-open {
   min-width: 140px;
   font-family: var(--font-mono);
   font-size: 14px;
-  padding: 10px 12px;
+  padding: 10px 34px 10px 12px;
   border: 1px solid var(--line);
   border-radius: 3px;
-  background: var(--field-bg);
   color: var(--ink);
+  cursor: pointer;
+  transition: border-color 0.15s ease;
+  -webkit-appearance: none;
+  appearance: none;
+  /* Chevron drawn with two gradients in currentColor, so it follows
+     the text color in light and dark mode without an image file. */
+  background-color: var(--cream);
+  background-image:
+    linear-gradient(45deg, transparent 50%, currentColor 50%),
+    linear-gradient(135deg, currentColor 50%, transparent 50%);
+  background-position:
+    calc(100% - 17px) 50%,
+    calc(100% - 12px) 50%;
+  background-size: 5px 5px;
+  background-repeat: no-repeat;
+}
+
+.search-bar input[type="text"]:hover,
+.search-bar select:hover,
+.search-bar input[type="text"]:focus,
+.search-bar select:focus {
+  border-color: var(--green);
 }
 
 .verified-filter {
@@ -1755,11 +1803,40 @@ body.cmdk-open {
   cursor: pointer;
 }
 
-.verified-filter input[type="checkbox"] {
-  accent-color: var(--green);
+/* ---------- custom checkbox (search filters + compare picks) ----------
+   A 15px square with a --green border (same size as the 15px
+   bookmark icon next to it on cards); checked fills --green and
+   shows an --on-green check. The check is an inline SVG so it needs
+   no extra file; its color is the fixed --on-green value (#e8dcc8),
+   which is the same in both themes. */
+.verified-filter input[type="checkbox"],
+.compare-check input {
+  -webkit-appearance: none;
+  appearance: none;
+  flex-shrink: 0;
   width: 15px;
   height: 15px;
+  margin: 0;
+  border: 1.5px solid var(--green);
+  border-radius: 3px;
+  background-color: transparent;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 11px 11px;
   cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.verified-filter input[type="checkbox"]:checked,
+.compare-check input:checked {
+  background-color: var(--green);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M2.5 6.2l2.3 2.3 4.7-5' fill='none' stroke='%23e8dcc8' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+}
+
+.verified-filter input[type="checkbox"]:focus-visible,
+.compare-check input:focus-visible {
+  outline: 2px solid var(--green);
+  outline-offset: 2px;
 }
 
 .category-chips {
@@ -2246,13 +2323,6 @@ body.cmdk-open {
   background: rgba(var(--green-rgb), 0.08);
 }
 
-.compare-check input {
-  width: 15px;
-  height: 15px;
-  margin: 0;
-  accent-color: var(--green);
-  cursor: pointer;
-}
 
 /* Keep long names clear of the two corner controls. */
 .agent-row.has-compare .agent-row-top {
