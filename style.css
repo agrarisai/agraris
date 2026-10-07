@@ -2258,6 +2258,35 @@ body.cmdk-open {
   opacity: 0.75;
 }
 
+/* ---------- litepaper page ---------- */
+
+/* Each numbered section is its own .content-page block so the
+   scroll-reveal threshold triggers per section, not once for the
+   whole (long) page. */
+.litepaper-section {
+  padding-bottom: 8px;
+}
+
+.litepaper-section h3 {
+  margin-top: 8px;
+}
+
+.litepaper-section li strong {
+  font-weight: 500;
+  color: var(--text-green-dark);
+}
+
+/* The contract address is one long unbroken string; let it wrap
+   on narrow screens instead of widening the page. */
+.litepaper-section code {
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  background: var(--panel);
+  padding: 1px 5px;
+  border-radius: 2px;
+  overflow-wrap: anywhere;
+}
+
 /* ---------- changelog page ---------- */
 
 .changelog {
