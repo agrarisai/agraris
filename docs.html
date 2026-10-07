@@ -123,6 +123,7 @@
         <li><a href="#combining">Combining parameters</a></li>
         <li><a href="#response-schema">Response schema</a></li>
         <li><a href="#rate-limits">Rate limits &amp; fair use</a></li>
+        <li><a href="#embed-widget">Embed widget</a></li>
       </ol>
     </nav>
 
@@ -323,6 +324,47 @@ const topTradingAgents = await res.json();</code></pre>
         there is no published quota. Please use it fairly — cache results
         on your side if you fetch repeatedly, and avoid aggressive
         polling.
+      </p>
+
+      <h3 id="embed-widget">Embed widget</h3>
+      <p>
+        Show an agent's card on your own site with an
+        <code>&lt;iframe&gt;</code>. The card shows the name, a two-line
+        description, category tags, GitHub stars, the Verified badge
+        (when the agent has it) and a "View on Agraris" link. Each agent
+        page has a ready-to-copy snippet under "Embed this agent".
+      </p>
+      <div class="docs-table-wrap">
+        <table class="docs-table">
+          <thead>
+            <tr>
+              <th>Parameter</th>
+              <th>Values</th>
+              <th>Notes</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td><code>id</code></td><td>agent uuid</td><td>Required. The same id as in <code>agent.html?id=</code>.</td></tr>
+            <tr><td><code>theme</code></td><td><code>light</code> | <code>dark</code></td><td>Optional, defaults to <code>light</code>. The card's page background is transparent.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <pre class="code-block"><code>&lt;iframe id="agraris-embed"
+  src="https://agraris.xyz/embed.html?id=AGENT_ID&amp;theme=dark"
+  width="420" height="180" style="border:0" loading="lazy"&gt;&lt;/iframe&gt;</code></pre>
+      <p>
+        The card reports its height to the parent page with
+        <code>postMessage</code>, so you can resize the iframe to fit:
+      </p>
+      <pre class="code-block"><code>window.addEventListener("message", (e) =&gt; {
+  if (e.origin !== "https://agraris.xyz") return;
+  if (e.data?.type !== "agraris-embed-height") return;
+  document.querySelector("#agraris-embed").height = e.data.height;
+});</code></pre>
+      <p>
+        <strong>GitHub READMEs don't support iframes.</strong> For a
+        README, use the "Listed on Agraris" badge from the agent page
+        instead.
       </p>
     </div>
 

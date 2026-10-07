@@ -71,6 +71,48 @@ function initCopyBadgeButton(root) {
   });
 }
 
+// iframe snippet for embed.html. Light is the embed's default, so the
+// light snippet leaves out the theme parameter.
+function buildEmbedSnippet(agentId, theme) {
+  const themeParam = theme === "dark" ? "&theme=dark" : "";
+  return `<iframe src="https://agraris.xyz/embed.html?id=${encodeURIComponent(agentId)}${themeParam}" width="420" height="180" style="border:0" loading="lazy"></iframe>`;
+}
+
+// Light/Dark toggle rewrites the snippet; Copy uses the same pattern as
+// the badge's "Copy markdown" button.
+function initEmbedSnippet(root, agentId) {
+  const codeEl = root.querySelector("#embed-snippet");
+  const copyBtn = root.querySelector("#copy-embed-btn");
+  const themeBtns = root.querySelectorAll("[data-embed-theme]");
+  if (!codeEl || !copyBtn) return;
+
+  themeBtns.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      themeBtns.forEach((b) => b.setAttribute("aria-pressed", String(b === btn)));
+      codeEl.textContent = buildEmbedSnippet(agentId, btn.dataset.embedTheme);
+    });
+  });
+
+  const defaultLabel = copyBtn.textContent;
+
+  copyBtn.addEventListener("click", () => {
+    if (!navigator.clipboard?.writeText) return;
+
+    navigator.clipboard
+      .writeText(codeEl.textContent)
+      .then(() => {
+        copyBtn.textContent = "Copied!";
+        setTimeout(() => {
+          copyBtn.textContent = defaultLabel;
+        }, 2000);
+      })
+      .catch(() => {
+        // clipboard write failed (permissions, insecure context, etc.) —
+        // fail silently, no error shown to the user
+      });
+  });
+}
+
 function initReportAgent(root, agentId) {
   const link = root.querySelector("#report-link");
   const form = root.querySelector("#report-form");
@@ -189,6 +231,18 @@ function initReportAgent(root, agentId) {
         </div>
       </div>
 
+      <div class="embed-section reveal">
+        <div class="detail-row-label">Embed this agent</div>
+        <div class="embed-theme-toggle" role="group" aria-label="Embed theme">
+          <button type="button" data-embed-theme="light" aria-pressed="true">Light</button>
+          <button type="button" data-embed-theme="dark" aria-pressed="false">Dark</button>
+        </div>
+        <div class="badge-code-row">
+          <code class="badge-code" id="embed-snippet">${escapeHtml(buildEmbedSnippet(agent.id, "light"))}</code>
+          <button type="button" class="btn btn-sm" id="copy-embed-btn">Copy</button>
+        </div>
+      </div>
+
       <div class="report-agent-block reveal">
         <a href="#" class="report-link" id="report-link" aria-expanded="false">Report this agent</a>
         <form class="report-form" id="report-form" hidden>
@@ -230,6 +284,7 @@ function initReportAgent(root, agentId) {
     observeReveal(container);
     initCopyLinkButton(container);
     initCopyBadgeButton(container);
+    initEmbedSnippet(container, agent.id);
     initReportAgent(container, agent.id);
   } catch (err) {
     container.innerHTML = renderEmptyState(

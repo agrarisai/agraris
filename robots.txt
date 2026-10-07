@@ -1,4 +1,5 @@
 User-agent: *
 Allow: /
+Disallow: /embed.html
 
 Sitemap: https://agrarisai.github.io/agraris/sitemap.xml

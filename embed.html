@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en" class="embed-page">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex" />
+  <title>Agraris agent card</title>
+  <script>
+    // Theme comes from ?theme=light|dark (default light), not from the
+    // visitor's saved site preference: the card has to match the page
+    // it's embedded in. Set before first paint so dark never flashes light.
+    (function () {
+      var theme = new URLSearchParams(window.location.search).get("theme");
+      document.documentElement.setAttribute("data-theme", theme === "dark" ? "dark" : "light");
+    })();
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,600;1,500&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main id="embed-root" aria-live="polite">
+    <div class="embed-card embed-card--loading" aria-busy="true">
+      <span class="embed-muted">Loading agent…</span>
+    </div>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-client.js"></script>
+  <script src="embed.js"></script>
+</body>
+</html>
