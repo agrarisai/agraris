@@ -1,0 +1,33 @@
+name: Weekly digest
+
+on:
+  schedule:
+    # Setiap Minggu jam 02:00 UTC (09:00 WIB)
+    - cron: "0 2 * * 0"
+  workflow_dispatch: {}
+
+jobs:
+  weekly-digest:
+    runs-on: ubuntu-latest
+    # Hanya membaca Supabase dan mengirim email draf; tidak ada yang di-commit.
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Install dependencies
+        run: npm install @supabase/supabase-js
+
+      - name: Generate digest draft
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          NOTIFY_EMAIL: ${{ secrets.NOTIFY_EMAIL }}
+        run: node scripts/generate-digest.js
