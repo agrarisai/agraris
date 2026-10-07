@@ -2276,6 +2276,15 @@ body.cmdk-open {
   color: var(--text-green-dark);
 }
 
+.litepaper-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 12px 0 40px;
+  padding-top: 20px;
+  border-top: 1px solid var(--line);
+}
+
 /* The contract address is one long unbroken string; let it wrap
    on narrow screens instead of widening the page. */
 .litepaper-section code {
