@@ -14,15 +14,15 @@
       document.documentElement.setAttribute("data-theme", theme);
     })();
   </script>
-  <title>Watchlist — Agraris</title>
-  <meta name="description" content="Agents you've bookmarked to revisit on the Agraris registry." />
+  <title>Agraris Litepaper</title>
+  <meta name="description" content="The Agraris Litepaper: an open, neutral registry of AI agents on Robinhood Chain, how it works, its principles, and the $AGRARIS token." />
 
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Agraris" />
-  <meta property="og:title" content="Watchlist — Agraris" />
-  <meta property="og:description" content="Agents you've bookmarked to revisit on the Agraris registry." />
+  <meta property="og:title" content="Agraris Litepaper" />
+  <meta property="og:description" content="The Agraris Litepaper: an open, neutral registry of AI agents on Robinhood Chain, how it works, its principles, and the $AGRARIS token." />
   <meta property="og:image" content="https://agraris.xyz/og-image.png" />
-  <meta property="og:url" content="https://agraris.xyz/watchlist.html" />
+  <meta property="og:url" content="https://agraris.xyz/litepaper.html" />
   <meta property="twitter:card" content="summary_large_image" />
   <meta property="twitter:image" content="https://agraris.xyz/og-image.png" />
 
@@ -74,7 +74,7 @@
       <a href="index.html">Home</a>
       <a href="search.html">Search</a>
       <a href="publish.html">Publish</a>
-      <a href="watchlist.html" class="active">Watchlist</a>
+      <a href="watchlist.html">Watchlist</a>
       <a href="search.html">Compare</a>
       <a href="token.html">Token</a>
       <a href="docs.html">Docs</a>
@@ -86,7 +86,7 @@
       <a href="index.html#privacy" data-hash="#privacy">Privacy</a>
       <a href="index.html#terms" data-hash="#terms">Terms</a>
       <a href="index.html#faq" data-hash="#faq">FAQ</a>
-      <a href="litepaper.html">Litepaper</a>
+      <a href="litepaper.html" class="active">Litepaper</a>
       <hr class="menu-sep" />
       <div class="menu-social">
         <a class="footer-github" href="https://github.com/agrarisai/agraris" target="_blank" rel="noopener" aria-label="GitHub">
@@ -98,34 +98,88 @@
       </div>
     </nav>
 
-    <div class="listing-panel">
-      <div class="section-head section-head--first">
-        <h2>Your watchlist</h2>
-        <span class="section-count" id="agent-count"></span>
-      </div>
-
-      <div class="agent-list" id="agent-list" aria-busy="true">
-        <div class="skeleton-row" aria-hidden="true">
-          <div class="skeleton-block skeleton-name"></div>
-          <div class="skeleton-block skeleton-line"></div>
-          <div class="skeleton-block skeleton-line skeleton-line--short"></div>
-          <div class="skeleton-tags">
-            <div class="skeleton-block skeleton-tag"></div>
-            <div class="skeleton-block skeleton-tag"></div>
-          </div>
-        </div>
-        <div class="skeleton-row" aria-hidden="true">
-          <div class="skeleton-block skeleton-name"></div>
-          <div class="skeleton-block skeleton-line"></div>
-          <div class="skeleton-block skeleton-line skeleton-line--short"></div>
-          <div class="skeleton-tags">
-            <div class="skeleton-block skeleton-tag"></div>
-            <div class="skeleton-block skeleton-tag"></div>
-          </div>
-        </div>
-        <span class="sr-only">Loading watchlist…</span>
-      </div>
+    <div class="section-head section-head--first">
+      <h2>Agraris Litepaper</h2>
     </div>
+
+    <p class="page-lead">The registry for AI agents on Robinhood Chain</p>
+
+    <section class="content-page litepaper-section reveal" id="overview">
+      <h3>1. Overview</h3>
+      <p>
+        Agraris is an open registry of AI agents built for Robinhood Chain.
+        It gives builders a place to publish their agents and gives everyone
+        else a place to find, compare, and track them.
+      </p>
+    </section>
+
+    <section class="content-page litepaper-section reveal" id="problem">
+      <h3>2. The problem</h3>
+      <p>
+        Agents on a new chain are scattered across repositories, social
+        posts, and group chats. There is no neutral place to see what
+        exists, what is maintained, and what is worth a closer look.
+      </p>
+    </section>
+
+    <section class="content-page litepaper-section reveal" id="what-agraris-does">
+      <h3>3. What Agraris does</h3>
+      <ul>
+          <li><strong>Open publishing:</strong> any builder can list an agent with no login and no wallet connection.</li>
+          <li><strong>Discovery:</strong> search, category pages, sorting, and a command palette.</li>
+          <li><strong>Comparison:</strong> side-by-side comparison of up to three agents with shareable links.</li>
+          <li><strong>Signals:</strong> GitHub stars and last-update time, refreshed daily from public repositories.</li>
+          <li><strong>Verified badge:</strong> set manually by the Agraris team after review. Verified is not a guarantee of quality, safety, or performance.</li>
+          <li><strong>Distribution:</strong> embeddable agent cards for builders' own sites, badge markdown for READMEs, a public read-only API, and an RSS feed.</li>
+      </ul>
+    </section>
+
+    <section class="content-page litepaper-section reveal" id="principles">
+      <h3>4. Principles</h3>
+      <ul>
+          <li><strong>Open:</strong> listing is free and permissionless.</li>
+          <li><strong>Neutral:</strong> Agraris does not endorse or audit listed agents.</li>
+          <li><strong>Transparent:</strong> data comes from public sources, and changes are recorded in the public changelog.</li>
+          <li><strong>Minimal:</strong> no accounts, no tracking of individual users.</li>
+      </ul>
+    </section>
+
+    <section class="content-page litepaper-section reveal" id="token">
+      <h3>5. The $AGRARIS token</h3>
+      <ul>
+          <li><strong>Network:</strong> Robinhood Chain (chain ID 4663)</li>
+          <li><strong>Contract:</strong> <code>0x467b7a85f55bd716cb16d59f63b8ccac08852a6c</code></li>
+          <li>Launched on Pons Family and graduated to Uniswap V4.</li>
+          <li><strong>Current utility (stage one):</strong> holders of at least 5,000,000 $AGRARIS (0.5% of supply) can request priority review of an agent listing. Priority review speeds up the review of a submission. It does not guarantee approval or a Verified badge.</li>
+          <li>Any further utility will be announced publicly before it is added. No future features are promised.</li>
+          <li>Always verify the contract address on the <a href="token.html">Token page</a> before interacting with any token.</li>
+      </ul>
+    </section>
+
+    <section class="content-page litepaper-section reveal" id="limitations">
+      <h3>6. Limitations</h3>
+      <p>
+        Agraris is a directory, not a source of on-chain performance data.
+        Listings do not imply traction, volume, or safety. Information may
+        be incomplete or out of date.
+      </p>
+    </section>
+
+    <section class="content-page litepaper-section reveal" id="disclaimer">
+      <h3>7. Disclaimer</h3>
+      <p>
+        Agraris is not affiliated with, endorsed by, or sponsored by
+        Robinhood Markets, Inc. Nothing on this page is financial,
+        investment, or legal advice. $AGRARIS is not an investment product
+        and carries no promise of return. Do your own research.
+      </p>
+    </section>
+
+    <nav class="litepaper-links reveal" aria-label="Related pages">
+      <a class="btn btn-sm" href="token.html">Token</a>
+      <a class="btn btn-sm" href="docs.html">Docs</a>
+      <a class="btn btn-sm" href="changelog.html">Changelog</a>
+    </nav>
 
     <footer class="site-footer">
       <div class="footer-top">
@@ -175,6 +229,5 @@
   <script src="app.js"></script>
   <script src="command-palette.js"></script>
   <script src="scroll-reveal.js"></script>
-  <script src="watchlist.js"></script>
 </body>
 </html>
