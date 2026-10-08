@@ -80,6 +80,66 @@ function buildEmbedSnippet(agentId, theme) {
 
 // Light/Dark toggle rewrites the snippet; Copy uses the same pattern as
 // the badge's "Copy markdown" button.
+// ---------- On-chain address (optional, builder-provided) ----------
+//
+// Only the address and an explorer link are shown — no on-chain data is
+// fetched. agents.contract_address may not exist yet (rows come from
+// select("*"), so the field is simply undefined) or may hold anything an
+// admin typed in the Dashboard, so the block renders only for a
+// well-formed 0x address and is omitted entirely otherwise.
+
+const ADDRESS_PATTERN = /^0x[a-fA-F0-9]{40}$/;
+const EXPLORER_ADDRESS_URL = "https://robinhoodchain.blockscout.com/address/";
+
+function renderOnchainBlock(agent) {
+  const address =
+    typeof agent.contract_address === "string" ? agent.contract_address.trim() : "";
+  if (!ADDRESS_PATTERN.test(address)) return "";
+
+  const safe = escapeHtml(address);
+  const short = escapeHtml(`${address.slice(0, 6)}…${address.slice(-4)}`);
+
+  return `
+    <div class="detail-row onchain-block reveal">
+      <div class="detail-row-label">On-chain</div>
+      <div class="onchain-row">
+        <code class="onchain-address" title="${safe}">
+          <span class="onchain-address-full">${safe}</span>
+          <span class="onchain-address-short" aria-hidden="true">${short}</span>
+        </code>
+        <button type="button" class="btn btn-sm" id="copy-address-btn" data-address="${safe}">Copy</button>
+        <a class="btn btn-sm" href="${EXPLORER_ADDRESS_URL}${safe}" target="_blank" rel="noopener">View on explorer</a>
+      </div>
+      <p class="onchain-note">Address provided by the builder. Agraris does not verify ownership, and a listing does not imply volume, traction, or safety.</p>
+    </div>
+  `;
+}
+
+// Same copy-to-clipboard pattern as the badge / embed buttons.
+function initCopyAddressButton(root) {
+  const btn = root.querySelector("#copy-address-btn");
+  if (!btn) return;
+
+  const defaultLabel = btn.textContent;
+
+  btn.addEventListener("click", () => {
+    if (!navigator.clipboard?.writeText) return;
+
+    navigator.clipboard
+      .writeText(btn.dataset.address)
+      .then(() => {
+        btn.textContent = "Copied!";
+        setTimeout(() => {
+          btn.textContent = defaultLabel;
+        }, 2000);
+      })
+      .catch(() => {
+        // clipboard write failed (permissions, insecure context, etc.) —
+        // fail silently, no error shown to the user
+      });
+  });
+}
+
 function initEmbedSnippet(root, agentId) {
   const codeEl = root.querySelector("#embed-snippet");
   const copyBtn = root.querySelector("#copy-embed-btn");
@@ -220,6 +280,8 @@ function initReportAgent(root, agentId) {
         <div>${escapeHtml(formatDate(agent.created_at))}</div>
       </div>
 
+      ${renderOnchainBlock(agent)}
+
       <div class="badge-section reveal">
         <div class="detail-row-label">Add this badge to your README</div>
         <div class="badge-block">
@@ -283,6 +345,7 @@ function initReportAgent(root, agentId) {
     `;
     observeReveal(container);
     initCopyLinkButton(container);
+    initCopyAddressButton(container);
     initCopyBadgeButton(container);
     initEmbedSnippet(container, agent.id);
     initReportAgent(container, agent.id);
