@@ -14,15 +14,15 @@
       document.documentElement.setAttribute("data-theme", theme);
     })();
   </script>
-  <title>Publish an agent — Agraris</title>
-  <meta name="description" content="Publish your AI agent to the Agraris registry." />
+  <title>Agraris Registry Stats</title>
+  <meta name="description" content="A live look at AI agents listed on Agraris for Robinhood Chain: totals, categories, weekly additions, newest and most-starred agents." />
 
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Agraris" />
-  <meta property="og:title" content="Publish an agent — Agraris" />
-  <meta property="og:description" content="No login required. Publish your AI agent to the Agraris registry in seconds." />
+  <meta property="og:title" content="Agraris Registry Stats" />
+  <meta property="og:description" content="A live look at AI agents listed on Agraris for Robinhood Chain: totals, categories, weekly additions, newest and most-starred agents." />
   <meta property="og:image" content="https://agraris.xyz/og-image.png" />
-  <meta property="og:url" content="https://agraris.xyz/publish.html" />
+  <meta property="og:url" content="https://agraris.xyz/stats.html" />
   <meta property="twitter:card" content="summary_large_image" />
   <meta property="twitter:image" content="https://agraris.xyz/og-image.png" />
 
@@ -51,7 +51,7 @@
       <nav class="nav">
         <a href="index.html">Home</a>
         <a href="search.html">Search</a>
-        <a href="publish.html" class="active">Publish</a>
+        <a href="publish.html">Publish</a>
       </nav>
       <div class="header-actions" id="header-actions">
         <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Switch to dark mode" aria-pressed="false" title="Switch to dark mode">
@@ -73,13 +73,13 @@
       <span class="menu-group-label">Product</span>
       <a href="index.html">Home</a>
       <a href="search.html">Search</a>
-      <a href="publish.html" class="active">Publish</a>
+      <a href="publish.html">Publish</a>
       <a href="watchlist.html">Watchlist</a>
       <a href="search.html">Compare</a>
       <a href="token.html">Token</a>
       <a href="docs.html">Docs</a>
       <a href="changelog.html">Changelog</a>
-      <a href="stats.html">Stats</a>
+      <a href="stats.html" class="active">Stats</a>
       <hr class="menu-sep" />
       <span class="menu-group-label">Company</span>
       <a href="index.html#how-it-works">How It Works</a>
@@ -100,65 +100,16 @@
     </nav>
 
     <div class="section-head section-head--first">
-      <h2>Publish an agent</h2>
+      <h2>Registry Stats</h2>
     </div>
 
-    <p class="page-lead">
-      No login or wallet connect needed. Your agent appears in the
-      registry as soon as you submit.
-    </p>
+    <p class="page-lead">A live look at AI agents listed on Agraris for Robinhood Chain</p>
 
-    <form id="publish-form" class="reveal" novalidate>
-      <div class="field">
-        <label for="name">Agent name <span class="required-mark">*</span></label>
-        <input type="text" id="name" name="name" required maxlength="120" />
-      </div>
-
-      <div class="field">
-        <label for="description">Description <span class="required-mark">*</span></label>
-        <textarea id="description" name="description" required maxlength="600"></textarea>
-        <span class="hint">A short summary of what the agent does.</span>
-      </div>
-
-      <div class="field">
-        <label for="version">Version <span class="required-mark">*</span></label>
-        <input type="text" id="version" name="version" required placeholder="e.g. 1.0.0" maxlength="40" />
-      </div>
-
-      <div class="field">
-        <label for="repo_url">Repo / GitHub link <span class="required-mark">*</span></label>
-        <input type="url" id="repo_url" name="repo_url" required placeholder="https://github.com/…" />
-      </div>
-
-      <div class="field">
-        <label for="category">Category / tools <span class="required-mark">*</span></label>
-        <input type="text" id="category" name="category" required placeholder="e.g. trading, browsing, data-analysis" />
-        <span class="hint">Separate multiple tags with commas.</span>
-      </div>
-
-      <div class="field">
-        <label for="demo_url">Demo link (optional)</label>
-        <input type="url" id="demo_url" name="demo_url" placeholder="https://…" />
-      </div>
-
-      <div class="field">
-        <label for="contract_address">Contract or wallet address (optional)</label>
-        <input type="text" id="contract_address" name="contract_address" placeholder="0x…" autocomplete="off" autocapitalize="off" spellcheck="false" aria-describedby="contract_address-hint" />
-        <span class="hint" id="contract_address-hint">Used to link to the Robinhood Chain explorer. Provided by the builder and not verified by Agraris.</span>
-      </div>
-
-      <div class="form-actions">
-        <button type="submit" class="btn btn-solid" id="submit-btn">Publish agent</button>
-        <span class="form-msg" id="form-msg"></span>
-      </div>
-    </form>
-
-    <div id="publish-success" class="publish-success reveal" hidden>
-      <h2>Your agent is live!</h2>
-      <p>Your agent has been added to the Agraris registry.</p>
-      <div class="publish-success-actions">
-        <a class="btn btn-solid" id="view-listing-btn" href="#">View your listing</a>
-        <button type="button" class="btn" id="share-x-btn">Share on X</button>
+    <div id="stats-root" aria-live="polite">
+      <div class="stats-loading" aria-busy="true">
+        <div class="skeleton-block skeleton-line"></div>
+        <div class="skeleton-block skeleton-line skeleton-line--short"></div>
+        <span class="stats-loading-text">Loading stats…</span>
       </div>
     </div>
 
@@ -211,6 +162,6 @@
   <script src="app.js"></script>
   <script src="command-palette.js"></script>
   <script src="scroll-reveal.js"></script>
-  <script src="publish.js"></script>
+  <script src="stats.js"></script>
 </body>
 </html>

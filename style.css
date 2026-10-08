@@ -2349,6 +2349,341 @@ body.cmdk-open {
   overflow-wrap: anywhere;
 }
 
+/* ---------- registry stats page (stats.html) ----------
+   Chart marks: bars/columns are --green in both themes. Thin lines
+   (cumulative line, bar end caps) use --text-green, which is the same
+   #2f6b3f in light mode and #8cc29a in dark mode, so marks keep
+   contrast against the dark surface. Text never wears the data color. */
+
+.stats-loading {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 8px 0 40px;
+}
+
+.stats-loading-text {
+  font-size: 12px;
+  opacity: 0.65;
+}
+
+.stats-error {
+  margin: 8px 0 40px;
+  padding: 16px;
+  border: 1px dashed var(--line);
+  border-left: 3px solid var(--danger);
+  border-radius: 6px;
+  font-size: 13px;
+}
+
+.stats-section {
+  margin-bottom: 18px;
+}
+
+.stats-card {
+  padding: 16px 16px 14px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--green);
+  border-radius: 6px;
+}
+
+.stats-card h3 {
+  margin: 0 0 12px;
+  font-family: var(--font-display);
+  font-size: 17px;
+  font-weight: 600;
+}
+
+/* --- headline numbers --- */
+
+.stats-tiles {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+/* Odd count on phones (3 tiles when no agent has an address): the
+   last tile spans the row instead of leaving a hole. */
+.stats-tile:last-child:nth-child(odd) {
+  grid-column: 1 / -1;
+}
+
+@media (min-width: 720px) {
+  .stats-tile:last-child:nth-child(odd) {
+    grid-column: auto;
+  }
+
+  .stats-tiles {
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  }
+}
+
+.stats-tile {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 12px 14px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--green);
+  border-radius: 6px;
+}
+
+.stats-tile-value {
+  font-family: var(--font-display);
+  font-size: 26px;
+  font-weight: 600;
+  line-height: 1.1;
+}
+
+.stats-tile-label {
+  font-size: 11px;
+  line-height: 1.4;
+  opacity: 0.7;
+}
+
+/* --- category bars --- */
+
+.cat-chart {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.cat-row {
+  display: grid;
+  grid-template-columns: minmax(0, 34%) minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  padding: 5px 4px;
+  border-radius: 3px;
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.cat-row:hover {
+  background: rgba(var(--green-rgb), 0.08);
+}
+
+.cat-row:hover .bar-fill {
+  opacity: 0.85;
+}
+
+/* Long category names are cut with an ellipsis instead of widening
+   the row; the full name is in the title attribute and aria-label. */
+.cat-label {
+  font-size: 12.5px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cat-bar {
+  display: block;
+  width: 100%;
+  height: 14px;
+}
+
+.cat-value {
+  min-width: 2ch;
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+.bar-track {
+  fill: var(--line-soft);
+  opacity: 0.45;
+}
+
+.bar-fill {
+  fill: var(--green);
+}
+
+.bar-cap {
+  fill: var(--text-green);
+}
+
+.stats-more {
+  margin-top: 10px;
+}
+
+/* --- weekly charts --- */
+
+.stats-chart {
+  position: relative;
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+.stats-chart svg {
+  display: block;
+  overflow: visible;
+}
+
+.stats-chart-caption {
+  margin: 4px 0 6px;
+  font-size: 11px;
+  opacity: 0.7;
+}
+
+.chart-grid {
+  stroke: var(--line-soft);
+  stroke-width: 1;
+}
+
+.chart-tick {
+  fill: var(--ink);
+  opacity: 0.6;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  font-variant-numeric: tabular-nums;
+}
+
+.chart-value {
+  fill: var(--ink);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.chart-line {
+  fill: none;
+  stroke: var(--text-green);
+  stroke-width: 2;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+
+.chart-area {
+  fill: var(--green);
+  opacity: 0.1;
+}
+
+.chart-dot {
+  fill: var(--text-green);
+  stroke: var(--panel);
+  stroke-width: 2;
+}
+
+.chart-hit {
+  fill: transparent;
+  cursor: default;
+  outline: none;
+}
+
+.chart-hit.is-active {
+  fill: rgba(var(--green-rgb), 0.08);
+}
+
+.chart-hit:focus-visible {
+  stroke: var(--text-green);
+  stroke-width: 1.5;
+}
+
+.stats-tooltip {
+  position: absolute;
+  z-index: 3;
+  max-width: 240px;
+  padding: 6px 9px;
+  background: var(--cream);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  box-shadow: 0 4px 10px rgba(var(--shadow-rgb), 0.15);
+  color: var(--ink);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  line-height: 1.4;
+  pointer-events: none;
+}
+
+.stats-tooltip[hidden] {
+  display: none;
+}
+
+.stats-table-toggle {
+  margin: 4px 0 6px;
+  font-size: 12px;
+}
+
+.stats-table-toggle summary {
+  cursor: pointer;
+  color: var(--text-green-dark);
+}
+
+.stats-table-toggle .docs-table-wrap {
+  margin-top: 8px;
+}
+
+.stats-table td:not(:first-child),
+.stats-table th:not(:first-child) {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+/* --- lists --- */
+
+.stats-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.stats-list li {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--line-soft);
+  font-size: 13px;
+}
+
+.stats-list li:last-child {
+  border-bottom: none;
+}
+
+.stats-list a {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.stats-list-value {
+  flex-shrink: 0;
+  font-size: 12px;
+  opacity: 0.75;
+  font-variant-numeric: tabular-nums;
+}
+
+.stats-note,
+.stats-empty {
+  margin: 10px 0 0;
+  font-size: 11px;
+  line-height: 1.5;
+  opacity: 0.65;
+}
+
+.stats-footnote {
+  padding: 16px 0 40px;
+  border-top: 1px solid var(--line);
+  font-size: 13px;
+}
+
+.stats-footnote p {
+  margin: 0 0 8px;
+  max-width: 60ch;
+}
+
+.stats-asof {
+  font-size: 11px;
+  opacity: 0.65;
+}
+
+.stats-footnote .btn {
+  margin-top: 6px;
+}
+
 /* ---------- changelog page ---------- */
 
 .changelog {
