@@ -118,6 +118,7 @@
         <li><a href="#single-agent">Get a single agent</a></li>
         <li><a href="#filter-category">Filter by category</a></li>
         <li><a href="#verified-only">Verified agents only</a></li>
+        <li><a href="#filter-address">Filter by contract address</a></li>
         <li><a href="#select-columns">Select columns</a></li>
         <li><a href="#sort">Sort</a></li>
         <li><a href="#pagination">Limit &amp; pagination</a></li>
@@ -228,6 +229,25 @@ curl "https://gnydurjxrynqcbpkxopd.supabase.co/rest/v1/agents?verified=eq.true&a
         name search.
       </p>
 
+      <h3 id="filter-address">Filter by contract address</h3>
+      <p>
+        <code>contract_address</code> is optional and empty for most agents.
+        Use <code>is</code> to list only agents that have one:
+      </p>
+      <pre class="code-block"><code>curl "https://gnydurjxrynqcbpkxopd.supabase.co/rest/v1/agents?contract_address=not.is.null&amp;select=id,name,contract_address" \
+  -H "apikey: sb_publishable_4roHAzTOTw9P0_8NXKt2IA_kXniR9pm"</code></pre>
+      <p>
+        To look up a specific address, use <code>ilike</code> so the match
+        ignores upper/lower case (builders may enter checksummed or
+        lowercase addresses):
+      </p>
+      <pre class="code-block"><code>curl "https://gnydurjxrynqcbpkxopd.supabase.co/rest/v1/agents?contract_address=ilike.0x467b7a85f55bd716cb16d59f63b8ccac08852a6c" \
+  -H "apikey: sb_publishable_4roHAzTOTw9P0_8NXKt2IA_kXniR9pm"</code></pre>
+      <p>
+        The address is provided by the builder. Agraris does not verify
+        ownership and does not fetch any on-chain data for it.
+      </p>
+
       <h3 id="select-columns">Select columns</h3>
       <p>
         Use <code>select</code> to fetch only specific columns,
@@ -315,6 +335,7 @@ const topTradingAgents = await res.json();</code></pre>
             <tr><td><code>verified</code></td><td>boolean</td><td>Marked "Verified" by Agraris</td></tr>
             <tr><td><code>github_stars</code></td><td>integer</td><td>Nullable; refreshed daily from GitHub</td></tr>
             <tr><td><code>github_updated_at</code></td><td>timestamptz</td><td>Nullable; last push to the repo</td></tr>
+            <tr><td><code>contract_address</code></td><td>text</td><td>Optional; contract or wallet address (<code>0x</code> + 40 hex) provided by the builder, not verified by Agraris</td></tr>
           </tbody>
         </table>
       </div>

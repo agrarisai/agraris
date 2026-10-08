@@ -1913,6 +1913,59 @@ body.cmdk-open {
   margin-bottom: 6px;
 }
 
+/* ---------- on-chain address (agent detail) ---------- */
+
+.onchain-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px 10px;
+}
+
+.onchain-address {
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  padding: 6px 10px;
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  background: var(--panel);
+  color: var(--ink);
+  overflow-wrap: anywhere;
+}
+
+.onchain-address-short {
+  display: none;
+}
+
+.onchain-note {
+  margin: 10px 0 0;
+  font-size: 11px;
+  line-height: 1.5;
+  opacity: 0.65;
+  max-width: 60ch;
+}
+
+/* Phones: show 0x1234…abcd. The full address stays in the DOM, visually
+   hidden (not display:none) so screen readers still read all of it;
+   Copy and the explorer link always use the full value. */
+@media (max-width: 560px) {
+  .onchain-address-short {
+    display: inline;
+  }
+
+  .onchain-address-full {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+}
+
 /* ---------- badge share ---------- */
 
 .badge-section {

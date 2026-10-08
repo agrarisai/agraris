@@ -140,6 +140,12 @@
         <input type="url" id="demo_url" name="demo_url" placeholder="https://…" />
       </div>
 
+      <div class="field">
+        <label for="contract_address">Contract or wallet address (optional)</label>
+        <input type="text" id="contract_address" name="contract_address" placeholder="0x…" autocomplete="off" autocapitalize="off" spellcheck="false" aria-describedby="contract_address-hint" />
+        <span class="hint" id="contract_address-hint">Used to link to the Robinhood Chain explorer. Provided by the builder and not verified by Agraris.</span>
+      </div>
+
       <div class="form-actions">
         <button type="submit" class="btn btn-solid" id="submit-btn">Publish agent</button>
         <span class="form-msg" id="form-msg"></span>
