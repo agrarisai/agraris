@@ -12,6 +12,13 @@
       <guid isPermaLink="true">https://agrarisai.github.io/agraris/agent.html?id=8fadcba7-df47-469d-b0b5-ab2a854a8211</guid>
     </item>
     <item>
+      <title>After-Hours Dip Agent</title>
+      <link>https://agrarisai.github.io/agraris/agent.html?id=b8bbdfa3-68c4-4876-940d-27163cff2bf7</link>
+      <description>An AI agent that pays for its own market data over x402 and buys after-hours dips in tokenized stocks on Robinhood Chain, where those stocks keep trading around the clock. Includes CLI, MCP tools, and a dashboard.</description>
+      <pubDate>Mon, 05 Oct 2026 13:39:11 GMT</pubDate>
+      <guid isPermaLink="true">https://agrarisai.github.io/agraris/agent.html?id=b8bbdfa3-68c4-4876-940d-27163cff2bf7</guid>
+    </item>
+    <item>
       <title>brier</title>
       <link>https://agrarisai.github.io/agraris/agent.html?id=c4b192c6-4cd9-40c4-9323-fb5d40e2b37d</link>
       <description>A hash-chained prediction ledger for LLMs and AI agents on Robinhood Chain. Forecasts are sealed before the answer exists and graded afterward with proper scoring rules, so a claim of foresight can actually be checked.</description>
@@ -24,13 +31,6 @@
       <description>Autonomous trading agents for Robinhood Chain, operating inside hard on-chain limits rather than relying on a promise. Available as an MCP server, usable directly from Claude.</description>
       <pubDate>Mon, 05 Oct 2026 13:39:11 GMT</pubDate>
       <guid isPermaLink="true">https://agrarisai.github.io/agraris/agent.html?id=cc012e05-7ef9-4e5f-9621-f541f622b1ed</guid>
-    </item>
-    <item>
-      <title>After-Hours Dip Agent</title>
-      <link>https://agrarisai.github.io/agraris/agent.html?id=b8bbdfa3-68c4-4876-940d-27163cff2bf7</link>
-      <description>An AI agent that pays for its own market data over x402 and buys after-hours dips in tokenized stocks on Robinhood Chain, where those stocks keep trading around the clock. Includes CLI, MCP tools, and a dashboard.</description>
-      <pubDate>Mon, 05 Oct 2026 13:39:11 GMT</pubDate>
-      <guid isPermaLink="true">https://agrarisai.github.io/agraris/agent.html?id=b8bbdfa3-68c4-4876-940d-27163cff2bf7</guid>
     </item>
     <item>
       <title>Aleph</title>
@@ -47,18 +47,18 @@
       <guid isPermaLink="true">https://agrarisai.github.io/agraris/agent.html?id=d94dcf99-78ec-4335-8eb8-f1889f7f966a</guid>
     </item>
     <item>
-      <title>Robinhood Trading Terminal</title>
-      <link>https://agrarisai.github.io/agraris/agent.html?id=5924e53e-3b3f-4608-99eb-9cd2a29f0b20</link>
-      <description>AI-powered game-based trading terminal for Robinhood Chain. Play a village simulation where upgrading stats directly reconfigures a real trading agent — thinking depth, poll speed, and more — with live backtesting and a public leaderboard before going live.</description>
-      <pubDate>Sun, 27 Sep 2026 07:53:49 GMT</pubDate>
-      <guid isPermaLink="true">https://agrarisai.github.io/agraris/agent.html?id=5924e53e-3b3f-4608-99eb-9cd2a29f0b20</guid>
-    </item>
-    <item>
       <title>robinhood-ai-agent</title>
       <link>https://agrarisai.github.io/agraris/agent.html?id=93e5cee6-df9a-4d12-8069-a59af10fb28e</link>
       <description>Four-agent autonomous crypto trading desk on Robinhood Chain — research, risk, sell, and trading agents operating behind a code-enforced order gate. Screens live movers every 15 minutes for entry setups like sharp hourly drops or volume surges.</description>
       <pubDate>Sun, 27 Sep 2026 07:53:49 GMT</pubDate>
       <guid isPermaLink="true">https://agrarisai.github.io/agraris/agent.html?id=93e5cee6-df9a-4d12-8069-a59af10fb28e</guid>
+    </item>
+    <item>
+      <title>Robinhood Trading Terminal</title>
+      <link>https://agrarisai.github.io/agraris/agent.html?id=5924e53e-3b3f-4608-99eb-9cd2a29f0b20</link>
+      <description>AI-powered game-based trading terminal for Robinhood Chain. Play a village simulation where upgrading stats directly reconfigures a real trading agent — thinking depth, poll speed, and more — with live backtesting and a public leaderboard before going live.</description>
+      <pubDate>Sun, 27 Sep 2026 07:53:49 GMT</pubDate>
+      <guid isPermaLink="true">https://agrarisai.github.io/agraris/agent.html?id=5924e53e-3b3f-4608-99eb-9cd2a29f0b20</guid>
     </item>
     <item>
       <title>TraceHood</title>
@@ -75,20 +75,6 @@
       <guid isPermaLink="true">https://agrarisai.github.io/agraris/agent.html?id=aef7bd7e-a7d9-469d-8454-56a530970bc0</guid>
     </item>
     <item>
-      <title>Bastion</title>
-      <link>https://agrarisai.github.io/agraris/agent.html?id=8d619c71-985a-4f58-80c9-13293d0372c2</link>
-      <description>Autonomous, verifiable AI fund on Robinhood Chain. A swarm of AI agents researches, debates, sizes, and executes trades on tokenized stocks 24/7 — then proves every trade on-chain. Non-custodial, keys never leave your disk.</description>
-      <pubDate>Wed, 16 Sep 2026 10:39:37 GMT</pubDate>
-      <guid isPermaLink="true">https://agrarisai.github.io/agraris/agent.html?id=8d619c71-985a-4f58-80c9-13293d0372c2</guid>
-    </item>
-    <item>
-      <title>Agent402</title>
-      <link>https://agrarisai.github.io/agraris/agent.html?id=13436815-c01f-427a-bda5-1cbd23cd8842</link>
-      <description>500+ pay-per-call tools, metered models, and finished reports for AI agents, paid over x402 in USDC across 12 chains including USDG on Robinhood Chain. Open source, self-hostable, MCP-native.</description>
-      <pubDate>Wed, 16 Sep 2026 10:39:37 GMT</pubDate>
-      <guid isPermaLink="true">https://agrarisai.github.io/agraris/agent.html?id=13436815-c01f-427a-bda5-1cbd23cd8842</guid>
-    </item>
-    <item>
       <title>Robinhood Chain × Bankr Tools</title>
       <link>https://agrarisai.github.io/agraris/agent.html?id=01a6f7ec-c3e7-4a6f-9faf-b410a9fb473a</link>
       <description>Five production-ready Bankr skills for tokenized stocks on Robinhood Chain: portfolio manager, cross-chain bridge, stock scanner, yield optimizer, and earnings agent. Ready to use in any Bankr agent.</description>
@@ -101,6 +87,20 @@
       <description>Stock-pair pricing oracle for Robinhood Chain (4663). Indexes every Uniswap v4 and v3 pool where one side is a tokenized stock or ETF: implied USD price, Chainlink deviation, market hours, and corporate actions, via a deterministic data path.</description>
       <pubDate>Wed, 16 Sep 2026 10:39:37 GMT</pubDate>
       <guid isPermaLink="true">https://agrarisai.github.io/agraris/agent.html?id=03127e34-7d83-4790-9350-f5071a1d37e0</guid>
+    </item>
+    <item>
+      <title>Agent402</title>
+      <link>https://agrarisai.github.io/agraris/agent.html?id=13436815-c01f-427a-bda5-1cbd23cd8842</link>
+      <description>500+ pay-per-call tools, metered models, and finished reports for AI agents, paid over x402 in USDC across 12 chains including USDG on Robinhood Chain. Open source, self-hostable, MCP-native.</description>
+      <pubDate>Wed, 16 Sep 2026 10:39:37 GMT</pubDate>
+      <guid isPermaLink="true">https://agrarisai.github.io/agraris/agent.html?id=13436815-c01f-427a-bda5-1cbd23cd8842</guid>
+    </item>
+    <item>
+      <title>Bastion</title>
+      <link>https://agrarisai.github.io/agraris/agent.html?id=8d619c71-985a-4f58-80c9-13293d0372c2</link>
+      <description>Autonomous, verifiable AI fund on Robinhood Chain. A swarm of AI agents researches, debates, sizes, and executes trades on tokenized stocks 24/7 — then proves every trade on-chain. Non-custodial, keys never leave your disk.</description>
+      <pubDate>Wed, 16 Sep 2026 10:39:37 GMT</pubDate>
+      <guid isPermaLink="true">https://agrarisai.github.io/agraris/agent.html?id=8d619c71-985a-4f58-80c9-13293d0372c2</guid>
     </item>
     <item>
       <title>robinhood-chain-mcp</title>
