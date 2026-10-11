@@ -143,18 +143,26 @@ function initCopyAddressButton(root) {
 // ---------- On-chain activity (Blockscout, fetched in the browser) ----------
 //
 // Two public Blockscout API calls for the agent's address:
-//   /api/v2/addresses/{address}           -> uses `hash`, `is_contract`
+//   /api/v2/addresses/{address}           -> uses `hash`, `is_contract`,
+//                                            `name`, `is_verified`
 //   /api/v2/addresses/{address}/counters  -> uses `transactions_count`,
 //                                            `token_transfers_count`
 // Field names are exactly as Blockscout returns them; the counts arrive
 // as strings (e.g. "1164"). Neither response carries a last-activity
 // date, so none is shown.
 //
+// Rendered as a ledger "receipt": a status line, label …… value rows,
+// the shortened address with a copy button, and "View on explorer" as
+// the closing line. When it renders, it takes the place of the plain
+// address row above it (hidden, not removed); when it doesn't, that row
+// stays as it was, so the address and explorer link are always there.
+//
 // Everything here is best-effort: on a CORS block, timeout, HTTP error,
 // bad JSON, an address mismatch or no usable count, the section simply
 // stays hidden — no empty numbers, no "undefined", no error text, and
-// the rest of the page is unaffected. Values are written with
-// textContent, never innerHTML.
+// the rest of the page is unaffected. A single missing or wrongly typed
+// field (name, is_verified, is_contract, one count) only drops its own
+// row. Values are written with textContent, never innerHTML.
 
 const BLOCKSCOUT_API_ADDRESS_URL = "https://robinhoodchain.blockscout.com/api/v2/addresses/";
 const BLOCKSCOUT_TIMEOUT_MS = 6000;
@@ -183,6 +191,90 @@ async function fetchBlockscoutJson(url, signal) {
   return res.json();
 }
 
+function el(tag, className, text) {
+  const node = document.createElement(tag);
+  if (className) node.className = className;
+  if (text !== undefined) node.textContent = text;
+  return node;
+}
+
+// One "Label ........ value" line. `valueNode` lets the address row put
+// a code element and a button on the right-hand side.
+function receiptRow(label, value, { mono = false, valueNode = null } = {}) {
+  const row = el("div", "receipt-row");
+  const dt = el("dt", "receipt-label", label);
+  const leader = el("span", "receipt-leader");
+  leader.setAttribute("aria-hidden", "true");
+  const dd = el("dd", `receipt-value${mono ? " is-mono" : ""}`);
+  if (valueNode) dd.appendChild(valueNode);
+  else dd.textContent = value;
+  row.append(dt, leader, dd);
+  return row;
+}
+
+function buildReceipt(address, info, counters) {
+  const rows = [];
+
+  if (typeof info.is_contract === "boolean") {
+    rows.push(receiptRow("Address type", info.is_contract ? "Contract" : "Not a contract"));
+  }
+  if (typeof info.name === "string" && info.name.trim() !== "") {
+    rows.push(receiptRow("Contract name", info.name.trim(), { mono: true }));
+  }
+  if (typeof info.is_verified === "boolean") {
+    rows.push(receiptRow("Source verified", info.is_verified ? "Yes" : "No"));
+  }
+
+  const txCount = formatBlockscoutCount(counters?.transactions_count);
+  const transferCount = formatBlockscoutCount(counters?.token_transfers_count);
+  if (!txCount && !transferCount) return null; // no usable count -> hide all
+  if (txCount) rows.push(receiptRow("Transactions", txCount, { mono: true }));
+  if (transferCount) rows.push(receiptRow("Token transfers", transferCount, { mono: true }));
+
+  // Address: shortened, monospace, with a small copy button (full value).
+  const addrWrap = el("span", "receipt-address");
+  const code = el("code", "", `${address.slice(0, 6)}…${address.slice(-4)}`);
+  code.title = address;
+  const copyBtn = el("button", "receipt-copy", "Copy");
+  copyBtn.type = "button";
+  copyBtn.setAttribute("aria-label", "Copy full address");
+  copyBtn.addEventListener("click", () => {
+    if (!navigator.clipboard?.writeText) return;
+    navigator.clipboard
+      .writeText(address)
+      .then(() => {
+        copyBtn.textContent = "Copied";
+        setTimeout(() => {
+          copyBtn.textContent = "Copy";
+        }, 2000);
+      })
+      .catch(() => {
+        // clipboard write failed — fail silently, like the other copy buttons
+      });
+  });
+  addrWrap.append(code, copyBtn);
+  rows.push(receiptRow("Address", "", { valueNode: addrWrap }));
+
+  const status = el("p", "receipt-status");
+  status.append(el("span", "receipt-dot"), document.createTextNode("Read live from Blockscout"));
+  status.firstChild.setAttribute("aria-hidden", "true");
+
+  const list = el("dl", "receipt-rows");
+  list.append(...rows);
+
+  const footer = el("p", "receipt-footer");
+  const link = el("a", "", "View on explorer →");
+  link.href = EXPLORER_ADDRESS_URL + encodeURIComponent(address);
+  link.target = "_blank";
+  link.rel = "noopener";
+  footer.appendChild(link);
+
+  const receipt = el("section", "onchain-receipt");
+  receipt.setAttribute("aria-label", "On-chain activity, read live from Blockscout");
+  receipt.append(status, list, footer);
+  return receipt;
+}
+
 async function loadOnchainActivity(root) {
   const box = root.querySelector(".onchain-activity");
   if (!box) return; // no valid address -> no block, no request
@@ -208,41 +300,14 @@ async function loadOnchainActivity(root) {
       return;
     }
 
-    const rows = [];
-    const txCount = formatBlockscoutCount(counters?.transactions_count);
-    const transferCount = formatBlockscoutCount(counters?.token_transfers_count);
-    if (txCount) rows.push(["Transactions", txCount]);
-    if (transferCount) rows.push(["Token transfers", transferCount]);
-    if (rows.length === 0) return;
+    const receipt = buildReceipt(address, info, counters);
+    if (!receipt) return;
 
-    if (typeof info.is_contract === "boolean") {
-      rows.unshift(["Address type", info.is_contract ? "Contract" : "Not a contract"]);
-    }
-
-    const heading = document.createElement("div");
-    heading.className = "detail-row-label";
-    heading.textContent = "On-chain activity";
-
-    const list = document.createElement("dl");
-    list.className = "onchain-stats";
-    rows.forEach(([label, value]) => {
-      const item = document.createElement("div");
-      item.className = "onchain-stat";
-      const dt = document.createElement("dt");
-      dt.textContent = label;
-      const dd = document.createElement("dd");
-      dd.textContent = value;
-      item.append(dt, dd);
-      list.appendChild(item);
-    });
-
-    const source = document.createElement("p");
-    source.className = "onchain-source";
-    source.textContent =
-      "Data from Blockscout (robinhoodchain.blockscout.com), loaded with this page. Shown as reported, without interpretation.";
-
-    box.replaceChildren(heading, list, source);
+    box.replaceChildren(receipt);
     box.hidden = false;
+    // The receipt carries the address, copy and explorer link itself.
+    const plainRow = box.closest(".onchain-block")?.querySelector(".onchain-row");
+    if (plainRow) plainRow.hidden = true;
   } catch {
     // CORS block, timeout (abort), network or JSON error — keep hidden.
   } finally {

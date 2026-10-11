@@ -271,6 +271,8 @@ https://robinhoodchain.blockscout.com/api/v2/addresses/{address}/counters</code>
           </thead>
           <tbody>
             <tr><td>Address type</td><td><code>is_contract</code></td><td>"Contract" or "Not a contract"</td></tr>
+            <tr><td>Contract name</td><td><code>name</code></td><td>Shown only when it is a non-empty string</td></tr>
+            <tr><td>Source verified</td><td><code>is_verified</code></td><td>"Yes" or "No"; shown only when it is a boolean</td></tr>
             <tr><td>Transactions</td><td><code>transactions_count</code></td><td>From <code>/counters</code>; a string such as <code>"1164"</code></td></tr>
             <tr><td>Token transfers</td><td><code>token_transfers_count</code></td><td>From <code>/counters</code>; a string</td></tr>
           </tbody>
@@ -280,7 +282,8 @@ https://robinhoodchain.blockscout.com/api/v2/addresses/{address}/counters</code>
         The response's <code>hash</code> is compared with the stored address
         without regard to upper/lower case (Blockscout returns the
         checksummed form). The numbers are shown as Blockscout reports them,
-        without interpretation. Neither endpoint returns a last-activity
+        without interpretation. A missing or unexpected field hides only its
+        own row. Neither endpoint returns a last-activity
         date, so none is shown. If the request fails, is blocked, or takes
         longer than 6 seconds, the section is hidden and the rest of the page
         is unaffected.
