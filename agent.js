@@ -78,15 +78,14 @@ function buildEmbedSnippet(agentId, theme) {
   return `<iframe src="https://agraris.xyz/embed.html?id=${encodeURIComponent(agentId)}${themeParam}" width="420" height="180" style="border:0" loading="lazy"></iframe>`;
 }
 
-// Light/Dark toggle rewrites the snippet; Copy uses the same pattern as
-// the badge's "Copy markdown" button.
 // ---------- On-chain address (optional, builder-provided) ----------
 //
-// Only the address and an explorer link are shown — no on-chain data is
-// fetched. agents.contract_address may not exist yet (rows come from
-// select("*"), so the field is simply undefined) or may hold anything an
-// admin typed in the Dashboard, so the block renders only for a
-// well-formed 0x address and is omitted entirely otherwise.
+// agents.contract_address may not exist yet (rows come from select("*"),
+// so the field is simply undefined) or may hold anything an admin typed
+// in the Dashboard, so the block renders only for a well-formed 0x
+// address and is omitted entirely otherwise. Inside it, the "On-chain
+// activity" counts are fetched from Blockscout after the page renders
+// (see loadOnchainActivity below).
 
 const ADDRESS_PATTERN = /^0x[a-fA-F0-9]{40}$/;
 const EXPLORER_ADDRESS_URL = "https://robinhoodchain.blockscout.com/address/";
@@ -110,6 +109,7 @@ function renderOnchainBlock(agent) {
         <button type="button" class="btn btn-sm" id="copy-address-btn" data-address="${safe}">Copy</button>
         <a class="btn btn-sm" href="${EXPLORER_ADDRESS_URL}${safe}" target="_blank" rel="noopener">View on explorer</a>
       </div>
+      <div class="onchain-activity" data-address="${safe}" hidden></div>
       <p class="onchain-note">Address provided by the builder. Agraris does not verify ownership, and a listing does not imply volume, traction, or safety.</p>
     </div>
   `;
@@ -140,6 +140,118 @@ function initCopyAddressButton(root) {
   });
 }
 
+// ---------- On-chain activity (Blockscout, fetched in the browser) ----------
+//
+// Two public Blockscout API calls for the agent's address:
+//   /api/v2/addresses/{address}           -> uses `hash`, `is_contract`
+//   /api/v2/addresses/{address}/counters  -> uses `transactions_count`,
+//                                            `token_transfers_count`
+// Field names are exactly as Blockscout returns them; the counts arrive
+// as strings (e.g. "1164"). Neither response carries a last-activity
+// date, so none is shown.
+//
+// Everything here is best-effort: on a CORS block, timeout, HTTP error,
+// bad JSON, an address mismatch or no usable count, the section simply
+// stays hidden — no empty numbers, no "undefined", no error text, and
+// the rest of the page is unaffected. Values are written with
+// textContent, never innerHTML.
+
+const BLOCKSCOUT_API_ADDRESS_URL = "https://robinhoodchain.blockscout.com/api/v2/addresses/";
+const BLOCKSCOUT_TIMEOUT_MS = 6000;
+
+// "1164" -> "1,164". Accepts a digit string (Blockscout's format) or a
+// safe non-negative integer; anything else is treated as unavailable.
+function formatBlockscoutCount(value) {
+  let digits = "";
+  if (typeof value === "string") digits = value.trim();
+  else if (Number.isSafeInteger(value) && value >= 0) digits = String(value);
+  if (!/^\d+$/.test(digits)) return null;
+  try {
+    return BigInt(digits).toLocaleString("en-US");
+  } catch {
+    return null;
+  }
+}
+
+async function fetchBlockscoutJson(url, signal) {
+  const res = await fetch(url, {
+    signal,
+    credentials: "omit",
+    headers: { Accept: "application/json" },
+  });
+  if (!res.ok) throw new Error(`Blockscout HTTP ${res.status}`);
+  return res.json();
+}
+
+async function loadOnchainActivity(root) {
+  const box = root.querySelector(".onchain-activity");
+  if (!box) return; // no valid address -> no block, no request
+
+  const address = box.dataset.address;
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), BLOCKSCOUT_TIMEOUT_MS);
+
+  try {
+    const base = BLOCKSCOUT_API_ADDRESS_URL + encodeURIComponent(address);
+    const [info, counters] = await Promise.all([
+      fetchBlockscoutJson(base, controller.signal),
+      fetchBlockscoutJson(`${base}/counters`, controller.signal),
+    ]);
+
+    // Blockscout returns the checksummed form (0x467B7a…) while the
+    // stored address may be lowercase, so compare case-insensitively.
+    if (
+      !info ||
+      typeof info.hash !== "string" ||
+      info.hash.toLowerCase() !== address.toLowerCase()
+    ) {
+      return;
+    }
+
+    const rows = [];
+    const txCount = formatBlockscoutCount(counters?.transactions_count);
+    const transferCount = formatBlockscoutCount(counters?.token_transfers_count);
+    if (txCount) rows.push(["Transactions", txCount]);
+    if (transferCount) rows.push(["Token transfers", transferCount]);
+    if (rows.length === 0) return;
+
+    if (typeof info.is_contract === "boolean") {
+      rows.unshift(["Address type", info.is_contract ? "Contract" : "Not a contract"]);
+    }
+
+    const heading = document.createElement("div");
+    heading.className = "detail-row-label";
+    heading.textContent = "On-chain activity";
+
+    const list = document.createElement("dl");
+    list.className = "onchain-stats";
+    rows.forEach(([label, value]) => {
+      const item = document.createElement("div");
+      item.className = "onchain-stat";
+      const dt = document.createElement("dt");
+      dt.textContent = label;
+      const dd = document.createElement("dd");
+      dd.textContent = value;
+      item.append(dt, dd);
+      list.appendChild(item);
+    });
+
+    const source = document.createElement("p");
+    source.className = "onchain-source";
+    source.textContent =
+      "Data from Blockscout (robinhoodchain.blockscout.com), loaded with this page. Shown as reported, without interpretation.";
+
+    box.replaceChildren(heading, list, source);
+    box.hidden = false;
+  } catch {
+    // CORS block, timeout (abort), network or JSON error — keep hidden.
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+// Light/Dark toggle rewrites the snippet; Copy uses the same pattern as
+// the badge's "Copy markdown" button.
 function initEmbedSnippet(root, agentId) {
   const codeEl = root.querySelector("#embed-snippet");
   const copyBtn = root.querySelector("#copy-embed-btn");
@@ -346,6 +458,7 @@ function initReportAgent(root, agentId) {
     observeReveal(container);
     initCopyLinkButton(container);
     initCopyAddressButton(container);
+    loadOnchainActivity(container);
     initCopyBadgeButton(container);
     initEmbedSnippet(container, agent.id);
     initReportAgent(container, agent.id);
