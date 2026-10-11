@@ -36,6 +36,12 @@
     <priority>0.6</priority>
   </url>
   <url>
+    <loc>https://agrarisai.github.io/agraris/agent.html?id=5237f248-407a-45b4-9cf1-01e18575fb6c</loc>
+    <lastmod>2026-10-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://agrarisai.github.io/agraris/agent.html?id=fd0acb0b-12ea-4941-9d4c-0e20bd117835</loc>
     <lastmod>2026-10-09</lastmod>
     <changefreq>monthly</changefreq>
@@ -44,12 +50,6 @@
   <url>
     <loc>https://agrarisai.github.io/agraris/agent.html?id=8fadcba7-df47-469d-b0b5-ab2a854a8211</loc>
     <lastmod>2026-10-06</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://agrarisai.github.io/agraris/agent.html?id=b8bbdfa3-68c4-4876-940d-27163cff2bf7</loc>
-    <lastmod>2026-10-05</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -66,13 +66,19 @@
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://agrarisai.github.io/agraris/agent.html?id=226b422a-f700-4ec4-8d1f-08231ab50cb2</loc>
-    <lastmod>2026-09-28</lastmod>
+    <loc>https://agrarisai.github.io/agraris/agent.html?id=b8bbdfa3-68c4-4876-940d-27163cff2bf7</loc>
+    <lastmod>2026-10-05</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
     <loc>https://agrarisai.github.io/agraris/agent.html?id=d94dcf99-78ec-4335-8eb8-f1889f7f966a</loc>
+    <lastmod>2026-09-28</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://agrarisai.github.io/agraris/agent.html?id=226b422a-f700-4ec4-8d1f-08231ab50cb2</loc>
     <lastmod>2026-09-28</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -102,7 +108,7 @@
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://agrarisai.github.io/agraris/agent.html?id=8d619c71-985a-4f58-80c9-13293d0372c2</loc>
+    <loc>https://agrarisai.github.io/agraris/agent.html?id=03127e34-7d83-4790-9350-f5071a1d37e0</loc>
     <lastmod>2026-09-16</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -120,19 +126,19 @@
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://agrarisai.github.io/agraris/agent.html?id=03127e34-7d83-4790-9350-f5071a1d37e0</loc>
+    <loc>https://agrarisai.github.io/agraris/agent.html?id=8d619c71-985a-4f58-80c9-13293d0372c2</loc>
     <lastmod>2026-09-16</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://agrarisai.github.io/agraris/agent.html?id=9655177f-68cf-44c4-84a2-680a49b4a349</loc>
+    <loc>https://agrarisai.github.io/agraris/agent.html?id=f628c3b6-15e8-4779-937b-739fee06a603</loc>
     <lastmod>2026-09-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://agrarisai.github.io/agraris/agent.html?id=f628c3b6-15e8-4779-937b-739fee06a603</loc>
+    <loc>https://agrarisai.github.io/agraris/agent.html?id=9655177f-68cf-44c4-84a2-680a49b4a349</loc>
     <lastmod>2026-09-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -144,13 +150,13 @@
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://agrarisai.github.io/agraris/agent.html?id=bb87c1d3-1c04-4700-89e3-42b8a3b834d4</loc>
+    <loc>https://agrarisai.github.io/agraris/agent.html?id=af1f1411-48d1-4193-9215-80b0944aa975</loc>
     <lastmod>2026-09-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://agrarisai.github.io/agraris/agent.html?id=af1f1411-48d1-4193-9215-80b0944aa975</loc>
+    <loc>https://agrarisai.github.io/agraris/agent.html?id=bb87c1d3-1c04-4700-89e3-42b8a3b834d4</loc>
     <lastmod>2026-09-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -162,7 +168,7 @@
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://agrarisai.github.io/agraris/agent.html?id=123b216e-2bb2-4e48-b8f8-17555bc03032</loc>
+    <loc>https://agrarisai.github.io/agraris/agent.html?id=483be7ed-85e4-4b89-a8e8-bf2696ebce40</loc>
     <lastmod>2026-09-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -174,7 +180,7 @@
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://agrarisai.github.io/agraris/agent.html?id=483be7ed-85e4-4b89-a8e8-bf2696ebce40</loc>
+    <loc>https://agrarisai.github.io/agraris/agent.html?id=123b216e-2bb2-4e48-b8f8-17555bc03032</loc>
     <lastmod>2026-09-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -272,7 +278,17 @@
     <priority>0.5</priority>
   </url>
   <url>
+    <loc>https://agrarisai.github.io/agraris/category.html?slug=qa-testing</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
     <loc>https://agrarisai.github.io/agraris/category.html?slug=risk-management</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://agrarisai.github.io/agraris/category.html?slug=test</loc>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
