@@ -102,19 +102,27 @@ function formatRange(start, end) {
 // ---------- data ----------
 
 async function fetchDigestData(supabase, since) {
+  // Service role bypasses RLS, so every query filters approved = true
+  // explicitly: entries waiting in the review queue never reach the digest
+  // (supabase/migration-review-queue.sql).
   const [newRes, topRes, countRes] = await Promise.all([
     supabase
       .from("agents")
       .select("id, name, created_at")
+      .eq("approved", true)
       .gte("created_at", since.toISOString())
       .order("created_at", { ascending: true }),
     supabase
       .from("agents")
       .select("id, name, github_stars")
+      .eq("approved", true)
       .not("github_stars", "is", null)
       .order("github_stars", { ascending: false })
       .limit(TOP_STARRED_COUNT),
-    supabase.from("agents").select("id", { count: "exact", head: true }),
+    supabase
+      .from("agents")
+      .select("id", { count: "exact", head: true })
+      .eq("approved", true),
   ]);
 
   for (const res of [newRes, topRes, countRes]) {
