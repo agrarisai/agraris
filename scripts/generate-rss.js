@@ -84,6 +84,9 @@ async function main() {
   const { data: agents, error } = await supabase
     .from("agents")
     .select("id, name, description, created_at")
+    // Service role bypasses RLS, so pending entries must be filtered out
+    // explicitly (supabase/migration-review-queue.sql).
+    .eq("approved", true)
     .order("created_at", { ascending: false })
     .limit(MAX_ITEMS);
 

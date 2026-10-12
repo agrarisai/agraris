@@ -7,8 +7,6 @@
   const submitBtn = document.getElementById("submit-btn");
   const msgEl = document.getElementById("form-msg");
   const successBlock = document.getElementById("publish-success");
-  const viewListingBtn = document.getElementById("view-listing-btn");
-  const shareXBtn = document.getElementById("share-x-btn");
 
   function setMessage(text, type) {
     msgEl.textContent = text;
@@ -85,28 +83,18 @@
     }
 
     try {
-      const { data, error } = await supabaseClient
+      // No .select() after the insert: new entries are saved with
+      // approved = false and RLS only lets the public read approved rows,
+      // so asking for the inserted row back would make the insert fail.
+      // See supabase/migration-review-queue.sql.
+      const { error } = await supabaseClient
         .from("agents")
-        .insert([payload])
-        .select()
-        .single();
+        .insert([payload]);
 
       if (error) throw error;
-      if (!data || !data.id) {
-        throw new Error("Insert succeeded but no agent id was returned.");
-      }
-
-      const listingUrl = `agent.html?id=${encodeURIComponent(data.id)}`;
-      const listingAbsoluteUrl = new URL(listingUrl, window.location.href).href;
 
       form.hidden = true;
       setMessage("", "");
-      viewListingBtn.href = listingUrl;
-      shareXBtn.onclick = () => {
-        const shareText = `Just published ${data.name} on @agrarisai — the registry for AI agents on Robinhood Chain.`;
-        const tweetUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(listingAbsoluteUrl)}`;
-        window.open(tweetUrl, "_blank", "noopener,noreferrer");
-      };
       successBlock.hidden = false;
     } catch (err) {
       console.error("Gagal publish agent:", err);
