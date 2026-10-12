@@ -54,13 +54,13 @@
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://agrarisai.github.io/agraris/agent.html?id=c4b192c6-4cd9-40c4-9323-fb5d40e2b37d</loc>
+    <loc>https://agrarisai.github.io/agraris/agent.html?id=cc012e05-7ef9-4e5f-9621-f541f622b1ed</loc>
     <lastmod>2026-10-05</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://agrarisai.github.io/agraris/agent.html?id=cc012e05-7ef9-4e5f-9621-f541f622b1ed</loc>
+    <loc>https://agrarisai.github.io/agraris/agent.html?id=c4b192c6-4cd9-40c4-9323-fb5d40e2b37d</loc>
     <lastmod>2026-10-05</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -72,13 +72,13 @@
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://agrarisai.github.io/agraris/agent.html?id=d94dcf99-78ec-4335-8eb8-f1889f7f966a</loc>
+    <loc>https://agrarisai.github.io/agraris/agent.html?id=226b422a-f700-4ec4-8d1f-08231ab50cb2</loc>
     <lastmod>2026-09-28</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://agrarisai.github.io/agraris/agent.html?id=226b422a-f700-4ec4-8d1f-08231ab50cb2</loc>
+    <loc>https://agrarisai.github.io/agraris/agent.html?id=d94dcf99-78ec-4335-8eb8-f1889f7f966a</loc>
     <lastmod>2026-09-28</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -108,6 +108,12 @@
     <priority>0.6</priority>
   </url>
   <url>
+    <loc>https://agrarisai.github.io/agraris/agent.html?id=8d619c71-985a-4f58-80c9-13293d0372c2</loc>
+    <lastmod>2026-09-16</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://agrarisai.github.io/agraris/agent.html?id=03127e34-7d83-4790-9350-f5071a1d37e0</loc>
     <lastmod>2026-09-16</lastmod>
     <changefreq>monthly</changefreq>
@@ -126,8 +132,8 @@
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://agrarisai.github.io/agraris/agent.html?id=8d619c71-985a-4f58-80c9-13293d0372c2</loc>
-    <lastmod>2026-09-16</lastmod>
+    <loc>https://agrarisai.github.io/agraris/agent.html?id=9655177f-68cf-44c4-84a2-680a49b4a349</loc>
+    <lastmod>2026-09-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -138,19 +144,7 @@
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://agrarisai.github.io/agraris/agent.html?id=9655177f-68cf-44c4-84a2-680a49b4a349</loc>
-    <lastmod>2026-09-15</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
     <loc>https://agrarisai.github.io/agraris/agent.html?id=78effed9-85c3-41f9-b811-f8bd094e4ca6</loc>
-    <lastmod>2026-09-15</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://agrarisai.github.io/agraris/agent.html?id=af1f1411-48d1-4193-9215-80b0944aa975</loc>
     <lastmod>2026-09-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -168,6 +162,18 @@
     <priority>0.6</priority>
   </url>
   <url>
+    <loc>https://agrarisai.github.io/agraris/agent.html?id=af1f1411-48d1-4193-9215-80b0944aa975</loc>
+    <lastmod>2026-09-15</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://agrarisai.github.io/agraris/agent.html?id=123b216e-2bb2-4e48-b8f8-17555bc03032</loc>
+    <lastmod>2026-09-15</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://agrarisai.github.io/agraris/agent.html?id=483be7ed-85e4-4b89-a8e8-bf2696ebce40</loc>
     <lastmod>2026-09-15</lastmod>
     <changefreq>monthly</changefreq>
@@ -175,12 +181,6 @@
   </url>
   <url>
     <loc>https://agrarisai.github.io/agraris/agent.html?id=588d4eef-6228-434d-ae12-939d7ee1a36c</loc>
-    <lastmod>2026-09-15</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://agrarisai.github.io/agraris/agent.html?id=123b216e-2bb2-4e48-b8f8-17555bc03032</loc>
     <lastmod>2026-09-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
