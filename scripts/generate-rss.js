@@ -48,9 +48,20 @@ function escapeXml(value) {
   });
 }
 
+// When an agent appeared in the registry: coalesce(approved_at, created_at).
+// approved_at is set when an entry leaves the review queue
+// (supabase/migration-review-notify.sql); older rows fall back to created_at.
+function publishedAt(agent) {
+  return agent.approved_at || agent.created_at;
+}
+
+function byPublishedDesc(a, b) {
+  return new Date(publishedAt(b)) - new Date(publishedAt(a));
+}
+
 function buildItem(agent) {
   const link = `${SITE_URL}agent.html?id=${encodeURIComponent(agent.id)}`;
-  const pubDate = new Date(agent.created_at).toUTCString();
+  const pubDate = new Date(publishedAt(agent)).toUTCString();
 
   return [
     "    <item>",
@@ -81,23 +92,43 @@ function buildRss(agents) {
 }
 
 async function main() {
-  const { data: agents, error } = await supabase
-    .from("agents")
-    .select("id, name, description, created_at")
-    // Service role bypasses RLS, so pending entries must be filtered out
-    // explicitly (supabase/migration-review-queue.sql).
-    .eq("approved", true)
-    .order("created_at", { ascending: false })
-    .limit(MAX_ITEMS);
+  // PostgREST can't order by coalesce(approved_at, created_at), so fetch
+  // the newest MAX_ITEMS of each kind (with and without approved_at),
+  // then merge and sort here. Service role bypasses RLS, so pending
+  // entries must be filtered out explicitly
+  // (supabase/migration-review-queue.sql).
+  const columns = "id, name, description, created_at, approved_at";
+  const [withApproval, withoutApproval] = await Promise.all([
+    supabase
+      .from("agents")
+      .select(columns)
+      .eq("approved", true)
+      .not("approved_at", "is", null)
+      .order("approved_at", { ascending: false })
+      .limit(MAX_ITEMS),
+    supabase
+      .from("agents")
+      .select(columns)
+      .eq("approved", true)
+      .is("approved_at", null)
+      .order("created_at", { ascending: false })
+      .limit(MAX_ITEMS),
+  ]);
 
-  if (error) {
-    throw new Error(`Failed to read agents table: ${error.message}`);
+  for (const res of [withApproval, withoutApproval]) {
+    if (res.error) {
+      throw new Error(`Failed to read agents table: ${res.error.message}`);
+    }
   }
 
-  const rss = buildRss(agents ?? []);
+  const agents = [...(withApproval.data ?? []), ...(withoutApproval.data ?? [])]
+    .sort(byPublishedDesc)
+    .slice(0, MAX_ITEMS);
+
+  const rss = buildRss(agents);
   fs.writeFileSync(OUTPUT_PATH, rss, "utf8");
 
-  console.log(`Generated ${(agents ?? []).length} RSS item(s) at ${OUTPUT_PATH}`);
+  console.log(`Generated ${agents.length} RSS item(s) at ${OUTPUT_PATH}`);
 }
 
 main().catch((err) => {

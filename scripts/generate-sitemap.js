@@ -104,7 +104,8 @@ function buildSitemap(agents, categories) {
   const agentEntries = agents.map((agent) =>
     buildUrlEntry({
       loc: `${SITE_URL}agent.html?id=${encodeURIComponent(agent.id)}`,
-      lastmod: formatDate(agent.created_at),
+      // When the page went live: coalesce(approved_at, created_at).
+      lastmod: formatDate(agent.approved_at || agent.created_at),
       changefreq: "monthly",
       priority: "0.6",
     })
@@ -134,7 +135,7 @@ function buildSitemap(agents, categories) {
 async function main() {
   const { data: agents, error } = await supabase
     .from("agents")
-    .select("id, category, created_at")
+    .select("id, category, created_at, approved_at")
     // Service role bypasses RLS, so pending entries must be filtered out
     // explicitly (supabase/migration-review-queue.sql).
     .eq("approved", true)

@@ -1,0 +1,35 @@
+name: Review queue notify
+
+on:
+  schedule:
+    # Tiap 15 menit. Jadwal GitHub Actions bisa tertunda beberapa menit.
+    - cron: "*/15 * * * *"
+  workflow_dispatch: {}
+
+# Jangan ada dua run notifikasi bersamaan (bisa mengirim email dobel).
+concurrency:
+  group: review-notify
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Email new submissions
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          NOTIFY_EMAIL: ${{ secrets.NOTIFY_EMAIL }}
+        run: node scripts/review-notify.js

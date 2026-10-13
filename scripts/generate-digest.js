@@ -5,7 +5,8 @@
 // 02:00 UTC = 09:00 WIB, + manual trigger).
 //
 // Alur:
-//   1. Ambil dari Supabase: agent yang dibuat 7 hari terakhir, top 3
+//   1. Ambil dari Supabase: agent yang tampil 7 hari terakhir
+//      (coalesce(approved_at, created_at)), top 3
 //      agent berdasarkan github_stars, dan total jumlah agent.
 //   2. Susun draf singkat berbahasa Inggris (lihat buildDraft()).
 //   3. Tulis draf ke GitHub job summary (halaman run di tab Actions).
@@ -106,12 +107,16 @@ async function fetchDigestData(supabase, since) {
   // explicitly: entries waiting in the review queue never reach the digest
   // (supabase/migration-review-queue.sql).
   const [newRes, topRes, countRes] = await Promise.all([
+    // "New this week" = coalesce(approved_at, created_at) >= since, i.e.
+    // agents that appeared in the registry this week, including ones
+    // submitted earlier and approved this week.
     supabase
       .from("agents")
-      .select("id, name, created_at")
+      .select("id, name, created_at, approved_at")
       .eq("approved", true)
-      .gte("created_at", since.toISOString())
-      .order("created_at", { ascending: true }),
+      .or(
+        `approved_at.gte.${since.toISOString()},and(approved_at.is.null,created_at.gte.${since.toISOString()})`
+      ),
     supabase
       .from("agents")
       .select("id, name, github_stars")
@@ -129,8 +134,11 @@ async function fetchDigestData(supabase, since) {
     if (res.error) throw new Error(`Supabase query failed: ${res.error.message}`);
   }
 
+  const publishedAt = (a) => new Date(a.approved_at || a.created_at).getTime();
+  const newAgents = (newRes.data ?? []).slice().sort((a, b) => publishedAt(a) - publishedAt(b));
+
   return {
-    newAgents: newRes.data ?? [],
+    newAgents,
     topStarred: topRes.data ?? [],
     total: countRes.count ?? 0,
   };
