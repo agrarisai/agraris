@@ -405,6 +405,22 @@ const topTradingAgents = await res.json();</code></pre>
         <code>.select()</code>; over REST, keep the default
         <code>Prefer: return=minimal</code>.
       </p>
+      <p>
+        To let builders follow their submission, the publish form sends a
+        random status code (<code>status_token</code>, a uuid made in the
+        browser) with the insert and links to
+        <a href="status.html">status.html</a>. Only a hash of the code is
+        stored, so the column is no use to anyone reading the table. The
+        status page asks for the status with the
+        <code>get_submission_status</code> function, which returns only
+        <code>status</code> (<code>pending</code> or
+        <code>approved</code>), <code>name</code> and <code>id</code>, and
+        nothing when the code does not match.
+      </p>
+      <pre class="code-block"><code>curl -X POST "https://gnydurjxrynqcbpkxopd.supabase.co/rest/v1/rpc/get_submission_status" \
+  -H "apikey: sb_publishable_4roHAzTOTw9P0_8NXKt2IA_kXniR9pm" \
+  -H "Content-Type: application/json" \
+  -d '{"p_token": "STATUS_CODE"}'</code></pre>
 
       <h3 id="rate-limits">Rate limits &amp; fair use</h3>
       <p>

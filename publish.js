@@ -7,6 +7,24 @@
   const submitBtn = document.getElementById("submit-btn");
   const msgEl = document.getElementById("form-msg");
   const successBlock = document.getElementById("publish-success");
+  const checkStatusBtn = document.getElementById("check-status-btn");
+
+  // Status codes from this browser's submissions, newest first, so
+  // status.html can fall back to the latest one when opened without ?t=.
+  const SUBMISSIONS_STORAGE_KEY = "agraris_submissions";
+  const MAX_STORED_SUBMISSIONS = 20;
+
+  function rememberStatusToken(token) {
+    try {
+      const raw = localStorage.getItem(SUBMISSIONS_STORAGE_KEY);
+      const parsed = raw ? JSON.parse(raw) : [];
+      const list = Array.isArray(parsed) ? parsed.filter((t) => typeof t === "string" && t !== token) : [];
+      list.unshift(token);
+      localStorage.setItem(SUBMISSIONS_STORAGE_KEY, JSON.stringify(list.slice(0, MAX_STORED_SUBMISSIONS)));
+    } catch {
+      // localStorage unavailable/blocked — the Check status link still works
+    }
+  }
 
   function setMessage(text, type) {
     msgEl.textContent = text;
@@ -76,6 +94,17 @@
       demo_url: demoUrl || null,
     };
 
+    // Random status code so the builder can check the review status on
+    // status.html. The database stores only a hash of it
+    // (supabase/migration-submission-status.sql).
+    const statusToken =
+      window.crypto && typeof window.crypto.randomUUID === "function"
+        ? window.crypto.randomUUID()
+        : null;
+    if (statusToken) {
+      payload.status_token = statusToken;
+    }
+
     // Only sent when filled in, so publishing keeps working even if the
     // contract_address column hasn't been added to the database yet.
     if (contractAddress) {
@@ -95,6 +124,11 @@
 
       form.hidden = true;
       setMessage("", "");
+      if (statusToken) {
+        rememberStatusToken(statusToken);
+        checkStatusBtn.href = `status.html?t=${encodeURIComponent(statusToken)}`;
+        checkStatusBtn.hidden = false;
+      }
       successBlock.hidden = false;
     } catch (err) {
       console.error("Gagal publish agent:", err);

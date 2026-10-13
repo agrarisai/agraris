@@ -80,12 +80,11 @@ function buildEmbedSnippet(agentId, theme) {
 
 // ---------- On-chain address (optional, builder-provided) ----------
 //
-// agents.contract_address may not exist yet (rows come from select("*"),
-// so the field is simply undefined) or may hold anything an admin typed
-// in the Dashboard, so the block renders only for a well-formed 0x
-// address and is omitted entirely otherwise. Inside it, the "On-chain
-// activity" counts are fetched from Blockscout after the page renders
-// (see loadOnchainActivity below).
+// agents.contract_address is empty for most agents and may hold
+// anything an admin typed in the Dashboard, so the block renders only
+// for a well-formed 0x address and is omitted entirely otherwise.
+// Inside it, the "On-chain activity" counts are fetched from Blockscout
+// after the page renders (see loadOnchainActivity below).
 
 const ADDRESS_PATTERN = /^0x[a-fA-F0-9]{40}$/;
 const EXPLORER_ADDRESS_URL = "https://robinhoodchain.blockscout.com/address/";
