@@ -421,6 +421,15 @@ const topTradingAgents = await res.json();</code></pre>
   -H "apikey: sb_publishable_4roHAzTOTw9P0_8NXKt2IA_kXniR9pm" \
   -H "Content-Type: application/json" \
   -d '{"p_token": "STATUS_CODE"}'</code></pre>
+      <p>
+        When an agent is approved, <code>approved_at</code> records the
+        time. The RSS feed, the sitemap and the weekly digest date each
+        agent by when it appeared in the registry: <code>approved_at</code>,
+        or <code>created_at</code> for agents listed before the review
+        queue. The owner is emailed about new submissions and approves or
+        rejects them from a GitHub Actions workflow; a rejected submission
+        is deleted.
+      </p>
 
       <h3 id="rate-limits">Rate limits &amp; fair use</h3>
       <p>

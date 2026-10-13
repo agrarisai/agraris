@@ -1,0 +1,56 @@
+name: Review queue
+
+# Setujui / tolak submission baru dari tab Actions (bisa dari HP):
+# Actions → Review queue → Run workflow.
+on:
+  workflow_dispatch:
+    inputs:
+      action:
+        description: "list = lihat antrean, approve = setujui, reject = hapus submission pending"
+        type: choice
+        options:
+          - list
+          - approve
+          - reject
+        default: list
+        required: true
+      name:
+        description: "Nama agent persis (opsional)"
+        type: string
+        required: false
+      id:
+        description: "ID agent / uuid (opsional; wajib kalau nama dipakai lebih dari satu submission)"
+        type: string
+        required: false
+
+# Satu aksi review dalam satu waktu, dan aksi yang sedang jalan tidak
+# dibatalkan oleh run berikutnya.
+concurrency:
+  group: review-queue
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      # Input diteruskan lewat env dan dibaca di Node; tidak pernah
+      # disisipkan ke perintah shell.
+      - name: Run review action
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          REVIEW_ACTION: ${{ inputs.action }}
+          REVIEW_NAME: ${{ inputs.name }}
+          REVIEW_ID: ${{ inputs.id }}
+        run: node scripts/review-action.js
