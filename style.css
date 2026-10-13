@@ -1726,6 +1726,59 @@ body.cmdk-open {
   flex-wrap: wrap;
 }
 
+.publish-success-actions [hidden] {
+  display: none;
+}
+
+/* ---------- submission status (status.html) ---------- */
+
+.status-card {
+  margin: 8px 0 40px;
+  padding: 28px 20px;
+  border: 1px dashed var(--line);
+  border-left: 3px solid var(--line);
+  border-radius: 6px;
+}
+
+.status-card[data-state="pending"] {
+  border-left-color: var(--text-green);
+}
+
+.status-card[data-state="approved"] {
+  border-left-color: var(--text-green-dark);
+}
+
+.status-card[data-state="error"] {
+  border-left-color: var(--danger);
+}
+
+.status-label {
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--text-green-dark);
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.status-card[data-state="not-found"] .status-label,
+.status-card[data-state="error"] .status-label {
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 400;
+  color: inherit;
+}
+
+.status-name {
+  margin: 8px 0 0;
+  font-size: 14px;
+  overflow-wrap: anywhere;
+}
+
+.status-actions {
+  margin-top: 20px;
+}
+
 /* ---------- search ---------- */
 
 .search-bar {

@@ -3,9 +3,8 @@
 // ============================================
 //
 // One read-only query to `agents` with the publishable key, then every
-// number is computed here in the browser. select("*") is used on
-// purpose: it is a single request that still works whether or not the
-// optional contract_address column exists yet.
+// number is computed here in the browser. The column list is
+// AGENT_COLUMNS from app.js, so internal columns are never fetched.
 //
 // Charts are inline SVG drawn in real pixels from the measured container
 // width (and redrawn on resize), so SVG text never shrinks on phones and
@@ -483,7 +482,7 @@ function initCopyStatsLink(root) {
 
   let agents;
   try {
-    const { data, error } = await supabaseClient.from("agents").select("*");
+    const { data, error } = await supabaseClient.from("agents").select(AGENT_COLUMNS);
     if (error) throw error;
     agents = data || [];
   } catch (err) {

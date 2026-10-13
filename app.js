@@ -121,11 +121,17 @@ function renderEmptyState(title, body, cta = null) {
   `;
 }
 
+// Columns the site reads from the agents table. Listed explicitly instead
+// of select("*") so internal columns (status_token, approved) never reach
+// the browser.
+const AGENT_COLUMNS =
+  "id, name, description, version, repo_url, category, demo_url, created_at, verified, github_stars, github_updated_at, contract_address";
+
 // Fetch agents from Supabase, newest first.
 async function fetchAgents({ search = "", category = "", limit = null } = {}) {
   let query = supabaseClient
     .from("agents")
-    .select("*")
+    .select(AGENT_COLUMNS)
     .order("created_at", { ascending: false });
 
   if (search) {
@@ -160,7 +166,7 @@ async function fetchAgents({ search = "", category = "", limit = null } = {}) {
 async function fetchAgentsByCategory(category) {
   const { data, error } = await supabaseClient
     .from("agents")
-    .select("*")
+    .select(AGENT_COLUMNS)
     .contains("category", [category])
     .order("created_at", { ascending: false });
 
@@ -181,7 +187,7 @@ async function fetchSimilarAgents(categories, excludeId, limit = 3) {
 
   const { data, error } = await supabaseClient
     .from("agents")
-    .select("*")
+    .select(AGENT_COLUMNS)
     .overlaps("category", categories)
     .neq("id", excludeId)
     .order("created_at", { ascending: false })
@@ -200,7 +206,7 @@ async function fetchSimilarAgents(categories, excludeId, limit = 3) {
 async function fetchAgentCount() {
   const { count, error } = await supabaseClient
     .from("agents")
-    .select("*", { count: "exact", head: true });
+    .select("id", { count: "exact", head: true });
 
   if (error) {
     console.error("Gagal mengambil jumlah agent:", error);
@@ -229,7 +235,7 @@ async function fetchAgentsLite() {
 async function fetchAgentById(id) {
   const { data, error } = await supabaseClient
     .from("agents")
-    .select("*")
+    .select(AGENT_COLUMNS)
     .eq("id", id)
     .single();
 
@@ -248,7 +254,7 @@ async function fetchAgentsByIds(ids) {
 
   const { data, error } = await supabaseClient
     .from("agents")
-    .select("*")
+    .select(AGENT_COLUMNS)
     .in("id", ids);
 
   if (error) {
