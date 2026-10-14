@@ -4,6 +4,9 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="robots" content="noindex" />
+  <!-- The status code in the URL (#t=…) is the only credential for
+       editing a listing: never send this page's URL to other sites. -->
+  <meta name="referrer" content="no-referrer" />
   <script>
     // Set the theme before first paint so dark mode doesn't flash light.
     (function () {
@@ -98,6 +101,58 @@
     <div class="status-card reveal" id="status-root" aria-live="polite">
       <p class="status-label">Checking…</p>
     </div>
+
+    <!-- Shown by status.js after a valid status code; values are filled
+         in with .value / .textContent only. -->
+    <section class="edit-listing" id="edit-root" aria-labelledby="edit-title" hidden>
+      <h3 id="edit-title">Edit listing</h3>
+      <p class="edit-listing-lead">
+        Name and repo link can't be changed here. Changes go live right away
+        on approved listings. Keep your status link private: anyone with it
+        can edit this listing.
+      </p>
+
+      <form id="edit-form" novalidate>
+        <div class="field">
+          <span class="field-label-static">Agent name</span>
+          <p class="edit-listing-name" id="edit-name"></p>
+        </div>
+
+        <div class="field">
+          <label for="edit-description">Description <span class="required-mark">*</span></label>
+          <textarea id="edit-description" name="description" required maxlength="600"></textarea>
+        </div>
+
+        <div class="field">
+          <label for="edit-version">Version <span class="required-mark">*</span></label>
+          <input type="text" id="edit-version" name="version" required maxlength="40" />
+        </div>
+
+        <div class="field">
+          <label for="edit-category">Category / tools <span class="required-mark">*</span></label>
+          <input type="text" id="edit-category" name="category" required aria-describedby="edit-category-hint" />
+          <span class="hint" id="edit-category-hint">Separate tags with commas. Up to 10 tags, 40 characters each.</span>
+        </div>
+
+        <div class="field">
+          <label for="edit-demo">Demo link (optional)</label>
+          <input type="url" id="edit-demo" name="demo_url" placeholder="https://…" maxlength="500" aria-describedby="edit-demo-hint" />
+          <span class="hint" id="edit-demo-hint">Must start with https://. Leave empty to remove it.</span>
+        </div>
+
+        <div class="field">
+          <label for="edit-contract">Contract address (optional)</label>
+          <input type="text" id="edit-contract" name="contract_address" placeholder="0x…" maxlength="42" autocomplete="off" autocapitalize="off" spellcheck="false" aria-describedby="edit-contract-hint" />
+          <span class="hint" id="edit-contract-hint">Optional. Address of your agent's contract on Robinhood Chain (0x...)</span>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn btn-solid" id="edit-save-btn">Save changes</button>
+          <button type="button" class="btn" id="edit-cancel-btn">Close</button>
+          <span class="form-msg" id="edit-msg" role="status" aria-live="polite"></span>
+        </div>
+      </form>
+    </section>
 
     <footer class="site-footer">
       <div class="footer-top">

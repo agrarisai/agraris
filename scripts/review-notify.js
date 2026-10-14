@@ -17,6 +17,17 @@
 // berikutnya akan mengirim ulang baris yang sama (lebih baik dobel
 // daripada terlewat).
 //
+// Ringkasan edit (terpisah, email kedua):
+//   Builder bisa mengedit listing lewat status.html (RPC update_submission,
+//   lihat supabase/migration-edit-listing.sql). Setiap edit dicatat di
+//   tabel privat agent_edits. Run ini mengambil baris agent_edits yang
+//   notified_at-nya masih kosong (praktis: edit sejak run sebelumnya,
+//   jadi ±15 menit terakhir; tidak ada yang terlewat kalau cron telat),
+//   mengelompokkannya per listing, mengirim SATU email ringkas (nama,
+//   field yang berubah, demo link lama → baru, link), lalu mengisi
+//   notified_at hanya untuk baris yang tercantum. Aturan "kirim dulu,
+//   tandai setelah sukses" sama dengan notifikasi antrean.
+//
 // Isi submission diperlakukan sebagai teks tak tepercaya: email hanya
 // berupa teks biasa, dan URL / domain / alamat email dari pengirim
 // ditulis dengan [.] / [:] / [at] supaya tidak bisa diklik.
@@ -47,6 +58,9 @@ const {
 // ---------- pengaturan yang mudah diubah ----------
 
 const MAX_PER_EMAIL = 20;
+// Baris agent_edits per run (beberapa baris bisa milik satu listing).
+const MAX_EDITS_PER_EMAIL = 100;
+const SITE_URL = "https://agraris.xyz";
 const DESCRIPTION_MAX = 200;
 
 // Pengirim default Resend, sama dengan scripts/generate-digest.js.
@@ -103,6 +117,30 @@ async function markNotified(ids) {
   return Array.isArray(data) ? data.length : 0;
 }
 
+// Edit yang belum dilaporkan, beserta data listing saat ini.
+async function fetchUnnotifiedEdits() {
+  const query = [
+    "select=id,agent_id,edited_at,changed_fields,previous,agents(name,approved,demo_url,contract_address)",
+    "notified_at=is.null",
+    "order=edited_at.asc",
+    `limit=${MAX_EDITS_PER_EMAIL}`,
+  ].join("&");
+
+  const { data, contentRange } = await rest("GET", "agent_edits", query, { prefer: "count=exact" });
+  const rows = Array.isArray(data) ? data : [];
+  const total = totalFromContentRange(contentRange) ?? rows.length;
+  return { rows, total };
+}
+
+async function markEditsNotified(ids) {
+  const query = [`id=in.(${ids.join(",")})`, "notified_at=is.null", "select=id"].join("&");
+  const { data } = await rest("PATCH", "agent_edits", query, {
+    body: { notified_at: new Date().toISOString() },
+    prefer: "return=representation",
+  });
+  return Array.isArray(data) ? data.length : 0;
+}
+
 // ---------- email ----------
 
 function buildSubject(count) {
@@ -148,6 +186,78 @@ function buildText(rows, total) {
   return lines.join("\n");
 }
 
+// Satu entri per listing: field yang berubah digabung, demo link yang
+// paling awal sebelum edit dibandingkan dengan yang sekarang.
+function groupEdits(rows) {
+  const byAgent = new Map();
+  for (const row of rows) {
+    const id = String(row.agent_id);
+    let entry = byAgent.get(id);
+    if (!entry) {
+      entry = { agentId: id, agent: row.agents || null, fields: new Set(), count: 0, last: row.edited_at, firstPrevious: {} };
+      byAgent.set(id, entry);
+    }
+    entry.count += 1;
+    entry.last = row.edited_at;
+    if (row.agents) entry.agent = row.agents;
+    const previous = row.previous && typeof row.previous === "object" ? row.previous : {};
+    for (const field of Array.isArray(row.changed_fields) ? row.changed_fields : []) {
+      if (!entry.fields.has(field) && Object.prototype.hasOwnProperty.call(previous, field)) {
+        entry.firstPrevious[field] = previous[field];
+      }
+      entry.fields.add(String(field));
+    }
+  }
+  return [...byAgent.values()];
+}
+
+function buildEditsSubject(count) {
+  return `Agraris: ${count} listing diedit oleh builder`;
+}
+
+function buildEditsText(entries, totalRows, shownRows) {
+  const lines = [`${entries.length} listing diedit lewat halaman status sejak email sebelumnya.`, ""];
+
+  entries.forEach((entry, i) => {
+    const agent = entry.agent || {};
+    const fields = [...entry.fields].map((f) => safeText(f, 40)).join(", ") || "-";
+    lines.push(`${i + 1}. ${safeText(agent.name || "(listing sudah dihapus)", 120)}`);
+    lines.push(`   Field: ${fields}${entry.count > 1 ? ` (${entry.count} kali edit)` : ""}`);
+    lines.push(`   Terakhir: ${formatUtc(entry.last)}`);
+    if (entry.fields.has("demo_url")) {
+      const before = entry.firstPrevious.demo_url;
+      lines.push(`   Demo lama: ${before ? safeText(before, 200) : "(kosong)"}`);
+      lines.push(`   Demo baru: ${agent.demo_url ? safeText(agent.demo_url, 200) : "(kosong)"}`);
+    }
+    if (entry.fields.has("contract_address")) {
+      lines.push(`   Contract: ${agent.contract_address ? safeText(agent.contract_address, 60) : "(kosong)"}`);
+    }
+    if (agent.approved) {
+      lines.push(`   Link: ${SITE_URL}/agent.html?id=${entry.agentId}`);
+    } else {
+      lines.push(`   Status: pending (belum tampil publik). ID: ${entry.agentId}`);
+    }
+    lines.push("");
+  });
+
+  if (totalRows > shownRows) {
+    lines.push(`... dan ${totalRows - shownRows} edit lainnya di email berikutnya.`, "");
+  }
+
+  lines.push(
+    "Edit pada listing approved langsung tampil tanpa review ulang.",
+    "Kalau demo link disalahgunakan, kosongkan atau ganti lewat workflow",
+    `"Review queue" (action set-demo, value clear): ${reviewWorkflowUrl()}`,
+    "Riwayat lengkap ada di tabel agent_edits (kolom previous berisi nilai lama).",
+    "",
+    "Teks dari builder ditulis dengan [.] [:] [at] supaya tidak bisa diklik.",
+    "",
+    "Dikirim oleh workflow \"Review queue notify\" (scripts/review-notify.js)."
+  );
+
+  return lines.join("\n");
+}
+
 // Mengembalikan true kalau terkirim, false kalau Resend menolak.
 async function sendEmail(subject, text) {
   const res = await fetch(RESEND_ENDPOINT, {
@@ -184,9 +294,7 @@ async function sendEmail(subject, text) {
 
 // ---------- main ----------
 
-async function main() {
-  requireEnv(["SUPABASE_URL", "SUPABASE_SERVICE_ROLE_KEY", "RESEND_API_KEY", "NOTIFY_EMAIL"]);
-
+async function notifyPending() {
   const { rows: fetched, total } = await fetchPending();
   // id selalu uuid dari database; disaring lagi supaya filter in.(...)
   // tidak pernah berisi nilai lain.
@@ -194,21 +302,59 @@ async function main() {
 
   if (rows.length === 0) {
     log("No new submissions to notify.");
-    return;
+    return true;
   }
 
   const text = buildText(rows, Math.max(total, rows.length));
   const sent = await sendEmail(buildSubject(Math.max(total, rows.length)), text);
   if (!sent) {
     // notified_at TIDAK diisi, jadi run berikutnya mencoba lagi.
-    process.exitCode = 1;
-    return;
+    return false;
   }
 
   log(`Emailed ${rows.length} submission(s)${total > rows.length ? ` (${total - rows.length} more left for later runs)` : ""}.`);
 
   const marked = await markNotified(rows.map((row) => String(row.id)));
   log(`Marked ${marked} row(s) as notified.`);
+  return true;
+}
+
+async function notifyEdits() {
+  const { rows: fetched, total } = await fetchUnnotifiedEdits();
+  // id log = bigint, agent_id = uuid; disaring supaya filter in.(...)
+  // hanya berisi angka.
+  const rows = fetched.filter((row) => /^\d+$/.test(String(row.id)) && UUID_PATTERN.test(String(row.agent_id)));
+
+  if (rows.length === 0) {
+    log("No listing edits to notify.");
+    return true;
+  }
+
+  const entries = groupEdits(rows);
+  const sent = await sendEmail(buildEditsSubject(entries.length), buildEditsText(entries, Math.max(total, rows.length), rows.length));
+  if (!sent) return false;
+
+  log(`Emailed ${rows.length} listing edit(s) across ${entries.length} listing(s).`);
+  const marked = await markEditsNotified(rows.map((row) => String(row.id)));
+  log(`Marked ${marked} edit(s) as notified.`);
+  return true;
+}
+
+async function main() {
+  requireEnv(["SUPABASE_URL", "SUPABASE_SERVICE_ROLE_KEY", "RESEND_API_KEY", "NOTIFY_EMAIL"]);
+
+  // Dua email independen: kegagalan satu tidak menghalangi yang lain,
+  // tapi run tetap merah supaya terlihat di tab Actions.
+  let ok = true;
+  for (const [label, task] of [["Review notify", notifyPending], ["Edit notify", notifyEdits]]) {
+    try {
+      if (!(await task())) ok = false;
+    } catch (err) {
+      logError(`${label} failed: ${redactEmails(err && err.message ? err.message : String(err))}`);
+      ok = false;
+    }
+  }
+  if (!ok) process.exitCode = 1;
 }
 
 main().catch((err) => {

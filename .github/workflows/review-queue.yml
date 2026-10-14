@@ -6,12 +6,14 @@ on:
   workflow_dispatch:
     inputs:
       action:
-        description: "list = lihat antrean, approve = setujui, reject = hapus submission pending"
+        description: "list = lihat antrean, approve = setujui, reject = hapus submission pending, set-contract / set-demo = isi contract address / demo link (agent mana pun)"
         type: choice
         options:
           - list
           - approve
           - reject
+          - set-contract
+          - set-demo
         default: list
         required: true
       name:
@@ -20,6 +22,10 @@ on:
         required: false
       id:
         description: "ID agent / uuid (opsional; wajib kalau nama dipakai lebih dari satu submission)"
+        type: string
+        required: false
+      value:
+        description: "Untuk set-contract / set-demo: 0x… atau https://…; isi clear untuk mengosongkan"
         type: string
         required: false
 
@@ -53,4 +59,5 @@ jobs:
           REVIEW_ACTION: ${{ inputs.action }}
           REVIEW_NAME: ${{ inputs.name }}
           REVIEW_ID: ${{ inputs.id }}
+          REVIEW_VALUE: ${{ inputs.value }}
         run: node scripts/review-action.js

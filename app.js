@@ -75,6 +75,19 @@ function renderVerifiedBadge(agent, { lg = false } = {}) {
   return `<span class="verified-badge${lg ? " verified-badge-lg" : ""}">✓ Verified</span>`;
 }
 
+// Blockscout link for a builder-provided contract address (Robinhood
+// Chain, chain id 4663). Nothing at all when the address is empty or
+// not a well-formed 0x address. Sits above the stretched row link
+// (z-index), like the tags.
+const EXPLORER_ADDRESS_BASE = "https://robinhoodchain.blockscout.com/address/";
+
+function renderOnchainLink(agent) {
+  const address =
+    typeof agent.contract_address === "string" ? agent.contract_address.trim() : "";
+  if (!/^0x[a-fA-F0-9]{40}$/.test(address)) return "";
+  return `<a class="agent-onchain-link" href="${EXPLORER_ADDRESS_BASE}${escapeHtml(address)}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()" title="${escapeHtml(address)}">On-chain ↗</a>`;
+}
+
 function renderAgentRow(agent) {
   const categories = normalizeCategories(agent.category);
   const tags = categories
@@ -99,6 +112,7 @@ function renderAgentRow(agent) {
       <div class="agent-meta-row">
         <span class="agent-version">v${escapeHtml(agent.version)}</span>
         ${renderGithubBadge(agent)}
+        ${renderOnchainLink(agent)}
       </div>
       <p class="agent-desc">${escapeHtml(agent.description)}</p>
       <div class="agent-meta">${tags}</div>
