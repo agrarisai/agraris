@@ -127,6 +127,7 @@
         <li><a href="#combining">Combining parameters</a></li>
         <li><a href="#response-schema">Response schema</a></li>
         <li><a href="#review-queue">Review queue</a></li>
+        <li><a href="#agent-of-the-week">Agent of the week</a></li>
         <li><a href="#rate-limits">Rate limits &amp; fair use</a></li>
         <li><a href="#embed-widget">Embed widget</a></li>
       </ol>
@@ -430,6 +431,20 @@ const topTradingAgents = await res.json();</code></pre>
         rejects them from a GitHub Actions workflow; a rejected submission
         is deleted.
       </p>
+
+      <h3 id="agent-of-the-week">Agent of the week</h3>
+      <p>
+        Each week Agraris may spotlight one approved agent. Picks are in
+        the read-only <code>featured_agents</code> table
+        (<code>week_start</code> is the Monday of the week, UTC, and
+        <code>note</code> is optional). Embed the agent with
+        <code>agents!inner(...)</code>: only approved agents are returned,
+        and a pick whose agent is not public is left out. The archive is
+        on <a href="featured.html">featured.html</a>. A pick is a
+        spotlight only, not an endorsement or advice.
+      </p>
+      <pre class="code-block"><code>curl 'https://gnydurjxrynqcbpkxopd.supabase.co/rest/v1/featured_agents?select=week_start,note,agents!inner(id,name,description)&amp;order=week_start.desc&amp;limit=1' \
+  -H "apikey: sb_publishable_4roHAzTOTw9P0_8NXKt2IA_kXniR9pm"</code></pre>
 
       <h3 id="rate-limits">Rate limits &amp; fair use</h3>
       <p>

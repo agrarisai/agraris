@@ -8,6 +8,7 @@
 //   1. Ambil dari Supabase: agent yang tampil 7 hari terakhir
 //      (coalesce(approved_at, created_at)), top 3
 //      agent berdasarkan github_stars, dan total jumlah agent.
+//      Plus Agent of the week minggu ini kalau ada (fetchFeaturedPick()).
 //   2. Susun draf singkat berbahasa Inggris (lihat buildDraft()).
 //   3. Tulis draf ke GitHub job summary (halaman run di tab Actions).
 //   4. Kirim draf ke NOTIFY_EMAIL lewat Resend.
@@ -144,11 +145,52 @@ async function fetchDigestData(supabase, since) {
   };
 }
 
+// Senin minggu ISO yang memuat `d` (UTC), YYYY-MM-DD. Sama dengan
+// scripts/feature-agent.js dan featured.js.
+function mondayOfUtc(d) {
+  const day = new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate()));
+  const isoDay = day.getUTCDay() === 0 ? 7 : day.getUTCDay();
+  day.setUTCDate(day.getUTCDate() - (isoDay - 1));
+  return day.toISOString().slice(0, 10);
+}
+
+// "Agent of the week" untuk minggu ini (supabase/migration-featured.sql).
+// Opsional: kalau belum ada pilihan, tabelnya belum ada, atau query gagal,
+// digest tetap jalan tanpa bagian ini. Service role melewati RLS, jadi
+// agent-nya dicek approved = true secara eksplisit.
+async function fetchFeaturedPick(supabase, now) {
+  try {
+    const pickRes = await supabase
+      .from("featured_agents")
+      .select("agent_id")
+      .eq("week_start", mondayOfUtc(now))
+      .maybeSingle();
+    if (pickRes.error || !pickRes.data) return null;
+
+    const agentRes = await supabase
+      .from("agents")
+      .select("id, name")
+      .eq("id", pickRes.data.agent_id)
+      .eq("approved", true)
+      .maybeSingle();
+    if (agentRes.error || !agentRes.data) return null;
+    return agentRes.data;
+  } catch {
+    return null;
+  }
+}
+
 // ---------- draf ----------
 // Ubah fungsi ini kalau mau mengganti format/kalimat draf.
 
-function buildDraft({ rangeLabel, newAgents, topStarred, total }) {
+function buildDraft({ rangeLabel, newAgents, topStarred, total, featured = null }) {
   const lines = [`Agraris weekly, ${rangeLabel}`, ""];
+
+  // Dihilangkan kalau minggu ini belum ada Agent of the week.
+  if (featured) {
+    lines.push(`Agent of the week: ${featured.name}`);
+    lines.push("");
+  }
 
   // Bagian "New this week" dihilangkan kalau tidak ada agent baru.
   if (newAgents.length > 0) {
@@ -282,11 +324,12 @@ async function main() {
   const since = new Date(now.getTime() - LOOKBACK_DAYS * 24 * 60 * 60 * 1000);
 
   const data = await fetchDigestData(supabase, since);
+  const featured = await fetchFeaturedPick(supabase, now);
   log(
-    `New this week: ${data.newAgents.length}, top starred: ${data.topStarred.length}, total: ${data.total}.`
+    `New this week: ${data.newAgents.length}, top starred: ${data.topStarred.length}, total: ${data.total}, agent of the week: ${featured ? "yes" : "no"}.`
   );
 
-  const draft = buildDraft({ rangeLabel: formatRange(since, now), ...data });
+  const draft = buildDraft({ rangeLabel: formatRange(since, now), ...data, featured });
   const notice = data.newAgents.length === 0 ? NO_NEW_AGENTS_NOTICE : "";
 
   // Summary dulu, supaya draf tetap tersimpan kalau email gagal.

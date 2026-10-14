@@ -1294,6 +1294,107 @@ body.cmdk-open {
   color: var(--on-green);
 }
 
+/* ---------- agent of the week (index.html, featured.html) ---------- */
+
+.featured-section {
+  margin-bottom: 8px;
+}
+
+.featured-section[hidden] {
+  display: none;
+}
+
+.featured-archive {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-bottom: 40px;
+}
+
+.featured-card {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--green);
+  border-radius: 8px;
+  padding: 20px 18px;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.featured-week {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  opacity: 0.7;
+  margin: 0 0 8px;
+}
+
+.featured-name {
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.featured-name a {
+  color: var(--text-green-dark);
+  text-decoration: none;
+}
+
+.featured-name a:hover {
+  text-decoration: underline;
+}
+
+.featured-version {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  opacity: 0.75;
+  margin: 4px 0 10px;
+}
+
+.featured-desc {
+  font-size: 14px;
+  line-height: 1.55;
+  margin: 0 0 12px;
+}
+
+.featured-note {
+  margin: 14px 0 0;
+  padding: 10px 12px;
+  border-left: 2px solid var(--line);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.featured-note-label {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  opacity: 0.65;
+  margin-bottom: 2px;
+}
+
+/* The shared on-chain block is styled for the agent page's row layout;
+   inside a card it sits as one more block, without the row rule. */
+.featured-card .onchain-block {
+  padding: 16px 0 0;
+  border-bottom: 0;
+}
+
+.featured-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.featured-disclaimer {
+  font-size: 12px;
+  opacity: 0.7;
+  margin: 10px 0 18px;
+}
+
 /* ---------- listing panel ---------- */
 
 /* Wraps a listing's heading + list in its own shaded block so it reads as

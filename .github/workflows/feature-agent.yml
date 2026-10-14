@@ -1,0 +1,66 @@
+name: Feature agent
+
+# Pilih "Agent of the week" dari tab Actions (bisa dari HP):
+# Actions → Feature agent → Run workflow.
+on:
+  workflow_dispatch:
+    inputs:
+      action:
+        description: "feature = pilih agent minggu ini, unfeature = hapus pilihan minggu itu, list = 10 pilihan terakhir"
+        type: choice
+        options:
+          - feature
+          - unfeature
+          - list
+        default: list
+        required: true
+      name:
+        description: "Nama agent persis (opsional)"
+        type: string
+        required: false
+      id:
+        description: "ID agent / uuid (opsional; wajib kalau nama dipakai lebih dari satu agent)"
+        type: string
+        required: false
+      note:
+        description: "Catatan singkat, maksimal 280 karakter (opsional)"
+        type: string
+        required: false
+      week_start:
+        description: "Senin awal minggu, YYYY-MM-DD (opsional; default Senin minggu ini, UTC)"
+        type: string
+        required: false
+
+# Satu perubahan pilihan dalam satu waktu; run yang sedang jalan tidak
+# dibatalkan oleh run berikutnya.
+concurrency:
+  group: feature-agent
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  feature:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      # Input diteruskan lewat env dan dibaca di Node; tidak pernah
+      # disisipkan ke perintah shell.
+      - name: Run feature action
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          FEATURE_ACTION: ${{ inputs.action }}
+          FEATURE_NAME: ${{ inputs.name }}
+          FEATURE_ID: ${{ inputs.id }}
+          FEATURE_NOTE: ${{ inputs.note }}
+          FEATURE_WEEK_START: ${{ inputs.week_start }}
+        run: node scripts/feature-agent.js
