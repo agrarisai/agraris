@@ -1776,7 +1776,94 @@ body.cmdk-open {
 }
 
 .status-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
   margin-top: 20px;
+}
+
+/* --- edit listing (status.html) --- */
+
+.edit-listing {
+  margin: -20px 0 40px;
+  padding: 22px 20px 24px;
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--green);
+  border-radius: 6px;
+  background: var(--panel);
+}
+
+.edit-listing h3 {
+  margin: 0 0 8px;
+  font-family: var(--font-display);
+  font-size: 19px;
+  font-weight: 600;
+}
+
+.edit-listing-lead {
+  margin: 0 0 20px;
+  font-size: 12px;
+  line-height: 1.6;
+  opacity: 0.75;
+}
+
+.field-label-static {
+  display: block;
+  font-size: 12px;
+  margin-bottom: 6px;
+}
+
+.edit-listing-name {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 500;
+  overflow-wrap: anywhere;
+}
+
+.edit-listing .form-actions {
+  flex-wrap: wrap;
+}
+
+/* --- publish success: status link to keep --- */
+
+.publish-keep-link {
+  max-width: 560px;
+  margin: 0 auto 24px;
+  text-align: left;
+}
+
+.publish-keep-link p {
+  margin: 0 0 8px;
+  font-size: 13px;
+  opacity: 0.85;
+}
+
+.publish-keep-link-row {
+  display: flex;
+  gap: 8px;
+}
+
+.publish-keep-link-row input {
+  flex: 1;
+  min-width: 0;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  padding: 8px 10px;
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  background: var(--field-bg);
+  color: var(--ink);
+}
+
+/* --- on-chain link on registry rows --- */
+
+.agent-onchain-link {
+  position: relative;
+  z-index: 2;
+  font-size: 11px;
+  color: var(--text-green-dark);
+  text-decoration: underline;
+  text-underline-offset: 2px;
 }
 
 /* ---------- search ---------- */

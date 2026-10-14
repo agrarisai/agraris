@@ -155,6 +155,13 @@
 
     <div id="publish-success" class="publish-success reveal" hidden>
       <h2 role="status">Submitted. Your agent will appear after review.</h2>
+      <div class="publish-keep-link" id="status-link-block" hidden>
+        <p><strong>Save this link.</strong> It shows your review status and is also the only way to edit your listing later (for example to add a contract address). Anyone with the link can edit the listing, so keep it private.</p>
+        <div class="publish-keep-link-row">
+          <input type="text" id="status-link" readonly aria-label="Your status and edit link" />
+          <button type="button" class="btn btn-sm" id="copy-status-link-btn">Copy</button>
+        </div>
+      </div>
       <div class="publish-success-actions">
         <a class="btn btn-solid" id="check-status-btn" href="status.html" hidden>Check status</a>
         <a class="btn" href="index.html">Back to registry</a>

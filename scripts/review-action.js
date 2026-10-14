@@ -5,10 +5,12 @@
 // jadi pemilik bisa menyetujui / menolak submission dari HP tanpa SQL.
 //
 // Input (diteruskan workflow lewat env, TIDAK lewat perintah shell):
-//   REVIEW_ACTION — list | approve | reject
+//   REVIEW_ACTION — list | approve | reject | set-contract | set-demo
 //   REVIEW_NAME   — nama agent persis (opsional)
 //   REVIEW_ID     — uuid agent (opsional; wajib kalau nama dipakai lebih
 //                   dari satu submission pending)
+//   REVIEW_VALUE  — nilai baru untuk set-contract / set-demo, atau
+//                   "clear" untuk mengosongkan
 //
 // Aturan:
 //   list    — tulis daftar pending (name, id, repo_url, created_at) ke
@@ -20,6 +22,16 @@
 //   id → gagal dan tampilkan daftar id. Baris approved = true tidak
 //   pernah diubah atau dihapus: setiap perubahan memakai filter
 //   approved=eq.false.
+//
+//   set-contract / set-demo — jalur manual untuk agent lama yang tidak
+//             punya token status (builder mengirim alamat kontrak / demo
+//             link ke kami). Berlaku untuk agent approved maupun pending,
+//             cocok lewat id atau name persis (nama dobel → wajib id).
+//             Hanya contract_address ATAU demo_url yang diubah; validasi
+//             sama dengan RPC update_submission():
+//               contract: ^0x[0-9a-fA-F]{40}$
+//               demo:     https://…, tanpa spasi, maks. 500 karakter
+//             Nilai "clear" mengosongkan kolomnya.
 //
 // Env vars lain (dari GitHub Actions secrets):
 //   SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY
@@ -40,7 +52,16 @@ const {
   appendSummary,
 } = require("./review-lib");
 
-const ACTIONS = ["list", "approve", "reject"];
+const ACTIONS = ["list", "approve", "reject", "set-contract", "set-demo"];
+const SET_ACTIONS = {
+  "set-contract": { column: "contract_address", label: "contract address" },
+  "set-demo": { column: "demo_url", label: "demo link" },
+};
+const CLEAR_VALUE = "clear";
+
+// Sama dengan update_submission() di supabase/migration-edit-listing.sql.
+const ADDRESS_PATTERN = /^0x[0-9a-fA-F]{40}$/;
+const MAX_DEMO_URL = 500;
 const LIST_LIMIT = 100;
 
 class UsageError extends Error {}
@@ -85,7 +106,40 @@ function parseInput(env) {
     throw new UsageError(`${action} butuh id atau name.`);
   }
 
-  return { action, id, name };
+  let value;
+  if (SET_ACTIONS[action]) {
+    value = parseSetValue(action, String(env.REVIEW_VALUE || "").trim());
+  }
+
+  return { action, id, name, value };
+}
+
+// Mengembalikan nilai yang akan disimpan (null = dikosongkan).
+function parseSetValue(action, raw) {
+  if (!raw) {
+    throw new UsageError(`${action} butuh value (atau "${CLEAR_VALUE}" untuk mengosongkan).`);
+  }
+  if (raw.toLowerCase() === CLEAR_VALUE) return null;
+
+  if (action === "set-contract") {
+    if (!ADDRESS_PATTERN.test(raw)) {
+      throw new UsageError("value harus 0x diikuti 40 karakter hex (0-9, a-f).");
+    }
+    return raw;
+  }
+
+  let ok = raw.length <= MAX_DEMO_URL && /^https:\/\/[^/?#\s]+/i.test(raw) && !/[\s\u0000-\u001F\u007F]/.test(raw);
+  if (ok) {
+    try {
+      ok = new URL(raw).protocol === "https:";
+    } catch {
+      ok = false;
+    }
+  }
+  if (!ok) {
+    throw new UsageError(`value harus diawali https://, tanpa spasi, maksimal ${MAX_DEMO_URL} karakter.`);
+  }
+  return raw;
 }
 
 function describeTarget({ id, name }) {
@@ -225,6 +279,63 @@ async function reject(target) {
   log(`Rejected (deleted) ${deleted.length} row(s): ${deleted[0].id}`);
 }
 
+// Cari tepat satu agent (approved atau pending) untuk set-contract /
+// set-demo.
+async function resolveAny(action, target, column) {
+  const query = [
+    `select=id,name,approved,${column}`,
+    ...matchFilters(target),
+    "order=created_at.asc",
+    "limit=50",
+  ].join("&");
+  const { data } = await rest("GET", "agents", query);
+  const rows = Array.isArray(data) ? data : [];
+
+  if (rows.length === 0) {
+    throw new UsageError(`Tidak ada agent yang cocok dengan ${describeTarget(target)}.`);
+  }
+  if (rows.length > 1 && !target.id) {
+    throw new UsageError(
+      `${rows.length} agent memakai nama yang sama. Isi id: ${rows.map((r) => r.id).join(", ")}`
+    );
+  }
+  return rows[0];
+}
+
+async function setField(action, target) {
+  const { column, label } = SET_ACTIONS[action];
+  const row = await resolveAny(action, target, column);
+  const before = row[column] ?? null;
+
+  if (before === target.value) {
+    summary(`## Review queue: ${action}\n\nTidak ada perubahan: ${label} untuk ${safeMd(row.name, MAX_NAME_LENGTH)} sudah sama.`);
+    log(`${action}: no change for ${row.id}`);
+    return;
+  }
+
+  const query = [filter("id", "eq", row.id), `select=id,name,${column}`].join("&");
+  const { data } = await rest("PATCH", "agents", query, {
+    body: { [column]: target.value },
+    prefer: "return=representation",
+  });
+  const changed = Array.isArray(data) ? data : [];
+  if (changed.length !== 1) {
+    throw new UsageError(`Tidak ada baris yang diubah (agent ${row.id} mungkin baru saja dihapus).`);
+  }
+
+  const show = (v) => (v ? safeMd(v, MAX_DEMO_URL) : "_(kosong)_");
+  summary(
+    [
+      `## Review queue: ${action}`,
+      "",
+      `- ${safeMd(changed[0].name, MAX_NAME_LENGTH)} (\`${changed[0].id}\`, ${row.approved ? "approved" : "pending"})`,
+      `- ${label} lama: ${show(before)}`,
+      `- ${label} baru: ${show(changed[0][column])}`,
+    ].join("\n")
+  );
+  log(`${action}: updated ${changed[0].id}`);
+}
+
 // ---------- main ----------
 
 async function main() {
@@ -233,7 +344,8 @@ async function main() {
 
   if (input.action === "list") return listPending();
   if (input.action === "approve") return approve(input);
-  return reject(input);
+  if (input.action === "reject") return reject(input);
+  return setField(input.action, input);
 }
 
 main().catch((err) => {

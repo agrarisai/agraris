@@ -8,6 +8,9 @@
   const msgEl = document.getElementById("form-msg");
   const successBlock = document.getElementById("publish-success");
   const checkStatusBtn = document.getElementById("check-status-btn");
+  const statusLinkBlock = document.getElementById("status-link-block");
+  const statusLinkInput = document.getElementById("status-link");
+  const copyStatusLinkBtn = document.getElementById("copy-status-link-btn");
 
   // Status codes from this browser's submissions, newest first, so
   // status.html can fall back to the latest one when opened without ?t=.
@@ -39,6 +42,23 @@
       return false;
     }
   }
+
+  statusLinkInput.addEventListener("focus", () => statusLinkInput.select());
+
+  copyStatusLinkBtn.addEventListener("click", () => {
+    const done = () => {
+      copyStatusLinkBtn.textContent = "Copied";
+      setTimeout(() => {
+        copyStatusLinkBtn.textContent = "Copy";
+      }, 2000);
+    };
+    if (navigator.clipboard?.writeText) {
+      navigator.clipboard.writeText(statusLinkInput.value).then(done, () => statusLinkInput.select());
+    } else {
+      // No clipboard API: select the text so it can be copied by hand.
+      statusLinkInput.focus();
+    }
+  });
 
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -94,9 +114,10 @@
       demo_url: demoUrl || null,
     };
 
-    // Random status code so the builder can check the review status on
-    // status.html. The database stores only a hash of it
-    // (supabase/migration-submission-status.sql).
+    // Random status code so the builder can check the review status and
+    // edit the listing on status.html. The database stores only a hash
+    // of it (supabase/migration-submission-status.sql). It goes in the
+    // URL fragment (#t=), which browsers never send to servers.
     const statusToken =
       window.crypto && typeof window.crypto.randomUUID === "function"
         ? window.crypto.randomUUID()
@@ -126,8 +147,11 @@
       setMessage("", "");
       if (statusToken) {
         rememberStatusToken(statusToken);
-        checkStatusBtn.href = `status.html?t=${encodeURIComponent(statusToken)}`;
+        const statusPath = `status.html#t=${encodeURIComponent(statusToken)}`;
+        checkStatusBtn.href = statusPath;
         checkStatusBtn.hidden = false;
+        statusLinkInput.value = new URL(statusPath, window.location.href).href;
+        statusLinkBlock.hidden = false;
       }
       successBlock.hidden = false;
     } catch (err) {
