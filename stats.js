@@ -2,9 +2,11 @@
 // Agraris — public registry stats (stats.html)
 // ============================================
 //
-// One read-only query to `agents` with the publishable key, then every
-// number is computed here in the browser. The column list is
-// AGENT_COLUMNS from app.js, so internal columns are never fetched.
+// One read-only query to `agents` with the publishable key (approved
+// rows only, explicit column list), then every number is computed here
+// in the browser. Growth over time uses coalesce(approved_at,
+// created_at): when an agent became public, not when it was submitted.
+// Nothing about pending submissions is fetched or shown.
 //
 // Charts are inline SVG drawn in real pixels from the measured container
 // width (and redrawn on resize), so SVG text never shrinks on phones and
@@ -18,9 +20,15 @@
 
 const STATS_ADDRESS_PATTERN = /^0x[a-fA-F0-9]{40}$/;
 const DAY_MS = 24 * 60 * 60 * 1000;
-const CATEGORY_PREVIEW_COUNT = 12;
+const CATEGORY_PREVIEW_COUNT = 8;
 const LIST_COUNT = 5;
+const GROWTH_WEEKS = 12;
 const SVG_NS = "http://www.w3.org/2000/svg";
+
+// Only what this page uses. github_stars feeds the existing "Most
+// starred" list; approved_at is only ever read for approved rows.
+const STATS_COLUMNS =
+  "id, name, category, contract_address, verified, github_stars, github_updated_at, created_at, approved_at";
 
 // ---------- formatting ----------
 
@@ -53,6 +61,26 @@ function fmtWeekLong(ts) {
   });
 }
 
+// Shown in place of a number that the data can't support.
+const NO_DATA = "\u2013";
+
+function fmtCount(n) {
+  return n === null || n === undefined ? NO_DATA : fmtNumber(n);
+}
+
+// Parses a timestamp; null when missing or invalid.
+function parseTime(value) {
+  if (!value) return null;
+  const t = new Date(value).getTime();
+  return Number.isNaN(t) ? null : t;
+}
+
+// When the agent became public: coalesce(approved_at, created_at).
+function growthTime(a) {
+  const approved = parseTime(a.approved_at);
+  return approved !== null ? approved : parseTime(a.created_at);
+}
+
 // Monday 00:00 UTC of the week containing `date`.
 function weekStartUtc(date) {
   const d = new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate()));
@@ -74,11 +102,18 @@ function niceMax(value) {
 // ---------- computing ----------
 
 function computeStats(agents, now) {
-  const weekAgo = now.getTime() - 7 * DAY_MS;
+  const nowMs = now.getTime();
+  const weekAgo = nowMs - 7 * DAY_MS;
+  const monthAgo = nowMs - 30 * DAY_MS;
 
   const withAddress = agents.filter(
     (a) => typeof a.contract_address === "string" && STATS_ADDRESS_PATTERN.test(a.contract_address.trim())
   ).length;
+
+  // GitHub activity: "–" when no agent has GitHub data at all, so a
+  // missing refresh never reads as "0 active".
+  const githubTimes = agents.map((a) => parseTime(a.github_updated_at)).filter((t) => t !== null);
+  const githubRecent = githubTimes.length === 0 ? null : githubTimes.filter((t) => t >= monthAgo).length;
 
   // A category is a text[]: one agent can count toward several.
   const catCounts = new Map();
@@ -93,16 +128,15 @@ function computeStats(agents, now) {
 
   // Weekly additions, every week from the first agent to now (empty
   // weeks included so gaps aren't hidden), plus a running total.
-  const dated = agents
-    .map((a) => new Date(a.created_at))
-    .filter((d) => !Number.isNaN(d.getTime()));
+  const dated = agents.map(growthTime).filter((t) => t !== null);
   const weeks = [];
   if (dated.length > 0) {
-    const first = weekStartUtc(new Date(Math.min(...dated.map((d) => d.getTime()))));
+    const first = weekStartUtc(new Date(Math.min(...dated)));
     const last = weekStartUtc(now);
     const counts = new Map();
-    dated.forEach((d) => {
-      const k = weekStartUtc(d);
+    // Anything dated after this week (clock skew) lands in this week.
+    dated.forEach((t) => {
+      const k = Math.min(weekStartUtc(new Date(t)), last);
       counts.set(k, (counts.get(k) || 0) + 1);
     });
     let total = 0;
@@ -113,9 +147,13 @@ function computeStats(agents, now) {
     }
   }
 
-  const newest = [...agents]
-    .filter((a) => !Number.isNaN(new Date(a.created_at).getTime()))
-    .sort((x, y) => new Date(y.created_at) - new Date(x.created_at))
+  // With agents but no usable dates, "added in the last N days" has no
+  // basis, so it shows "–" instead of 0.
+  const hasDates = agents.length === 0 || dated.length > 0;
+
+  const recent = agents
+    .filter((a) => parseTime(a.approved_at) !== null)
+    .sort((x, y) => parseTime(y.approved_at) - parseTime(x.approved_at))
     .slice(0, LIST_COUNT);
 
   const mostStarred = agents
@@ -126,11 +164,14 @@ function computeStats(agents, now) {
   return {
     total: agents.length,
     verified: agents.filter(isVerified).length,
-    lastWeek: dated.filter((d) => d.getTime() >= weekAgo).length,
+    lastWeek: hasDates ? dated.filter((t) => t >= weekAgo).length : null,
+    lastMonth: hasDates ? dated.filter((t) => t >= monthAgo).length : null,
     withAddress,
+    githubRecent,
     categories,
     weeks,
-    newest,
+    growth: weeks.slice(-GROWTH_WEEKS),
+    recent,
     mostStarred,
   };
 }
@@ -139,12 +180,10 @@ function computeStats(agents, now) {
 
 function renderTiles(s) {
   const tiles = [
-    ["Total agents", s.total],
-    ["Verified agents", s.verified],
-    ["Added in the last 7 days", s.lastWeek],
+    ["Total agents", fmtCount(s.total)],
+    ["Added in the last 7 days", s.lastWeek === null ? NO_DATA : `+${fmtNumber(s.lastWeek)}`],
+    ["Added in the last 30 days", s.lastMonth === null ? NO_DATA : `+${fmtNumber(s.lastMonth)}`],
   ];
-  // Only when at least one agent actually has an address.
-  if (s.withAddress > 0) tiles.push(["With an on-chain address", s.withAddress]);
 
   return `
     <section class="stats-section reveal" aria-label="Registry totals">
@@ -153,12 +192,89 @@ function renderTiles(s) {
           .map(
             ([label, value]) => `
           <div class="stats-tile">
-            <span class="stats-tile-value">${fmtNumber(value)}</span>
+            <span class="stats-tile-value">${escapeHtml(value)}</span>
             <span class="stats-tile-label">${escapeHtml(label)}</span>
           </div>`
           )
           .join("")}
       </div>
+    </section>`;
+}
+
+function renderGrowth(s) {
+  const title = `<h3 id="stats-growth-title">Growth, last ${GROWTH_WEEKS} weeks</h3>`;
+  const g = s.growth;
+
+  if (g.length === 0) {
+    return `
+      <section class="stats-section stats-card reveal" aria-labelledby="stats-growth-title">
+        ${title}
+        <p class="stats-empty">No agents yet.</p>
+      </section>`;
+  }
+
+  // One or two points make a line that looks like a trend but isn't:
+  // say it in words instead.
+  if (g.length <= 2) {
+    return `
+      <section class="stats-section stats-card reveal" aria-labelledby="stats-growth-title">
+        ${title}
+        <ul class="stats-list">
+          ${g
+            .map(
+              (w) => `
+            <li>
+              <span>Week of ${escapeHtml(fmtWeekLong(w.start))}</span>
+              <span class="stats-list-value">${fmtNumber(w.total)} total (+${fmtNumber(w.added)})</span>
+            </li>`
+            )
+            .join("")}
+        </ul>
+        <p class="stats-note">Not enough weeks yet for a chart.</p>
+      </section>`;
+  }
+
+  const rows = g
+    .map(
+      (w) => `<tr><th scope="row">${escapeHtml(fmtWeekLong(w.start))}</th><td>${fmtNumber(w.total)}</td><td>${fmtNumber(w.added)}</td></tr>`
+    )
+    .join("");
+
+  return `
+    <section class="stats-section stats-card reveal" aria-labelledby="stats-growth-title">
+      ${title}
+      <p class="stats-chart-caption">Total agents at the end of each week (weeks start Monday, UTC)</p>
+      <div class="stats-chart" id="chart-growth" aria-hidden="true"></div>
+      <table class="sr-only">
+        <caption>Total agents per week, last ${g.length} weeks</caption>
+        <thead><tr><th scope="col">Week of</th><th scope="col">Total</th><th scope="col">Added that week</th></tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+      <p class="stats-note">Counted from the date an agent was approved (or published, for older listings).</p>
+    </section>`;
+}
+
+function renderSummary(s) {
+  const items = [
+    ["Verified agents", fmtCount(s.verified)],
+    ["With an on-chain address", fmtCount(s.withAddress)],
+    ["GitHub repo updated in the last 30 days", fmtCount(s.githubRecent)],
+  ];
+  return `
+    <section class="stats-section stats-card reveal" aria-labelledby="stats-summary-title">
+      <h3 id="stats-summary-title">At a glance</h3>
+      <ul class="stats-list">
+        ${items
+          .map(
+            ([label, value]) => `
+          <li>
+            <span>${escapeHtml(label)}</span>
+            <span class="stats-list-value">${escapeHtml(value)}</span>
+          </li>`
+          )
+          .join("")}
+      </ul>
+      <p class="stats-note">An on-chain address is listed by the builder; it does not measure usage.</p>
     </section>`;
 }
 
@@ -216,8 +332,6 @@ function renderWeekly(s) {
       <h3 id="stats-week-title">Agents added per week</h3>
       <p class="stats-chart-caption">Added each week (weeks start Monday, UTC)</p>
       <div class="stats-chart" id="chart-weekly"></div>
-      <p class="stats-chart-caption">Total listed, cumulative</p>
-      <div class="stats-chart" id="chart-cumulative"></div>
       <details class="stats-table-toggle">
         <summary>Show as table</summary>
         <div class="docs-table-wrap">
@@ -227,7 +341,7 @@ function renderWeekly(s) {
           </table>
         </div>
       </details>
-      <p class="stats-note">Includes agents added by the Agraris team after review.</p>
+      <p class="stats-note">Counted by approval date. Includes agents added by the Agraris team after review.</p>
     </section>`;
 }
 
@@ -267,8 +381,17 @@ function renderFooterNote(loadedAt) {
   return `
     <section class="stats-section stats-footnote reveal">
       <p>Agraris is a directory. These numbers describe the registry, not on-chain volume or traction.</p>
+      <p class="stats-note">All numbers are computed from approved agents only.</p>
       <p class="stats-asof">Data as of <time datetime="${loadedAt.toISOString()}">${escapeHtml(asOf)}</time></p>
-      <button type="button" class="btn btn-sm" id="copy-stats-link-btn">Copy link</button>
+      <div class="stats-copy-row">
+        <button type="button" class="btn btn-sm" id="copy-summary-btn">Copy weekly summary</button>
+        <button type="button" class="btn btn-sm" id="copy-stats-link-btn">Copy link</button>
+        <span class="stats-copy-status" id="copy-summary-status" role="status" aria-live="polite"></span>
+      </div>
+      <div class="stats-copy-fallback" id="copy-summary-fallback" hidden>
+        <label for="copy-summary-text">Copying isn't available here. Select the text and copy it:</label>
+        <textarea id="copy-summary-text" rows="3" readonly></textarea>
+      </div>
     </section>`;
 }
 
@@ -342,14 +465,13 @@ function weekLabel(w) {
   return `Week of ${fmtWeekLong(w.start)}: ${fmtNumber(w.added)} added, ${fmtNumber(w.total)} total`;
 }
 
-// Draws one of the two weekly charts. kind = "weekly" (columns) or
-// "cumulative" (line + light area). Both share the same x positions.
-function drawWeekChart(container, weeks, kind) {
+// Column chart of agents added per week, full history. (The running
+// total is drawn by drawGrowthChart.)
+function drawWeekChart(container, weeks) {
   const W = Math.floor(container.clientWidth);
   if (W <= 0) return;
-  const H = kind === "weekly" ? 150 : 120;
+  const H = 150;
   const padL = 30;
-  // Same left/right padding in both charts so a week sits at the same x.
   const padR = 34;
   const padT = 18;
   const axisH = 22;
@@ -357,15 +479,12 @@ function drawWeekChart(container, weeks, kind) {
   const plotH = H - padT - axisH;
   const n = weeks.length;
   const band = plotW / n;
-  const values = weeks.map((w) => (kind === "weekly" ? w.added : w.total));
+  const values = weeks.map((w) => w.added);
   const yMax = niceMax(Math.max(...values, 1));
   const y = (v) => padT + plotH - (v / yMax) * plotH;
   const xCenter = (i) => padL + band * i + band / 2;
 
-  const summary =
-    kind === "weekly"
-      ? `Column chart of agents added per week, ${n} week${n === 1 ? "" : "s"}, from the week of ${fmtWeekLong(weeks[0].start)}. Peak: ${fmtNumber(Math.max(...values))} in one week.`
-      : `Line chart of the cumulative number of listed agents, reaching ${fmtNumber(weeks[n - 1].total)}.`;
+  const summary = `Column chart of agents added per week, ${n} week${n === 1 ? "" : "s"}, from the week of ${fmtWeekLong(weeks[0].start)}. Peak: ${fmtNumber(Math.max(...values))} in one week.`;
 
   const svg = svgEl("svg", {
     viewBox: `0 0 ${W} ${H}`,
@@ -390,32 +509,21 @@ function drawWeekChart(container, weeks, kind) {
     svg.appendChild(svgEl("text", { class: "chart-tick", x, y: H - 6, "text-anchor": anchor }, fmtWeek(weeks[i].start)));
   });
 
-  if (kind === "weekly") {
-    const barW = Math.max(2, Math.min(24, band - 2));
-    weeks.forEach((w, i) => {
-      if (w.added === 0) return;
-      const top = y(w.added);
-      svg.appendChild(svgEl("path", { class: "bar-fill", d: vBarPath(xCenter(i) - barW / 2, top, barW, padT + plotH - top, 4) }));
-      if (barW > 6) {
-        svg.appendChild(svgEl("rect", { class: "bar-cap", x: xCenter(i) - barW / 2 + 3, y: top, width: barW - 6, height: 2 }));
-      }
-    });
-    // Direct labels, selectively: the peak week and the latest week.
-    const peak = values.indexOf(Math.max(...values));
-    [...new Set([peak, n - 1])].forEach((i) => {
-      if (values[i] === 0 && i !== n - 1) return;
-      svg.appendChild(svgEl("text", { class: "chart-value", x: xCenter(i), y: y(values[i]) - 5, "text-anchor": "middle" }, fmtNumber(values[i])));
-    });
-  } else {
-    const pts = weeks.map((w, i) => [xCenter(i), y(w.total)]);
-    const line = pts.map(([px, py], i) => `${i ? "L" : "M"}${px.toFixed(1)},${py.toFixed(1)}`).join(" ");
-    const base = padT + plotH;
-    svg.appendChild(svgEl("path", { class: "chart-area", d: `${line} L${pts[n - 1][0].toFixed(1)},${base} L${pts[0][0].toFixed(1)},${base} Z` }));
-    svg.appendChild(svgEl("path", { class: "chart-line", d: line }));
-    const [ex, ey] = pts[n - 1];
-    svg.appendChild(svgEl("circle", { class: "chart-dot", cx: ex, cy: ey, r: 4 }));
-    svg.appendChild(svgEl("text", { class: "chart-value", x: ex + 8, y: ey + 4, "text-anchor": "start" }, fmtNumber(weeks[n - 1].total)));
-  }
+  const barW = Math.max(2, Math.min(24, band - 2));
+  weeks.forEach((w, i) => {
+    if (w.added === 0) return;
+    const top = y(w.added);
+    svg.appendChild(svgEl("path", { class: "bar-fill", d: vBarPath(xCenter(i) - barW / 2, top, barW, padT + plotH - top, 4) }));
+    if (barW > 6) {
+      svg.appendChild(svgEl("rect", { class: "bar-cap", x: xCenter(i) - barW / 2 + 3, y: top, width: barW - 6, height: 2 }));
+    }
+  });
+  // Direct labels, selectively: the peak week and the latest week.
+  const peak = values.indexOf(Math.max(...values));
+  [...new Set([peak, n - 1])].forEach((i) => {
+    if (values[i] === 0 && i !== n - 1) return;
+    svg.appendChild(svgEl("text", { class: "chart-value", x: xCenter(i), y: y(values[i]) - 5, "text-anchor": "middle" }, fmtNumber(values[i])));
+  });
 
   // Hit targets: one full-height column per week, focusable, so hover
   // and keyboard focus show the same tooltip. Values stay in the table.
@@ -432,7 +540,7 @@ function drawWeekChart(container, weeks, kind) {
     const show = () => {
       svg.querySelectorAll(".chart-hit.is-active").forEach((el) => el.classList.remove("is-active"));
       hit.classList.add("is-active");
-      showTooltip(container, weekLabel(w), xCenter(i), kind === "weekly" ? y(w.added) : y(w.total));
+      showTooltip(container, weekLabel(w), xCenter(i), y(w.added));
     };
     hit.addEventListener("pointerenter", show);
     hit.addEventListener("focus", show);
@@ -444,13 +552,171 @@ function drawWeekChart(container, weeks, kind) {
   container.replaceChildren(svg);
 }
 
+// Cumulative total per week for the last GROWTH_WEEKS weeks: y axis
+// with ticks, x axis with a tick per week and as many week labels as
+// fit the measured width (always the last one). Only drawn for 3+
+// weeks; renderGrowth() shows text below that. Screen readers get the
+// sr-only table next to it, so the SVG itself is aria-hidden.
+function drawGrowthChart(container, weeks) {
+  const W = Math.floor(container.clientWidth);
+  const n = weeks.length;
+  if (W <= 0 || n < 3) return;
+
+  const H = 190;
+  const values = weeks.map((w) => w.total);
+  const yMax = niceMax(Math.max(...values, 1));
+  const padL = 12 + 7 * fmtNumber(yMax).length;
+  const padR = 18 + 7 * fmtNumber(values[n - 1]).length;
+  const padT = 14;
+  const axisH = 26;
+  const plotW = Math.max(10, W - padL - padR);
+  const plotH = H - padT - axisH;
+  const base = padT + plotH;
+  const y = (v) => padT + plotH - (v / yMax) * plotH;
+  const x = (i) => padL + (plotW * i) / (n - 1);
+
+  const svg = svgEl("svg", { viewBox: `0 0 ${W} ${H}`, width: W, height: H, focusable: "false" });
+
+  // Gridlines + y ticks at 0, half and max (whole numbers only).
+  [0, yMax / 2, yMax].forEach((t) => {
+    if (!Number.isInteger(t)) return;
+    if (t !== 0) svg.appendChild(svgEl("line", { class: "chart-grid", x1: padL, x2: padL + plotW, y1: y(t), y2: y(t) }));
+    svg.appendChild(svgEl("text", { class: "chart-tick chart-tick--axis", x: padL - 7, y: y(t) + 4, "text-anchor": "end" }, fmtNumber(t)));
+  });
+
+  // Axes.
+  svg.appendChild(svgEl("line", { class: "chart-axis", x1: padL, x2: padL, y1: padT, y2: base }));
+  svg.appendChild(svgEl("line", { class: "chart-axis", x1: padL, x2: padL + plotW, y1: base, y2: base }));
+
+  // Week ticks; labels every `step` weeks counted back from the latest,
+  // so the newest week is always labeled and labels never collide.
+  const labelW = 46;
+  const step = Math.max(1, Math.ceil((labelW * n) / plotW));
+  weeks.forEach((w, i) => {
+    svg.appendChild(svgEl("line", { class: "chart-axis", x1: x(i), x2: x(i), y1: base, y2: base + 4 }));
+    if ((n - 1 - i) % step !== 0) return;
+    const anchor = i === 0 ? "start" : i === n - 1 ? "end" : "middle";
+    const lx = i === 0 ? x(i) - 4 : i === n - 1 ? x(i) + 4 : x(i);
+    svg.appendChild(svgEl("text", { class: "chart-tick chart-tick--axis", x: lx, y: H - 6, "text-anchor": anchor }, fmtWeek(w.start)));
+  });
+
+  const pts = values.map((v, i) => [x(i), y(v)]);
+  const line = pts.map(([px, py], i) => `${i ? "L" : "M"}${px.toFixed(1)},${py.toFixed(1)}`).join(" ");
+  svg.appendChild(svgEl("path", { class: "chart-area", d: `${line} L${pts[n - 1][0].toFixed(1)},${base} L${pts[0][0].toFixed(1)},${base} Z` }));
+  svg.appendChild(svgEl("path", { class: "chart-line", d: line }));
+  pts.forEach(([px, py], i) => {
+    svg.appendChild(svgEl("circle", { class: "chart-dot", cx: px, cy: py, r: i === n - 1 ? 4 : 2.5 }));
+  });
+  const [ex, ey] = pts[n - 1];
+  svg.appendChild(svgEl("text", { class: "chart-value", x: ex + 8, y: ey + 4, "text-anchor": "start" }, fmtNumber(values[n - 1])));
+
+  // Hover only (keyboard and screen-reader users have the table).
+  weeks.forEach((w, i) => {
+    const left = i === 0 ? padL : (x(i - 1) + x(i)) / 2;
+    const right = i === n - 1 ? padL + plotW : (x(i) + x(i + 1)) / 2;
+    const hit = svgEl("rect", { class: "chart-hit", x: left, y: padT, width: Math.max(right - left, 1), height: plotH });
+    hit.addEventListener("pointerenter", () => {
+      hit.classList.add("is-active");
+      showTooltip(container, weekLabel(w), x(i), y(w.total));
+    });
+    hit.addEventListener("pointerleave", () => {
+      hit.classList.remove("is-active");
+      hideTooltip();
+    });
+    svg.appendChild(hit);
+  });
+
+  container.replaceChildren(svg);
+}
+
 function drawCharts(root, stats) {
   hideTooltip();
   drawCategoryBars(root);
   const weekly = root.querySelector("#chart-weekly");
-  const cumulative = root.querySelector("#chart-cumulative");
-  if (weekly && stats.weeks.length) drawWeekChart(weekly, stats.weeks, "weekly");
-  if (cumulative && stats.weeks.length) drawWeekChart(cumulative, stats.weeks, "cumulative");
+  const growth = root.querySelector("#chart-growth");
+  if (weekly && stats.weeks.length) drawWeekChart(weekly, stats.weeks);
+  if (growth) drawGrowthChart(growth, stats.growth);
+}
+
+// ---------- weekly summary (plain text) ----------
+
+// Category names come from builders: flatten whitespace/control
+// characters so a tag can't break the one-line summary.
+function plainTag(name) {
+  return String(name).replace(/[\u0000-\u001f\u007f\s]+/g, " ").trim().slice(0, 40);
+}
+
+function buildWeeklySummary(s) {
+  const plural = (n, word) => `${fmtNumber(n)} ${word}${n === 1 ? "" : "s"}`;
+  const parts = [];
+  if (s.lastWeek === null) {
+    parts.push(`Agraris: ${plural(s.total, "agent")} listed.`);
+  } else {
+    parts.push(`Agraris this week: +${plural(s.lastWeek, "agent")} (${fmtNumber(s.total)} total).`);
+  }
+  const top = [...new Set(s.categories.map((c) => plainTag(c.name)).filter(Boolean))].slice(0, 3);
+  if (top.length) parts.push(`Top categories: ${top.join(", ")}.`);
+  parts.push(`${plural(s.withAddress, "agent")} list an on-chain address.`);
+  parts.push("agraris.xyz/stats");
+  return parts.join(" ");
+}
+
+// Clipboard API first; the hidden-textarea + execCommand fallback covers
+// older browsers and non-secure contexts. Resolves true when copied.
+async function copyText(text) {
+  if (navigator.clipboard?.writeText && window.isSecureContext) {
+    try {
+      await navigator.clipboard.writeText(text);
+      return true;
+    } catch (e) {
+      // fall through to the legacy path
+    }
+  }
+  const ta = document.createElement("textarea");
+  ta.value = text;
+  ta.setAttribute("readonly", "");
+  ta.style.position = "fixed";
+  ta.style.top = "0";
+  ta.style.left = "0";
+  ta.style.opacity = "0";
+  document.body.appendChild(ta);
+  ta.select();
+  let ok = false;
+  try {
+    ok = document.execCommand("copy");
+  } catch (e) {
+    ok = false;
+  }
+  ta.remove();
+  return ok;
+}
+
+function initCopySummary(root, stats) {
+  const btn = root.querySelector("#copy-summary-btn");
+  const status = root.querySelector("#copy-summary-status");
+  const fallback = root.querySelector("#copy-summary-fallback");
+  const fallbackText = root.querySelector("#copy-summary-text");
+  if (!btn) return;
+  let timer = null;
+  btn.addEventListener("click", async () => {
+    const text = buildWeeklySummary(stats);
+    const ok = await copyText(text);
+    clearTimeout(timer);
+    if (ok) {
+      fallback.hidden = true;
+      status.textContent = "Copied";
+      timer = setTimeout(() => {
+        status.textContent = "";
+      }, 2500);
+    } else {
+      // Nothing worked: show the text so it can be copied by hand.
+      status.textContent = "";
+      fallbackText.value = text;
+      fallback.hidden = false;
+      fallbackText.focus();
+      fallbackText.select();
+    }
+  });
 }
 
 // Same copy-to-clipboard pattern as the agent page's "Copy link".
@@ -482,7 +748,10 @@ function initCopyStatsLink(root) {
 
   let agents;
   try {
-    const { data, error } = await supabaseClient.from("agents").select(AGENT_COLUMNS);
+    const { data, error } = await supabaseClient
+      .from("agents")
+      .select(STATS_COLUMNS)
+      .eq("approved", true);
     if (error) throw error;
     agents = data || [];
   } catch (err) {
@@ -498,16 +767,18 @@ function initCopyStatsLink(root) {
 
   root.innerHTML = [
     renderTiles(stats),
+    renderGrowth(stats),
+    renderSummary(stats),
     renderCategories(stats),
-    renderWeekly(stats),
     renderList(
-      "Newest agents",
+      "Recently added",
       "stats-new-title",
-      stats.newest,
-      (a) => escapeHtml(fmtDate(a.created_at)),
-      "",
+      stats.recent,
+      (a) => `Approved ${escapeHtml(fmtDate(a.approved_at))}`,
+      "Newest approvals first.",
       "No agents yet."
     ),
+    renderWeekly(stats),
     renderList(
       "Most starred",
       "stats-star-title",
@@ -522,6 +793,7 @@ function initCopyStatsLink(root) {
   drawCharts(root, stats);
   observeReveal(root);
   initCopyStatsLink(root);
+  initCopySummary(root, stats);
 
   const moreBtn = root.querySelector("#cat-more");
   moreBtn?.addEventListener("click", () => {

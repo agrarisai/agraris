@@ -2580,8 +2580,8 @@ body.cmdk-open {
   gap: 10px;
 }
 
-/* Odd count on phones (3 tiles when no agent has an address): the
-   last tile spans the row instead of leaving a hole. */
+/* Odd count on phones (3 tiles): the last tile spans the row
+   instead of leaving a hole. */
 .stats-tile:last-child:nth-child(odd) {
   grid-column: 1 / -1;
 }
@@ -2859,6 +2859,62 @@ body.cmdk-open {
 
 .stats-footnote .btn {
   margin-top: 6px;
+}
+
+/* --- growth chart axes --- */
+
+.chart-axis {
+  stroke: var(--ink);
+  stroke-width: 1;
+  opacity: 0.6;
+}
+
+/* Axis labels on the growth chart: stronger than the recessive
+   .chart-tick so week labels stay readable in both themes. */
+.chart-tick--axis {
+  opacity: 0.8;
+}
+
+/* --- copy weekly summary --- */
+
+.stats-copy-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.stats-footnote .stats-copy-row .btn {
+  margin-top: 0;
+}
+
+.stats-copy-status {
+  font-size: 12px;
+  color: var(--text-green-dark);
+}
+
+.stats-copy-fallback {
+  margin-top: 10px;
+  font-size: 12px;
+}
+
+.stats-copy-fallback[hidden] {
+  display: none;
+}
+
+.stats-copy-fallback textarea {
+  display: block;
+  width: 100%;
+  margin-top: 6px;
+  padding: 8px;
+  background: var(--field-bg);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  color: var(--ink);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  resize: vertical;
 }
 
 /* ---------- changelog page ---------- */

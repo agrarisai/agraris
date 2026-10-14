@@ -122,8 +122,10 @@ function renderEmptyState(title, body, cta = null) {
 }
 
 // Columns the site reads from the agents table. Listed explicitly instead
-// of select("*") so internal columns (status_token, approved, approved_at,
-// notified_at) never reach the browser.
+// of select("*") so internal columns (status_token, approved, notified_at)
+// never reach the browser. approved_at is not internal: it is readable for
+// approved agents on purpose and is fetched by the stats page (stats.js),
+// though this shared list doesn't include it.
 const AGENT_COLUMNS =
   "id, name, description, version, repo_url, category, demo_url, created_at, verified, github_stars, github_updated_at, contract_address";
 
