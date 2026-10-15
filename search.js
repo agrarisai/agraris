@@ -48,6 +48,7 @@
     if (activeKind) url.searchParams.set("kind", activeKind);
     else url.searchParams.delete("kind");
     history.replaceState(history.state, "", url);
+    syncNavActive();
   }
 
   function populateCategoryChips(agents) {

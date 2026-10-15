@@ -651,6 +651,26 @@ const THEME_STORAGE_KEY = "agraris-theme";
 })();
 
 // ============================================
+// Search / Tools active state (shared header + menu)
+// ============================================
+// search.html serves both the agent registry and the tool list
+// (?kind=tool), so the highlighted nav item depends on the query string:
+// "Tools" for kind=tool, "Search" otherwise. Other pages keep the static
+// markup. search.js calls this again when its Agents/Tools tabs change
+// the URL without a reload.
+function syncNavActive() {
+  if (!/(^|\/)search(\.html)?$/.test(window.location.pathname)) return;
+  const isToolList = new URLSearchParams(window.location.search).get("kind") === "tool";
+  document.querySelectorAll('[data-nav="search"]').forEach((a) => {
+    a.classList.toggle("active", !isToolList);
+  });
+  document.querySelectorAll('[data-nav="tools"]').forEach((a) => {
+    a.classList.toggle("active", isToolList);
+  });
+}
+syncNavActive();
+
+// ============================================
 // Hamburger menu (shared header, all pages)
 // ============================================
 

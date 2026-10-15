@@ -87,6 +87,7 @@
   function renderDefault() {
     items = [
       { href: "search.html" },
+      { href: "search.html?kind=tool" },
       { href: "publish.html" },
       { href: "watchlist.html" },
     ];
@@ -95,6 +96,9 @@
       <div class="cmdk-section-label">Quick links</div>
       <a class="cmdk-result" href="search.html">
         <span class="cmdk-result-name">Go to Search</span>
+      </a>
+      <a class="cmdk-result" href="search.html?kind=tool">
+        <span class="cmdk-result-name">Go to Tools</span>
       </a>
       <a class="cmdk-result" href="publish.html">
         <span class="cmdk-result-name">Go to Publish</span>
