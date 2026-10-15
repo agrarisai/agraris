@@ -145,6 +145,15 @@ $$;
 revoke all on function public.agents_hash_status_token() from public;
 
 -- Cek status: signature, hasil, dan grant sama seperti sebelumnya.
+--
+-- "drop function if exists" (di sini dan di dua fungsi RPC di bawah)
+-- supaya file ini tetap bisa dijalankan ulang setelah
+-- migration-listing-kind.sql: fungsi-fungsi itu mengembalikan kolom
+-- `kind` tambahan, dan Postgres menolak create or replace kalau kolom
+-- kembaliannya berbeda. Setelah dijalankan ulang, jalankan
+-- migration-listing-kind.sql lagi untuk mengembalikan kolom kind.
+drop function if exists public.get_submission_status(uuid);
+
 create or replace function public.get_submission_status(p_token uuid)
 returns table (status text, name text, id uuid)
 language sql
@@ -161,6 +170,11 @@ as $$
     and a.status_token = public.agents_status_token_hash(p_token)
   limit 1;
 $$;
+
+-- Grant diberikan lagi (drop di atas menghapusnya), sama seperti
+-- migration-submission-status.sql.
+revoke all on function public.get_submission_status(uuid) from public;
+grant execute on function public.get_submission_status(uuid) to anon, authenticated;
 
 -- ---------------------------------------------
 -- 3. Log edit (privat)
@@ -192,6 +206,8 @@ create index if not exists agent_edits_agent_recent_idx
 -- ---------------------------------------------
 -- 4. RPC: isi form edit
 -- ---------------------------------------------
+drop function if exists public.get_submission_editable(uuid);
+
 create or replace function public.get_submission_editable(p_token uuid)
 returns table (
   description      text,
@@ -234,6 +250,8 @@ $$;
 --                tag kosong & duplikat dibuang)
 -- Error validasi memakai SQLSTATE 22023 (invalid_parameter_value);
 -- status.js hanya menampilkan pesan error dengan kode itu.
+drop function if exists public.update_submission(uuid, text, text, text, text, text[]);
+
 create or replace function public.update_submission(
   p_token            uuid,
   p_description      text,

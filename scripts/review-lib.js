@@ -138,6 +138,13 @@ function redactEmails(text) {
   return String(text).replace(/[^\s@()<>"']+@[^\s@()<>"']+\.[^\s@()<>"']+/g, "[email]");
 }
 
+// Jenis listing untuk email / job summary: "Tool" untuk kind = tool,
+// selain itu "Agent". Nilainya dipetakan, bukan dicetak apa adanya, jadi
+// tidak ada teks dari database yang masuk ke email atau summary lewat sini.
+function kindLabel(kind) {
+  return kind === "tool" ? "Tool" : "Agent";
+}
+
 function formatUtc(iso) {
   const d = new Date(iso);
   if (Number.isNaN(d.getTime())) return "-";
@@ -166,6 +173,7 @@ module.exports = {
   safeMd,
   safeText,
   redactEmails,
+  kindLabel,
   formatUtc,
   appendSummary,
 };

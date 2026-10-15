@@ -11,6 +11,15 @@
   const statusLinkBlock = document.getElementById("status-link-block");
   const statusLinkInput = document.getElementById("status-link");
   const copyStatusLinkBtn = document.getElementById("copy-status-link-btn");
+  const kindInputs = form.querySelectorAll('input[name="kind"]');
+  const categoryInput = document.getElementById("category");
+  const suggestBlock = document.getElementById("category-suggest");
+  const suggestChipsEl = document.getElementById("category-suggest-chips");
+
+  // Tag ideas for tools. They are ordinary category tags (same text[]
+  // column, same lowercase-with-hyphens style as "data-analysis") and the
+  // chips only save typing: they add no limit of their own.
+  const TOOL_TAG_SUGGESTIONS = ["mcp-server", "api", "sdk", "skill", "dataset", "library"];
 
   // Status codes from this browser's submissions, newest first, so
   // status.html can fall back to the latest one when opened without ?t=.
@@ -42,6 +51,69 @@
       return false;
     }
   }
+
+  // ---------- agent / tool ----------
+
+  function selectedKind() {
+    const checked = form.querySelector('input[name="kind"]:checked');
+    return checked && checked.value === "tool" ? "tool" : "agent";
+  }
+
+  function parseTags(raw) {
+    return raw
+      .split(",")
+      .map((s) => s.trim())
+      .filter(Boolean);
+  }
+
+  // Chips mirror the tag field (case-insensitive): active = tag is present.
+  function syncSuggestionChips() {
+    const have = new Set(parseTags(categoryInput.value).map((t) => t.toLowerCase()));
+    suggestChipsEl.querySelectorAll(".category-chip").forEach((chip) => {
+      const on = have.has(chip.dataset.tag);
+      chip.classList.toggle("is-active", on);
+      chip.setAttribute("aria-pressed", String(on));
+    });
+  }
+
+  // The page ships with the agent wording, so the default state is exactly
+  // what it was before tools existed. Picking "Tool" swaps the few strings
+  // that say "agent" (data-text-agent / data-text-tool pairs in
+  // publish.html) and shows the tag suggestions.
+  function applyKind() {
+    const kind = selectedKind();
+    const suffix = kind === "tool" ? "Tool" : "Agent";
+    document.querySelectorAll("[data-text-agent]").forEach((el) => {
+      el.textContent = el.dataset[`text${suffix}`];
+    });
+    categoryInput.placeholder = categoryInput.dataset[`placeholder${suffix}`];
+    form.querySelectorAll(".kind-option").forEach((label) => {
+      label.classList.toggle("is-selected", label.querySelector("input").checked);
+    });
+    suggestBlock.hidden = kind !== "tool";
+    syncSuggestionChips();
+  }
+
+  suggestChipsEl.innerHTML = TOOL_TAG_SUGGESTIONS.map(
+    (tag) =>
+      `<button type="button" class="category-chip" data-tag="${tag}" aria-pressed="false">${tag}</button>`
+  ).join("");
+
+  suggestChipsEl.addEventListener("click", (e) => {
+    const chip = e.target.closest(".category-chip");
+    if (!chip) return;
+    const tags = parseTags(categoryInput.value);
+    const at = tags.findIndex((t) => t.toLowerCase() === chip.dataset.tag);
+    if (at === -1) tags.push(chip.dataset.tag);
+    else tags.splice(at, 1);
+    categoryInput.value = tags.join(", ");
+    syncSuggestionChips();
+  });
+
+  categoryInput.addEventListener("input", syncSuggestionChips);
+  kindInputs.forEach((input) => input.addEventListener("change", applyKind));
+  // Also covers a browser restoring the form (back/forward) with "Tool" checked.
+  applyKind();
 
   statusLinkInput.addEventListener("focus", () => statusLinkInput.select());
 
@@ -130,6 +202,12 @@
     // contract_address column hasn't been added to the database yet.
     if (contractAddress) {
       payload.contract_address = contractAddress;
+    }
+
+    // Agents are sent exactly as before (no kind): the column defaults to
+    // 'agent'. Only tools say so (supabase/migration-listing-kind.sql).
+    if (selectedKind() === "tool") {
+      payload.kind = "tool";
     }
 
     try {

@@ -63,11 +63,19 @@ function buildItem(agent) {
   const link = `${SITE_URL}agent.html?id=${encodeURIComponent(agent.id)}`;
   const pubDate = new Date(publishedAt(agent)).toUTCString();
 
+  // Tools (agents.kind = 'tool', supabase/migration-listing-kind.sql) are
+  // labeled twice: a "[Tool]" prefix in the title, which every feed reader
+  // shows, and a <category> element for readers that filter on it. Agent
+  // items are written exactly as before.
+  const isTool = agent.kind === "tool";
+  const title = isTool ? `[Tool] ${agent.name}` : agent.name;
+
   return [
     "    <item>",
-    `      <title>${escapeXml(agent.name)}</title>`,
+    `      <title>${escapeXml(title)}</title>`,
     `      <link>${escapeXml(link)}</link>`,
     `      <description>${escapeXml(agent.description)}</description>`,
+    ...(isTool ? ["      <category>Tool</category>"] : []),
     `      <pubDate>${pubDate}</pubDate>`,
     `      <guid isPermaLink="true">${escapeXml(link)}</guid>`,
     "    </item>",
@@ -83,7 +91,7 @@ function buildRss(agents) {
     "  <channel>",
     "    <title>Agraris — Recently published agents</title>",
     `    <link>${SITE_URL}</link>`,
-    "    <description>New AI agents published to the Agraris registry for Robinhood Chain</description>",
+    "    <description>New AI agents and tools published to the Agraris registry for Robinhood Chain</description>",
     items,
     "  </channel>",
     "</rss>",
@@ -97,7 +105,7 @@ async function main() {
   // then merge and sort here. Service role bypasses RLS, so pending
   // entries must be filtered out explicitly
   // (supabase/migration-review-queue.sql).
-  const columns = "id, name, description, created_at, approved_at";
+  const columns = "id, name, description, created_at, approved_at, kind";
   const [withApproval, withoutApproval] = await Promise.all([
     supabase
       .from("agents")

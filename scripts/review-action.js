@@ -48,6 +48,7 @@ const {
   rest,
   filter,
   safeMd,
+  kindLabel,
   formatUtc,
   appendSummary,
 } = require("./review-lib");
@@ -160,7 +161,7 @@ function matchFilters({ id, name }) {
 
 async function findRows(target, approved) {
   const query = [
-    "select=id,name,repo_url,created_at",
+    "select=id,name,repo_url,created_at,kind",
     filter("approved", "eq", approved ? "true" : "false"),
     ...matchFilters(target),
     "order=created_at.asc",
@@ -171,10 +172,10 @@ async function findRows(target, approved) {
 }
 
 function pendingTable(rows) {
-  const lines = ["| Name | ID | Repo | Dikirim |", "| --- | --- | --- | --- |"];
+  const lines = ["| Name | Jenis | ID | Repo | Dikirim |", "| --- | --- | --- | --- | --- |"];
   for (const row of rows) {
     lines.push(
-      `| ${safeMd(row.name, MAX_NAME_LENGTH)} | \`${String(row.id)}\` | ${safeMd(row.repo_url, 200)} | ${formatUtc(row.created_at)} |`
+      `| ${safeMd(row.name, MAX_NAME_LENGTH)} | ${kindLabel(row.kind)} | \`${String(row.id)}\` | ${safeMd(row.repo_url, 200)} | ${formatUtc(row.created_at)} |`
     );
   }
   return lines.join("\n");
@@ -184,7 +185,7 @@ function pendingTable(rows) {
 
 async function listPending() {
   const query = [
-    "select=id,name,repo_url,created_at",
+    "select=id,name,repo_url,created_at,kind",
     filter("approved", "eq", "false"),
     "order=created_at.asc",
     `limit=${LIST_LIMIT}`,
@@ -238,7 +239,7 @@ async function resolveOne(action, target) {
 
 async function approve(target) {
   const row = await resolveOne("approve", target);
-  const query = [filter("id", "eq", row.id), filter("approved", "eq", "false"), "select=id,name"].join("&");
+  const query = [filter("id", "eq", row.id), filter("approved", "eq", "false"), "select=id,name,kind"].join("&");
   const { data } = await rest("PATCH", "agents", query, {
     body: { approved: true },
     prefer: "return=representation",
@@ -251,7 +252,7 @@ async function approve(target) {
     [
       "## Review queue: approved",
       "",
-      `- ${safeMd(changed[0].name, MAX_NAME_LENGTH)} (\`${changed[0].id}\`)`,
+      `- ${safeMd(changed[0].name, MAX_NAME_LENGTH)} (\`${changed[0].id}\`, ${kindLabel(changed[0].kind)})`,
       "",
       `Baris diubah: ${changed.length}`,
     ].join("\n")
@@ -261,7 +262,7 @@ async function approve(target) {
 
 async function reject(target) {
   const row = await resolveOne("reject", target);
-  const query = [filter("id", "eq", row.id), filter("approved", "eq", "false"), "select=id,name"].join("&");
+  const query = [filter("id", "eq", row.id), filter("approved", "eq", "false"), "select=id,name,kind"].join("&");
   const { data } = await rest("DELETE", "agents", query, { prefer: "return=representation" });
   const deleted = Array.isArray(data) ? data : [];
   if (deleted.length !== 1) {
@@ -271,7 +272,7 @@ async function reject(target) {
     [
       "## Review queue: rejected",
       "",
-      `- ${safeMd(deleted[0].name, MAX_NAME_LENGTH)} (\`${deleted[0].id}\`)`,
+      `- ${safeMd(deleted[0].name, MAX_NAME_LENGTH)} (\`${deleted[0].id}\`, ${kindLabel(deleted[0].kind)})`,
       "",
       `Baris dihapus: ${deleted.length}`,
     ].join("\n")

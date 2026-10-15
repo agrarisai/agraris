@@ -26,9 +26,10 @@ const GROWTH_WEEKS = 12;
 const SVG_NS = "http://www.w3.org/2000/svg";
 
 // Only what this page uses. github_stars feeds the existing "Most
-// starred" list; approved_at is only ever read for approved rows.
+// starred" list; approved_at is only ever read for approved rows. kind
+// splits agents from tools (supabase/migration-listing-kind.sql).
 const STATS_COLUMNS =
-  "id, name, category, contract_address, verified, github_stars, github_updated_at, created_at, approved_at";
+  "id, name, category, contract_address, verified, github_stars, github_updated_at, created_at, approved_at, kind";
 
 // ---------- formatting ----------
 
@@ -183,6 +184,8 @@ function renderTiles(s) {
     ["Total agents", fmtCount(s.total)],
     ["Added in the last 7 days", s.lastWeek === null ? NO_DATA : `+${fmtNumber(s.lastWeek)}`],
     ["Added in the last 30 days", s.lastMonth === null ? NO_DATA : `+${fmtNumber(s.lastMonth)}`],
+    // Approved tools only. Every other number on this page counts agents.
+    ["Tools", fmtCount(s.tools)],
   ];
 
   return `
@@ -369,7 +372,7 @@ function renderList(title, id, items, valueFor, note, emptyText) {
     </section>`;
 }
 
-function renderFooterNote(loadedAt) {
+function renderFooterNote(loadedAt, loadedWithTools) {
   const asOf = loadedAt.toLocaleString("en-US", {
     year: "numeric",
     month: "short",
@@ -381,7 +384,11 @@ function renderFooterNote(loadedAt) {
   return `
     <section class="stats-section stats-footnote reveal">
       <p>Agraris is a directory. These numbers describe the registry, not on-chain volume or traction.</p>
-      <p class="stats-note">All numbers are computed from approved agents only.</p>
+      <p class="stats-note">${
+        loadedWithTools
+          ? "All numbers are computed from approved listings only. Agent figures do not include tools."
+          : "All numbers are computed from approved agents only."
+      }</p>
       <p class="stats-asof">Data as of <time datetime="${loadedAt.toISOString()}">${escapeHtml(asOf)}</time></p>
       <div class="stats-copy-row">
         <button type="button" class="btn btn-sm" id="copy-summary-btn">Copy weekly summary</button>
@@ -654,6 +661,9 @@ function buildWeeklySummary(s) {
   } else {
     parts.push(`Agraris this week: +${plural(s.lastWeek, "agent")} (${fmtNumber(s.total)} total).`);
   }
+  // Tools are mentioned only when there are any, so the text is unchanged
+  // until the first tool is approved.
+  if (s.tools > 0) parts.push(`${plural(s.tools, "tool")} listed.`);
   const top = [...new Set(s.categories.map((c) => plainTag(c.name)).filter(Boolean))].slice(0, 3);
   if (top.length) parts.push(`Top categories: ${top.join(", ")}.`);
   parts.push(`${plural(s.withAddress, "agent")} list an on-chain address.`);
@@ -746,14 +756,21 @@ function initCopyStatsLink(root) {
 (async function () {
   const root = document.getElementById("stats-root");
 
+  // Agents and tools come back in one query and are split right here, so
+  // every figure below (computeStats and everything it feeds) only ever
+  // sees agents. Tools are counted separately for the "Tools" tile. A row
+  // without a kind counts as an agent, like isTool() in app.js.
   let agents;
+  let toolCount;
   try {
     const { data, error } = await supabaseClient
       .from("agents")
       .select(STATS_COLUMNS)
       .eq("approved", true);
     if (error) throw error;
-    agents = data || [];
+    const rows = data || [];
+    agents = rows.filter((row) => row.kind !== "tool");
+    toolCount = rows.length - agents.length;
   } catch (err) {
     root.innerHTML = `
       <div class="stats-error" role="alert">
@@ -764,6 +781,7 @@ function initCopyStatsLink(root) {
 
   const loadedAt = new Date();
   const stats = computeStats(agents, loadedAt);
+  stats.tools = toolCount;
 
   root.innerHTML = [
     renderTiles(stats),
@@ -787,7 +805,7 @@ function initCopyStatsLink(root) {
       "Stars come from public GitHub repositories and are not a measure of usage.",
       "No GitHub data yet."
     ),
-    renderFooterNote(loadedAt),
+    renderFooterNote(loadedAt, stats.tools > 0),
   ].join("");
 
   drawCharts(root, stats);

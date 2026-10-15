@@ -100,24 +100,45 @@
     </nav>
 
     <div class="section-head section-head--first">
-      <h2>Publish an agent</h2>
+      <h2 data-text-agent="Publish an agent" data-text-tool="Publish a tool">Publish an agent</h2>
     </div>
 
     <p class="page-lead">
-      No login or wallet connect needed. New agents are reviewed before
-      they appear in the registry.
+      No login or wallet connect needed.
+      <span data-text-agent="New agents are reviewed before they appear in the registry." data-text-tool="New tools are reviewed before they appear in the registry.">New agents are reviewed before
+      they appear in the registry.</span>
     </p>
 
     <form id="publish-form" class="reveal" novalidate>
+      <fieldset class="kind-picker" id="kind-picker">
+        <legend>What are you listing?</legend>
+        <div class="kind-picker-options">
+          <label class="kind-option is-selected">
+            <input type="radio" name="kind" value="agent" checked />
+            <span>
+              <strong>Agent</strong>
+              <span class="kind-option-hint">An AI agent people can run or use</span>
+            </span>
+          </label>
+          <label class="kind-option">
+            <input type="radio" name="kind" value="tool" />
+            <span>
+              <strong>Tool / MCP server</strong>
+              <span class="kind-option-hint">An MCP server, API, SDK, skill, dataset or library</span>
+            </span>
+          </label>
+        </div>
+      </fieldset>
+
       <div class="field">
-        <label for="name">Agent name <span class="required-mark">*</span></label>
+        <label for="name"><span data-text-agent="Agent name" data-text-tool="Tool name">Agent name</span> <span class="required-mark">*</span></label>
         <input type="text" id="name" name="name" required maxlength="120" />
       </div>
 
       <div class="field">
         <label for="description">Description <span class="required-mark">*</span></label>
         <textarea id="description" name="description" required maxlength="600"></textarea>
-        <span class="hint">A short summary of what the agent does.</span>
+        <span class="hint" data-text-agent="A short summary of what the agent does." data-text-tool="A short summary of what the tool does.">A short summary of what the agent does.</span>
       </div>
 
       <div class="field">
@@ -131,9 +152,15 @@
       </div>
 
       <div class="field">
-        <label for="category">Category / tools <span class="required-mark">*</span></label>
-        <input type="text" id="category" name="category" required placeholder="e.g. trading, browsing, data-analysis" />
+        <label for="category"><span data-text-agent="Category / tools" data-text-tool="Category">Category / tools</span> <span class="required-mark">*</span></label>
+        <input type="text" id="category" name="category" required placeholder="e.g. trading, browsing, data-analysis" data-placeholder-agent="e.g. trading, browsing, data-analysis" data-placeholder-tool="e.g. mcp-server, api, data" />
         <span class="hint">Separate multiple tags with commas.</span>
+        <!-- Tools only (publish.js shows it). Clicking a tag adds or removes
+             it in the field above; the field stays the source of truth. -->
+        <div class="category-suggest" id="category-suggest" hidden>
+          <span class="hint">Suggested tags:</span>
+          <div class="category-chips" id="category-suggest-chips"></div>
+        </div>
       </div>
 
       <div class="field">
@@ -148,13 +175,13 @@
       </div>
 
       <div class="form-actions">
-        <button type="submit" class="btn btn-solid" id="submit-btn">Publish agent</button>
+        <button type="submit" class="btn btn-solid" id="submit-btn" data-text-agent="Publish agent" data-text-tool="Publish tool">Publish agent</button>
         <span class="form-msg" id="form-msg"></span>
       </div>
     </form>
 
     <div id="publish-success" class="publish-success reveal" hidden>
-      <h2 role="status">Submitted. Your agent will appear after review.</h2>
+      <h2 role="status" data-text-agent="Submitted. Your agent will appear after review." data-text-tool="Submitted. Your tool will appear after review.">Submitted. Your agent will appear after review.</h2>
       <div class="publish-keep-link" id="status-link-block" hidden>
         <p><strong>Save this link.</strong> It shows your review status and is also the only way to edit your listing later (for example to add a contract address). Anyone with the link can edit the listing, so keep it private.</p>
         <div class="publish-keep-link-row">

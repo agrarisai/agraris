@@ -75,6 +75,20 @@ function renderVerifiedBadge(agent, { lg = false } = {}) {
   return `<span class="verified-badge${lg ? " verified-badge-lg" : ""}">✓ Verified</span>`;
 }
 
+// A listing is either an agent or a tool / MCP server (agents.kind, see
+// supabase/migration-listing-kind.sql). Anything that is not exactly
+// 'tool' — including a missing value — is treated as an agent, so cards
+// for agents never change.
+function isTool(listing) {
+  return listing?.kind === "tool";
+}
+
+// Small "Tool" label next to the name. Agents carry no label.
+function renderKindBadge(listing, { lg = false } = {}) {
+  if (!isTool(listing)) return "";
+  return `<span class="kind-badge${lg ? " kind-badge-lg" : ""}">Tool</span>`;
+}
+
 // Blockscout link for a builder-provided contract address (Robinhood
 // Chain, chain id 4663). Nothing at all when the address is empty or
 // not a well-formed 0x address. Sits above the stretched row link
@@ -107,6 +121,7 @@ function renderAgentRow(agent) {
       ${renderCompareCheckbox(agent)}
       <div class="agent-row-top">
         <span class="agent-name">${escapeHtml(agent.name)}</span>
+        ${renderKindBadge(agent)}
         ${renderVerifiedBadge(agent)}
       </div>
       <div class="agent-meta-row">
@@ -139,9 +154,11 @@ function renderEmptyState(title, body, cta = null) {
 // of select("*") so internal columns (status_token, approved, notified_at)
 // never reach the browser. approved_at is not internal: it is readable for
 // approved agents on purpose and is fetched by the stats page (stats.js),
-// though this shared list doesn't include it.
+// though this shared list doesn't include it. kind is public too: it says
+// whether a listing is an agent or a tool. The column must exist before
+// this code is deployed (supabase/migration-listing-kind.sql).
 const AGENT_COLUMNS =
-  "id, name, description, version, repo_url, category, demo_url, created_at, verified, github_stars, github_updated_at, contract_address";
+  "id, name, description, version, repo_url, category, demo_url, created_at, verified, github_stars, github_updated_at, contract_address, kind";
 
 // Fetch agents from Supabase, newest first.
 async function fetchAgents({ search = "", category = "", limit = null } = {}) {
@@ -194,16 +211,18 @@ async function fetchAgentsByCategory(category) {
   return data || [];
 }
 
-// Fetch up to `limit` other agents that share at least one category
-// with `categories` (used for the "Similar agents" section on the
-// agent detail page). Newest first — simpler than randomizing and
-// good enough for a handful of suggestions.
-async function fetchSimilarAgents(categories, excludeId, limit = 3) {
+// Fetch up to `limit` other listings of the same kind ("agent" by
+// default, or "tool") that share at least one category with `categories`
+// (used for the "Similar agents" / "Similar tools" section on the detail
+// page). Newest first — simpler than randomizing and good enough for a
+// handful of suggestions.
+async function fetchSimilarAgents(categories, excludeId, limit = 3, kind = "agent") {
   if (!categories || categories.length === 0) return [];
 
   const { data, error } = await supabaseClient
     .from("agents")
     .select(AGENT_COLUMNS)
+    .eq("kind", kind)
     .overlaps("category", categories)
     .neq("id", excludeId)
     .order("created_at", { ascending: false })
@@ -217,12 +236,14 @@ async function fetchSimilarAgents(categories, excludeId, limit = 3) {
   return data || [];
 }
 
-// Fetch the total number of agents in the registry without
-// downloading any rows.
-async function fetchAgentCount() {
+// Fetch the number of listings of one kind ("agent" by default, so the
+// headline agent count never includes tools; pass "tool" for the tool
+// count) without downloading any rows.
+async function fetchAgentCount({ kind = "agent" } = {}) {
   const { count, error } = await supabaseClient
     .from("agents")
-    .select("id", { count: "exact", head: true });
+    .select("id", { count: "exact", head: true })
+    .eq("kind", kind);
 
   if (error) {
     console.error("Gagal mengambil jumlah agent:", error);
@@ -234,11 +255,14 @@ async function fetchAgentCount() {
 
 // Fetch just the columns needed for registry-wide stats (unique
 // categories, total GitHub stars) — lighter than fetchAgents() since it
-// skips description/version/etc for every row.
+// skips description/version/etc for every row. Agents only, like
+// fetchAgentCount(), so the home page's headline numbers stay agent
+// numbers and match stats.html.
 async function fetchAgentsLite() {
   const { data, error } = await supabaseClient
     .from("agents")
-    .select("id, category, github_stars");
+    .select("id, category, github_stars")
+    .eq("kind", "agent");
 
   if (error) {
     console.error("Gagal mengambil data ringkas agent:", error);

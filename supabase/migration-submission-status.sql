@@ -125,6 +125,13 @@ create policy "Public can submit agents for review"
 -- ---------------------------------------------
 -- Hanya mengembalikan status ('pending' / 'approved'), name, dan id.
 -- Token tidak cocok atau NULL → hasil kosong (0 baris).
+--
+-- "drop function if exists" supaya file ini tetap bisa dijalankan ulang
+-- setelah migration-listing-kind.sql: fungsi itu menambah kolom `kind` ke
+-- hasil, dan Postgres menolak create or replace kalau kolom kembaliannya
+-- berbeda. Grant di bawah diberikan lagi.
+drop function if exists public.get_submission_status(uuid);
+
 create or replace function public.get_submission_status(p_token uuid)
 returns table (status text, name text, id uuid)
 language sql

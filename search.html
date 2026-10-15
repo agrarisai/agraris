@@ -105,6 +105,14 @@
         <span class="section-count" id="agent-count"></span>
       </div>
 
+      <!-- Reads and writes ?kind=agent|tool so a filtered view can be shared.
+           search.js marks the active button (aria-pressed) from the URL. -->
+      <div class="kind-tabs" id="kind-tabs" role="group" aria-label="Listing type">
+        <button type="button" class="kind-tab is-active" data-kind="" aria-pressed="true">All</button>
+        <button type="button" class="kind-tab" data-kind="agent" aria-pressed="false">Agents</button>
+        <button type="button" class="kind-tab" data-kind="tool" aria-pressed="false">Tools</button>
+      </div>
+
       <div class="search-bar">
         <input
           type="text"
