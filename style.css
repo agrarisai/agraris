@@ -3638,3 +3638,135 @@ html.embed-page::before {
   margin-top: 20px;
   font-size: 13px;
 }
+
+/* ---------- listing kind (agent / tool) ---------- */
+
+/* Small outlined label on tool listings. Agents carry no label. Neutral
+   (ink on panel) so it never competes with the green Verified badge. */
+.kind-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 7px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--panel);
+  color: var(--ink);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  line-height: 1.6;
+  white-space: nowrap;
+  vertical-align: middle;
+}
+
+.kind-badge-lg {
+  padding: 3px 9px;
+  font-size: 12px;
+}
+
+/* All / Agents / Tools filter on search.html. Buttons with aria-pressed,
+   styled as one segmented control. */
+.kind-tabs {
+  display: inline-flex;
+  margin-bottom: 14px;
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.kind-tab {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  line-height: 1.4;
+  padding: 8px 14px;
+  border: 0;
+  border-right: 1px solid var(--line);
+  background: var(--panel);
+  color: var(--ink);
+  cursor: pointer;
+}
+
+.kind-tab:last-child {
+  border-right: 0;
+}
+
+.kind-tab:hover {
+  background: var(--cream);
+}
+
+.kind-tab:focus-visible {
+  outline: 2px solid var(--green);
+  outline-offset: -2px;
+}
+
+.kind-tab.is-active,
+.kind-tab.is-active:hover {
+  background: var(--green);
+  color: var(--on-green);
+}
+
+/* "What are you listing?" on publish.html. Not wrapped in .field, because
+   `.field label` would restyle the option cards. */
+.kind-picker {
+  min-width: 0;
+  margin: 0 0 18px;
+  padding: 0;
+  border: 0;
+}
+
+.kind-picker legend {
+  margin-bottom: 6px;
+  padding: 0;
+  font-size: 12px;
+  color: var(--ink);
+}
+
+.kind-picker-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.kind-option {
+  display: flex;
+  flex: 1 1 180px;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  background: var(--field-bg);
+  color: var(--ink);
+  cursor: pointer;
+}
+
+.kind-option input {
+  margin: 3px 0 0;
+  accent-color: var(--green);
+}
+
+.kind-option.is-selected {
+  border-color: var(--green);
+}
+
+.kind-option strong {
+  display: block;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.kind-option-hint {
+  display: block;
+  font-size: 11px;
+  opacity: 0.7;
+}
+
+/* Clickable category suggestions under the publish form's tag input
+   (tools only). Reuses .category-chip; only the spacing differs. */
+.category-suggest {
+  margin: 8px 0 0;
+}
+
+.category-suggest .category-chips {
+  margin: 6px 0 0;
+}

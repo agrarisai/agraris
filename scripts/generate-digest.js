@@ -106,31 +106,39 @@ async function fetchDigestData(supabase, since) {
   // Service role bypasses RLS, so every query filters approved = true
   // explicitly: entries waiting in the review queue never reach the digest
   // (supabase/migration-review-queue.sql).
-  const [newRes, topRes, countRes] = await Promise.all([
+  const [newRes, topRes, countRes, toolCountRes] = await Promise.all([
     // "New this week" = coalesce(approved_at, created_at) >= since, i.e.
     // agents that appeared in the registry this week, including ones
     // submitted earlier and approved this week.
     supabase
       .from("agents")
-      .select("id, name, created_at, approved_at")
+      .select("id, name, created_at, approved_at, kind")
       .eq("approved", true)
       .or(
         `approved_at.gte.${since.toISOString()},and(approved_at.is.null,created_at.gte.${since.toISOString()})`
       ),
     supabase
       .from("agents")
-      .select("id, name, github_stars")
+      .select("id, name, github_stars, kind")
       .eq("approved", true)
       .not("github_stars", "is", null)
       .order("github_stars", { ascending: false })
       .limit(TOP_STARRED_COUNT),
+    // The headline total counts AGENTS only; tools are counted separately
+    // (agents.kind, supabase/migration-listing-kind.sql).
     supabase
       .from("agents")
       .select("id", { count: "exact", head: true })
-      .eq("approved", true),
+      .eq("approved", true)
+      .eq("kind", "agent"),
+    supabase
+      .from("agents")
+      .select("id", { count: "exact", head: true })
+      .eq("approved", true)
+      .eq("kind", "tool"),
   ]);
 
-  for (const res of [newRes, topRes, countRes]) {
+  for (const res of [newRes, topRes, countRes, toolCountRes]) {
     if (res.error) throw new Error(`Supabase query failed: ${res.error.message}`);
   }
 
@@ -141,31 +149,45 @@ async function fetchDigestData(supabase, since) {
     newAgents,
     topStarred: topRes.data ?? [],
     total: countRes.count ?? 0,
+    tools: toolCountRes.count ?? 0,
   };
 }
 
 // ---------- draf ----------
 // Ubah fungsi ini kalau mau mengganti format/kalimat draf.
 
-function buildDraft({ rangeLabel, newAgents, topStarred, total }) {
+// Tool diberi label "(tool)" di daftar; agent ditulis apa adanya.
+function listingName(a) {
+  return a.kind === "tool" ? `${a.name} (tool)` : a.name;
+}
+
+function buildDraft({ rangeLabel, newAgents, topStarred, total, tools = 0 }) {
   const lines = [`Agraris weekly, ${rangeLabel}`, ""];
 
-  // Bagian "New this week" dihilangkan kalau tidak ada agent baru.
+  // Bagian "New this week" dihilangkan kalau tidak ada listing baru.
   if (newAgents.length > 0) {
     lines.push("New this week");
-    newAgents.forEach((a) => lines.push(`- ${a.name}`));
+    newAgents.forEach((a) => lines.push(`- ${listingName(a)}`));
     lines.push("");
   }
 
   if (topStarred.length > 0) {
     lines.push("Most starred right now");
     topStarred.forEach((a) =>
-      lines.push(`- ${a.name} (${a.github_stars.toLocaleString("en-US")} stars)`)
+      lines.push(`- ${listingName(a)} (${a.github_stars.toLocaleString("en-US")} stars)`)
     );
     lines.push("");
   }
 
-  lines.push(`${total.toLocaleString("en-US")} agent${total === 1 ? "" : "s"} listed in total.`);
+  // Total agent tidak pernah ikut menghitung tool. Tool disebut hanya
+  // kalau jumlahnya lebih dari 0, jadi kalimatnya tidak berubah sampai ada
+  // tool yang disetujui.
+  const agentsPart = `${total.toLocaleString("en-US")} agent${total === 1 ? "" : "s"}`;
+  lines.push(
+    tools > 0
+      ? `${agentsPart} and ${tools.toLocaleString("en-US")} tool${tools === 1 ? "" : "s"} listed in total.`
+      : `${agentsPart} listed in total.`
+  );
   lines.push("");
   lines.push(SITE_LABEL);
 
@@ -283,7 +305,7 @@ async function main() {
 
   const data = await fetchDigestData(supabase, since);
   log(
-    `New this week: ${data.newAgents.length}, top starred: ${data.topStarred.length}, total: ${data.total}.`
+    `New this week: ${data.newAgents.length}, top starred: ${data.topStarred.length}, total agents: ${data.total}, total tools: ${data.tools}.`
   );
 
   const draft = buildDraft({ rangeLabel: formatRange(since, now), ...data });

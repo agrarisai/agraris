@@ -62,6 +62,7 @@ function renderTrendingCard(agent, rank) {
       ${renderWatchlistButton(agent.id)}
       <div class="agent-row-top">
         <span class="agent-name">${escapeHtml(agent.name)}</span>
+        ${renderKindBadge(agent)}
         ${renderVerifiedBadge(agent)}
       </div>
       <div class="agent-meta-row">
@@ -129,14 +130,19 @@ async function loadTrending() {
   enableCompareSelection();
 
   try {
-    const [agents, totalCount] = await Promise.all([
+    // totalCount is the number of AGENTS (tools are not counted in it).
+    // The tool count only decorates the heading and must never take the
+    // list down with it, so a failed count falls back to 0.
+    const [agents, totalCount, toolCount] = await Promise.all([
       fetchAgents({ limit: RECENT_LIMIT }),
       fetchAgentCount(),
+      fetchAgentCount({ kind: "tool" }).catch(() => 0),
     ]);
 
-    countEl.textContent = totalCount
-      ? `${totalCount} agent${totalCount === 1 ? "" : "s"}`
-      : "";
+    const countParts = [];
+    if (totalCount) countParts.push(`${totalCount} agent${totalCount === 1 ? "" : "s"}`);
+    if (toolCount) countParts.push(`${toolCount} tool${toolCount === 1 ? "" : "s"}`);
+    countEl.textContent = countParts.join(" · ");
 
     loadStatsBar(totalCount);
     loadTrending();

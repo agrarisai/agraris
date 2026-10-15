@@ -73,10 +73,14 @@ function renderCard(agent) {
     ? `<span class="verified-badge">✓ Verified</span>`
     : "";
 
+  // Same small label as on the site's cards; agents carry none.
+  const kindLabel = agent?.kind === "tool" ? `<span class="kind-badge">Tool</span>` : "";
+
   return `
     <article class="embed-card">
       <div class="embed-head">
         <span class="embed-name">${escapeHtml(agent.name)}</span>
+        ${kindLabel}
         ${verified}
         ${stars}
       </div>
@@ -137,7 +141,7 @@ document.fonts?.ready.then(postHeight);
     // script failed to load it won't exist, which is handled below.
     const { data, error } = await supabaseClient
       .from("agents")
-      .select("id, name, description, category, github_stars, verified")
+      .select("id, name, description, category, github_stars, verified, kind")
       .eq("id", id)
       .maybeSingle();
 

@@ -25,6 +25,8 @@
   const editRoot = document.getElementById("edit-root");
   const editForm = document.getElementById("edit-form");
   const editName = document.getElementById("edit-name");
+  const editNameLabel = document.getElementById("edit-name-label");
+  const editContractHint = document.getElementById("edit-contract-hint");
   const editMsg = document.getElementById("edit-msg");
   const saveBtn = document.getElementById("edit-save-btn");
   const cancelBtn = document.getElementById("edit-cancel-btn");
@@ -79,7 +81,7 @@
     return "";
   }
 
-  function render({ label, name = "", link = null, state, editable = false }) {
+  function render({ label, name = "", link = null, state, editable = false, kind = "agent" }) {
     root.textContent = "";
     root.dataset.state = state;
     editButton = null;
@@ -93,6 +95,14 @@
       const nameEl = document.createElement("p");
       nameEl.className = "status-name";
       nameEl.textContent = name;
+      // Tools get the same small "Tool" label as on the cards. Built with
+      // the DOM (never innerHTML), like everything else on this page.
+      if (kind === "tool") {
+        const badge = document.createElement("span");
+        badge.className = "kind-badge";
+        badge.textContent = "Tool";
+        nameEl.append(" ", badge);
+      }
       root.appendChild(nameEl);
     }
 
@@ -123,16 +133,21 @@
   }
 
   function renderRow(row) {
+    // kind comes from get_submission_status; a missing value means agent.
+    const kind = row.kind === "tool" ? "tool" : "agent";
     if (row.status === "approved") {
       render({
         label: "Approved",
         name: row.name,
         state: "approved",
-        link: row.id ? { href: `agent.html?id=${encodeURIComponent(row.id)}`, text: "View agent" } : null,
+        link: row.id
+          ? { href: `agent.html?id=${encodeURIComponent(row.id)}`, text: kind === "tool" ? "View tool" : "View agent" }
+          : null,
         editable: true,
+        kind,
       });
     } else {
-      render({ label: "Pending review", name: row.name, state: "pending", editable: true });
+      render({ label: "Pending review", name: row.name, state: "pending", editable: true, kind });
     }
   }
 
@@ -144,6 +159,11 @@
   }
 
   function fillForm(row) {
+    // The two strings in the form that say "agent" follow the listing's
+    // kind (the kind itself can't be changed here).
+    const noun = row.kind === "tool" ? "tool" : "agent";
+    editNameLabel.textContent = `${noun === "tool" ? "Tool" : "Agent"} name`;
+    editContractHint.textContent = `Optional. Address of your ${noun}'s contract on Robinhood Chain (0x...)`;
     editName.textContent = row.name || "";
     editForm.description.value = row.description || "";
     editForm.version.value = row.version || "";

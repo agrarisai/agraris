@@ -135,7 +135,9 @@ function buildSitemap(agents, categories) {
 async function main() {
   const { data: agents, error } = await supabase
     .from("agents")
-    .select("id, category, created_at, approved_at")
+    // Agents and tools both get a page (agent.html?id=...), so both stay in
+    // the sitemap. kind is only used for the log line below.
+    .select("id, category, created_at, approved_at, kind")
     // Service role bypasses RLS, so pending entries must be filtered out
     // explicitly (supabase/migration-review-queue.sql).
     .eq("approved", true)
@@ -154,8 +156,11 @@ async function main() {
   const sitemap = buildSitemap(allAgents, categories);
   fs.writeFileSync(OUTPUT_PATH, sitemap, "utf8");
 
+  const toolCount = allAgents.filter((entry) => entry.kind === "tool").length;
+  const agentCount = allAgents.length - toolCount;
+
   console.log(
-    `Generated sitemap with ${allAgents.length} agent(s) and ${categories.length} categor${categories.length === 1 ? "y" : "ies"} at ${OUTPUT_PATH}`
+    `Generated sitemap with ${agentCount} agent(s), ${toolCount} tool(s) and ${categories.length} categor${categories.length === 1 ? "y" : "ies"} at ${OUTPUT_PATH}`
   );
 }
 

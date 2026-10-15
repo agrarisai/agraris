@@ -52,6 +52,7 @@ const {
   totalFromContentRange,
   safeText,
   redactEmails,
+  kindLabel,
   formatUtc,
 } = require("./review-lib");
 
@@ -87,7 +88,7 @@ function reviewWorkflowUrl() {
 
 async function fetchPending() {
   const query = [
-    "select=id,name,repo_url,description,created_at",
+    "select=id,name,repo_url,description,created_at,kind",
     filter("approved", "eq", "false"),
     "notified_at=is.null",
     "order=created_at.asc",
@@ -155,6 +156,7 @@ function buildText(rows, total) {
 
   rows.forEach((row, i) => {
     lines.push(`${i + 1}. ${safeText(row.name, 120)}`);
+    lines.push(`   Jenis: ${kindLabel(row.kind)}`);
     lines.push(`   ID: ${row.id}`);
     lines.push(`   Repo: ${safeText(row.repo_url, 200)}`);
     lines.push(`   Dikirim: ${formatUtc(row.created_at)}`);

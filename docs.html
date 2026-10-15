@@ -119,6 +119,7 @@
         <li><a href="#single-agent">Get a single agent</a></li>
         <li><a href="#filter-category">Filter by category</a></li>
         <li><a href="#verified-only">Verified agents only</a></li>
+        <li><a href="#kind-filter">Agents or tools</a></li>
         <li><a href="#filter-address">Filter by contract address</a></li>
         <li><a href="#onchain-activity">On-chain activity on agent pages</a></li>
         <li><a href="#select-columns">Select columns</a></li>
@@ -233,6 +234,21 @@ curl "https://gnydurjxrynqcbpkxopd.supabase.co/rest/v1/agents?verified=eq.true&a
         for example <code>?name=ilike.*bot*</code> for a case-insensitive
         name search.
       </p>
+
+      <h3 id="kind-filter">Agents or tools</h3>
+      <p>
+        The registry lists two kinds of entries in the same table. The
+        <code>kind</code> column is <code>agent</code> or <code>tool</code>
+        (tools, MCP servers, APIs, SDKs and similar). A request without a
+        <code>kind</code> filter returns both, so add one if you only want
+        agents:
+      </p>
+      <pre class="code-block"><code>curl "https://gnydurjxrynqcbpkxopd.supabase.co/rest/v1/agents?kind=eq.agent" \
+  -H "apikey: sb_publishable_4roHAzTOTw9P0_8NXKt2IA_kXniR9pm"
+
+# only tools
+curl "https://gnydurjxrynqcbpkxopd.supabase.co/rest/v1/agents?kind=eq.tool" \
+  -H "apikey: sb_publishable_4roHAzTOTw9P0_8NXKt2IA_kXniR9pm"</code></pre>
 
       <h3 id="filter-address">Filter by contract address</h3>
       <p>
@@ -380,6 +396,7 @@ const topTradingAgents = await res.json();</code></pre>
             <tr><td><code>github_stars</code></td><td>integer</td><td>Nullable; refreshed daily from GitHub</td></tr>
             <tr><td><code>github_updated_at</code></td><td>timestamptz</td><td>Nullable; last push to the repo</td></tr>
             <tr><td><code>contract_address</code></td><td>text</td><td>Optional; contract or wallet address (<code>0x</code> + 40 hex) provided by the builder, not verified by Agraris</td></tr>
+            <tr><td><code>kind</code></td><td>text</td><td><code>agent</code> or <code>tool</code>; filter with <code>?kind=eq.tool</code></td></tr>
             <tr><td><code>approved</code></td><td>boolean</td><td>Always <code>true</code> in API responses; pending entries are not returned</td></tr>
           </tbody>
         </table>

@@ -420,7 +420,10 @@ function initReportAgent(root, agentId) {
     const tags = categories
       .map((c) => `<span class="tag">${escapeHtml(c)}</span>`)
       .join("");
-    const similarAgents = await fetchSimilarAgents(categories, agent.id, 3);
+    // Same template for both kinds. Only the noun changes for tools, and
+    // "similar" means the same kind (agents see agents, tools see tools).
+    const kind = isTool(agent) ? "tool" : "agent";
+    const similarAgents = await fetchSimilarAgents(categories, agent.id, 3, kind);
 
     document.title = `${agent.name} — Agraris`;
     setMetaDescription(agent.description);
@@ -431,6 +434,7 @@ function initReportAgent(root, agentId) {
       <div class="detail-head reveal">
         <div class="agent-row-top">
           <span class="agent-name">${escapeHtml(agent.name)}</span>
+          ${renderKindBadge(agent, { lg: true })}
           ${renderVerifiedBadge(agent, { lg: true })}
         </div>
         <div class="agent-meta-row">
@@ -470,7 +474,7 @@ function initReportAgent(root, agentId) {
       </div>
 
       <div class="embed-section reveal">
-        <div class="detail-row-label">Embed this agent</div>
+        <div class="detail-row-label">Embed this ${kind}</div>
         <div class="embed-theme-toggle" role="group" aria-label="Embed theme">
           <button type="button" data-embed-theme="light" aria-pressed="true">Light</button>
           <button type="button" data-embed-theme="dark" aria-pressed="false">Dark</button>
@@ -482,7 +486,7 @@ function initReportAgent(root, agentId) {
       </div>
 
       <div class="report-agent-block reveal">
-        <a href="#" class="report-link" id="report-link" aria-expanded="false">Report this agent</a>
+        <a href="#" class="report-link" id="report-link" aria-expanded="false">Report this ${kind}</a>
         <form class="report-form" id="report-form" hidden>
           <div class="field">
             <label for="report-reason">Reason</label>
@@ -509,7 +513,7 @@ function initReportAgent(root, agentId) {
           ? `
             <div class="similar-agents-section reveal">
               <div class="section-head section-head--sub">
-                <h2>Similar agents</h2>
+                <h2>Similar ${kind}s</h2>
               </div>
               <div class="agent-list">
                 ${similarAgents.map(renderAgentRow).join("")}

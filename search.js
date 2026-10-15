@@ -9,12 +9,46 @@
   const sortInput = document.getElementById("sort-input");
   const verifiedFilterInput = document.getElementById("verified-filter-input");
   const categoryChipsEl = document.getElementById("category-chips");
+  const kindTabsEl = document.getElementById("kind-tabs");
 
   let allAgents = [];
   let debounceTimer = null;
   const activeCategories = new Set();
 
+  // "" = All, otherwise "agent" or "tool". Comes from ?kind= so a filtered
+  // view can be shared; anything else in the URL means All.
+  const KINDS = ["agent", "tool"];
+  function readKindFromUrl() {
+    const value = new URLSearchParams(window.location.search).get("kind");
+    return KINDS.includes(value) ? value : "";
+  }
+  let activeKind = readKindFromUrl();
+
   enableCompareSelection();
+
+  // Everything that follows works on the listings of the active kind. An
+  // "agent" is anything that is not a tool, same rule as isTool() in app.js.
+  function listingsForKind() {
+    if (!activeKind) return allAgents;
+    return allAgents.filter((a) => isTool(a) === (activeKind === "tool"));
+  }
+
+  function syncKindTabs() {
+    kindTabsEl.querySelectorAll(".kind-tab").forEach((btn) => {
+      const on = btn.dataset.kind === activeKind;
+      btn.classList.toggle("is-active", on);
+      btn.setAttribute("aria-pressed", String(on));
+    });
+  }
+
+  // Keep the address bar in step with the tab (without piling up history
+  // entries), so copying the URL shares the filtered view.
+  function writeKindToUrl() {
+    const url = new URL(window.location.href);
+    if (activeKind) url.searchParams.set("kind", activeKind);
+    else url.searchParams.delete("kind");
+    history.replaceState(history.state, "", url);
+  }
 
   function populateCategoryChips(agents) {
     const seen = new Set();
@@ -74,7 +108,7 @@
   function applyFilters() {
     const search = searchInput.value.trim().toLowerCase();
 
-    const filtered = allAgents.filter((a) => {
+    const filtered = listingsForKind().filter((a) => {
       const matchesSearch =
         !search ||
         a.name.toLowerCase().includes(search) ||
@@ -99,7 +133,7 @@
 
     if (agents.length === 0) {
       listEl.innerHTML = renderEmptyState(
-        "No agents match your search",
+        activeKind === "tool" ? "No tools match your search" : "No agents match your search",
         "Try a different keyword, or clear a category filter to see more results."
       );
       return;
@@ -111,15 +145,12 @@
 
   try {
     allAgents = await fetchAgents();
-    populateCategoryChips(allAgents);
+    syncKindTabs();
+    populateCategoryChips(listingsForKind());
 
     const initialQuery = new URLSearchParams(window.location.search).get("q");
-    if (initialQuery) {
-      searchInput.value = initialQuery;
-      applyFilters();
-    } else {
-      renderResults(sortAgents(allAgents));
-    }
+    if (initialQuery) searchInput.value = initialQuery;
+    applyFilters();
   } catch (err) {
     listEl.innerHTML = renderEmptyState(
       "Couldn't load agents",
@@ -137,6 +168,34 @@
   sortInput.addEventListener("change", applyFilters);
 
   verifiedFilterInput.addEventListener("change", applyFilters);
+
+  kindTabsEl.addEventListener("click", (e) => {
+    const tab = e.target.closest(".kind-tab");
+    if (!tab || tab.dataset.kind === activeKind) return;
+
+    activeKind = tab.dataset.kind;
+    syncKindTabs();
+    writeKindToUrl();
+
+    // The category chips follow the tab: tags that no listing of this
+    // kind uses disappear, and a selected tag that vanished is dropped so
+    // it can't silently filter everything out.
+    populateCategoryChips(listingsForKind());
+    const stillThere = new Set(
+      Array.from(categoryChipsEl.querySelectorAll(".category-chip")).map((c) => c.dataset.category)
+    );
+    [...activeCategories].forEach((c) => {
+      if (!stillThere.has(c)) activeCategories.delete(c);
+    });
+    categoryChipsEl.querySelectorAll(".category-chip").forEach((chip) => {
+      if (activeCategories.has(chip.dataset.category)) {
+        chip.classList.add("is-active");
+        chip.setAttribute("aria-pressed", "true");
+      }
+    });
+
+    applyFilters();
+  });
 
   categoryChipsEl.addEventListener("click", (e) => {
     const chip = e.target.closest(".category-chip");
