@@ -259,14 +259,13 @@ async function fetchAgentCount({ kind = "agent" } = {}) {
 
 // Fetch just the columns needed for registry-wide stats (unique
 // categories, total GitHub stars) — lighter than fetchAgents() since it
-// skips description/version/etc for every row. Agents only, like
-// fetchAgentCount(), so the home page's headline numbers stay agent
-// numbers and match stats.html.
-async function fetchAgentsLite() {
-  const { data, error } = await supabaseClient
-    .from("agents")
-    .select("id, category, github_stars")
-    .eq("kind", "agent");
+// skips description/version/etc for every row. Agents only by default,
+// like fetchAgentCount(); pass { kind: null } for every listing (agents
+// and tools), which is what the home page stats bar uses.
+async function fetchAgentsLite({ kind = "agent" } = {}) {
+  let query = supabaseClient.from("agents").select("id, category, github_stars");
+  if (kind) query = query.eq("kind", kind);
+  const { data, error } = await query;
 
   if (error) {
     console.error("Gagal mengambil data ringkas agent:", error);

@@ -1108,6 +1108,18 @@ body.cmdk-open {
   flex-direction: column;
   align-items: center;
   text-align: center;
+  min-width: 0;
+}
+
+/* Agents / Tools link to the matching search tab. Same look as the plain
+   items; only the label underlines on hover. */
+.stats-bar-link {
+  color: inherit;
+  text-decoration: none;
+}
+
+.stats-bar-link:hover .stats-bar-label {
+  text-decoration: underline;
 }
 
 .stats-bar-value {

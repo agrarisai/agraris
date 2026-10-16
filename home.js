@@ -2,15 +2,17 @@
 // Agraris — home page logic
 // ============================================
 
-// Populates the small stats bar under the hero (total agents, unique
-// categories, total GitHub stars). The agent count is passed in since
-// it's already been fetched for the "Recently published" heading;
-// categories and stars need a lightweight fetch of every agent's
-// category/github_stars. Stars are populated daily by GitHub Actions
+// Populates the small stats bar under the hero (agents, tools, unique
+// categories, total GitHub stars). The agent and tool counts are passed
+// in since they've already been fetched for the "Recently published"
+// heading; a tool count of null (its fetch failed) leaves "—". Categories
+// and stars cover every approved listing, agents and tools alike, and
+// need a lightweight fetch of each listing's category/github_stars. Stars are populated daily by GitHub Actions
 // (see scripts/update-github-stats.js), so this is just a sum over
 // already-fetched data — no GitHub API calls happen here.
-async function loadStatsBar(agentCount) {
+async function loadStatsBar(agentCount, toolCount) {
   const agentsEl = document.getElementById("stat-agents");
+  const toolsEl = document.getElementById("stat-tools");
   const categoriesEl = document.getElementById("stat-categories");
   const starsEl = document.getElementById("stat-stars");
 
@@ -18,9 +20,13 @@ async function loadStatsBar(agentCount) {
     agentsEl.textContent = agentCount.toLocaleString("en-US");
   }
 
+  if (toolsEl && typeof toolCount === "number") {
+    toolsEl.textContent = toolCount.toLocaleString("en-US");
+  }
+
   let liteAgents;
   try {
-    liteAgents = await fetchAgentsLite();
+    liteAgents = await fetchAgentsLite({ kind: null });
   } catch {
     return; // leave categories/stars as "—"
   }
@@ -131,12 +137,13 @@ async function loadTrending() {
 
   try {
     // totalCount is the number of AGENTS (tools are not counted in it).
-    // The tool count only decorates the heading and must never take the
-    // list down with it, so a failed count falls back to 0.
+    // The tool count only decorates the heading and the stats bar, and
+    // must never take the list down with it, so a failed count becomes
+    // null: the heading leaves tools out and the stats bar keeps "—".
     const [agents, totalCount, toolCount] = await Promise.all([
       fetchAgents({ limit: RECENT_LIMIT }),
       fetchAgentCount(),
-      fetchAgentCount({ kind: "tool" }).catch(() => 0),
+      fetchAgentCount({ kind: "tool" }).catch(() => null),
     ]);
 
     const countParts = [];
@@ -144,7 +151,7 @@ async function loadTrending() {
     if (toolCount) countParts.push(`${toolCount} tool${toolCount === 1 ? "" : "s"}`);
     countEl.textContent = countParts.join(" · ");
 
-    loadStatsBar(totalCount);
+    loadStatsBar(totalCount, toolCount);
     loadTrending();
 
     if (agents.length === 0) {
