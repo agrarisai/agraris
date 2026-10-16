@@ -1,0 +1,625 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-10-16T07:50:02.723Z",
+  "count": 31,
+  "listings": [
+    {
+      "id": "fd0acb0b-12ea-4941-9d4c-0e20bd117835",
+      "kind": "agent",
+      "name": "A2I2 SandBox",
+      "description": "A browser-based sandbox for experimenting with AI agents on Robinhood Chain. Agents run against a simulated fork of the Robinhood Chain testnet with synthetic prices, and a policy layer checks each agent intent before it runs. No accounts or backend are required.",
+      "version": "0.1.0",
+      "repo_url": "https://github.com/A2I2-SandBox/A2I2-SandBox",
+      "category": [
+        "trading"
+      ],
+      "demo_url": "https://a2-i2-sand-box.vercel.app",
+      "contract_address": null,
+      "created_at": "2026-10-09T17:12:02.307016+00:00",
+      "approved_at": "2026-10-09T17:12:02.307016+00:00",
+      "github_stars": 0,
+      "github_updated_at": "2026-10-15T04:00:53+00:00",
+      "verified": false,
+      "url": "https://agraris.xyz/agent.html?id=fd0acb0b-12ea-4941-9d4c-0e20bd117835"
+    },
+    {
+      "id": "8fadcba7-df47-469d-b0b5-ab2a854a8211",
+      "kind": "agent",
+      "name": "fomo-robinhood-radar",
+      "description": "Tracks which wallets on Robinhood Chain are buying what, with resolved wallet identities, a 20-second on-chain tape, provenance on every fill, and AI verdicts on bursts and exits. Available as a site, Telegram bot, and API.",
+      "version": "1.0.0",
+      "repo_url": "https://github.com/cvxv666/fomo-robinhood-radar",
+      "category": [
+        "analytics"
+      ],
+      "demo_url": null,
+      "contract_address": null,
+      "created_at": "2026-10-06T11:43:53.63821+00:00",
+      "approved_at": "2026-10-06T11:43:53.63821+00:00",
+      "github_stars": 127,
+      "github_updated_at": "2026-10-06T11:33:12+00:00",
+      "verified": false,
+      "url": "https://agraris.xyz/agent.html?id=8fadcba7-df47-469d-b0b5-ab2a854a8211"
+    },
+    {
+      "id": "b8bbdfa3-68c4-4876-940d-27163cff2bf7",
+      "kind": "agent",
+      "name": "After-Hours Dip Agent",
+      "description": "An AI agent that pays for its own market data over x402 and buys after-hours dips in tokenized stocks on Robinhood Chain, where those stocks keep trading around the clock. Includes CLI, MCP tools, and a dashboard.",
+      "version": "1.0.0",
+      "repo_url": "https://github.com/glabun002/after-hours-dip-agent",
+      "category": [
+        "trading",
+        "payments"
+      ],
+      "demo_url": "https://afterhoursoracle.xyz",
+      "contract_address": null,
+      "created_at": "2026-10-05T13:39:11.93502+00:00",
+      "approved_at": "2026-10-05T13:39:11.93502+00:00",
+      "github_stars": 0,
+      "github_updated_at": "2026-07-10T00:57:09+00:00",
+      "verified": false,
+      "url": "https://agraris.xyz/agent.html?id=b8bbdfa3-68c4-4876-940d-27163cff2bf7"
+    },
+    {
+      "id": "c4b192c6-4cd9-40c4-9323-fb5d40e2b37d",
+      "kind": "agent",
+      "name": "brier",
+      "description": "A hash-chained prediction ledger for LLMs and AI agents on Robinhood Chain. Forecasts are sealed before the answer exists and graded afterward with proper scoring rules, so a claim of foresight can actually be checked.",
+      "version": "1.0.0",
+      "repo_url": "https://github.com/Noisyxl/brier",
+      "category": [
+        "analytics",
+        "developer-tools"
+      ],
+      "demo_url": null,
+      "contract_address": null,
+      "created_at": "2026-10-05T13:39:11.93502+00:00",
+      "approved_at": "2026-10-05T13:39:11.93502+00:00",
+      "github_stars": 116,
+      "github_updated_at": "2026-09-20T11:05:21+00:00",
+      "verified": false,
+      "url": "https://agraris.xyz/agent.html?id=c4b192c6-4cd9-40c4-9323-fb5d40e2b37d"
+    },
+    {
+      "id": "cc012e05-7ef9-4e5f-9621-f541f622b1ed",
+      "kind": "agent",
+      "name": "merrymen",
+      "description": "Autonomous trading agents for Robinhood Chain, operating inside hard on-chain limits rather than relying on a promise. Available as an MCP server, usable directly from Claude.",
+      "version": "1.0.0",
+      "repo_url": "https://github.com/millw14/merrymen",
+      "category": [
+        "trading",
+        "risk-management"
+      ],
+      "demo_url": "https://merrymen.dev",
+      "contract_address": null,
+      "created_at": "2026-10-05T13:39:11.93502+00:00",
+      "approved_at": "2026-10-05T13:39:11.93502+00:00",
+      "github_stars": 69,
+      "github_updated_at": "2026-10-15T15:23:14+00:00",
+      "verified": false,
+      "url": "https://agraris.xyz/agent.html?id=cc012e05-7ef9-4e5f-9621-f541f622b1ed"
+    },
+    {
+      "id": "226b422a-f700-4ec4-8d1f-08231ab50cb2",
+      "kind": "agent",
+      "name": "Aleph",
+      "description": "Read-only contract scanner for Robinhood Chain (chain ID 4663). Reads a token contract before you buy and reports on-chain findings with evidence for each one: verification status, ownership, mint capability, holders, and deployment origin. Available as an npm package.",
+      "version": "1.0.0",
+      "repo_url": "https://github.com/Aleph-Agent/aleph",
+      "category": [
+        "risk-management",
+        "analytics"
+      ],
+      "demo_url": null,
+      "contract_address": null,
+      "created_at": "2026-09-28T15:25:08.320016+00:00",
+      "approved_at": "2026-09-28T15:25:08.320016+00:00",
+      "github_stars": null,
+      "github_updated_at": null,
+      "verified": true,
+      "url": "https://agraris.xyz/agent.html?id=226b422a-f700-4ec4-8d1f-08231ab50cb2"
+    },
+    {
+      "id": "d94dcf99-78ec-4335-8eb8-f1889f7f966a",
+      "kind": "agent",
+      "name": "Aegis",
+      "description": "Two-way security shield for agentic trading on Robinhood Chain: a prompt-injection firewall that screens MCP tool output before an agent reads it, and a pre-trade scanner that returns GO / CAUTION / NO before an agent signs. Includes an MCP server and optional on-chain verdict receipts.",
+      "version": "1.0.0",
+      "repo_url": "https://github.com/aegisagentdev/aegis",
+      "category": [
+        "risk-management",
+        "infrastructure"
+      ],
+      "demo_url": "https://aegisagent.pro",
+      "contract_address": null,
+      "created_at": "2026-09-28T15:25:08.320016+00:00",
+      "approved_at": "2026-09-28T15:25:08.320016+00:00",
+      "github_stars": null,
+      "github_updated_at": null,
+      "verified": true,
+      "url": "https://agraris.xyz/agent.html?id=d94dcf99-78ec-4335-8eb8-f1889f7f966a"
+    },
+    {
+      "id": "5924e53e-3b3f-4608-99eb-9cd2a29f0b20",
+      "kind": "agent",
+      "name": "Robinhood Trading Terminal",
+      "description": "AI-powered game-based trading terminal for Robinhood Chain. Play a village simulation where upgrading stats directly reconfigures a real trading agent — thinking depth, poll speed, and more — with live backtesting and a public leaderboard before going live.",
+      "version": "1.0.0",
+      "repo_url": "https://github.com/abdellahsenini2002-dot/robinhood-trading-terminal",
+      "category": [
+        "trading",
+        "developer-tools"
+      ],
+      "demo_url": null,
+      "contract_address": null,
+      "created_at": "2026-09-27T07:53:49.257981+00:00",
+      "approved_at": "2026-09-27T07:53:49.257981+00:00",
+      "github_stars": 0,
+      "github_updated_at": "2026-09-12T09:10:09+00:00",
+      "verified": false,
+      "url": "https://agraris.xyz/agent.html?id=5924e53e-3b3f-4608-99eb-9cd2a29f0b20"
+    },
+    {
+      "id": "93e5cee6-df9a-4d12-8069-a59af10fb28e",
+      "kind": "agent",
+      "name": "robinhood-ai-agent",
+      "description": "Four-agent autonomous crypto trading desk on Robinhood Chain — research, risk, sell, and trading agents operating behind a code-enforced order gate. Screens live movers every 15 minutes for entry setups like sharp hourly drops or volume surges.",
+      "version": "1.0.0",
+      "repo_url": "https://github.com/sk151199/robinhood-ai-agent",
+      "category": [
+        "trading",
+        "autonomous-agents"
+      ],
+      "demo_url": null,
+      "contract_address": null,
+      "created_at": "2026-09-27T07:53:49.257981+00:00",
+      "approved_at": "2026-09-27T07:53:49.257981+00:00",
+      "github_stars": 0,
+      "github_updated_at": "2026-09-25T17:54:34+00:00",
+      "verified": false,
+      "url": "https://agraris.xyz/agent.html?id=93e5cee6-df9a-4d12-8069-a59af10fb28e"
+    },
+    {
+      "id": "e65a1fbf-2a20-4767-b943-8975024b2962",
+      "kind": "agent",
+      "name": "TraceHood",
+      "description": "Independent, read-only intelligence terminal for Robinhood Chain — paste a contract and inspect price, pools, liquidity, holders, creator, and likely related wallets, with cluster-adjusted concentration shown separately from raw. Every conclusion links back to onchain evidence.",
+      "version": "1.0.0",
+      "repo_url": "https://github.com/TraceHood/robinhood-explorer",
+      "category": [
+        "analytics",
+        "risk-management"
+      ],
+      "demo_url": null,
+      "contract_address": null,
+      "created_at": "2026-09-27T07:53:49.257981+00:00",
+      "approved_at": "2026-09-27T07:53:49.257981+00:00",
+      "github_stars": 0,
+      "github_updated_at": "2026-09-20T07:29:57+00:00",
+      "verified": false,
+      "url": "https://agraris.xyz/agent.html?id=e65a1fbf-2a20-4767-b943-8975024b2962"
+    },
+    {
+      "id": "aef7bd7e-a7d9-469d-8454-56a530970bc0",
+      "kind": "agent",
+      "name": "GENIUS",
+      "description": "A trading desk run by six AI agent roles on Robinhood Chain, built in public — hard risk limits written in code, every decision journaled, and losses published next to wins. Live market data, a paper broker with realistic costs, and a daily GitHub Actions run keep the desk operating and auditable.",
+      "version": "1.0.0",
+      "repo_url": "https://github.com/Genius-AI-77/Genius",
+      "category": [
+        "trading",
+        "autonomous-agents"
+      ],
+      "demo_url": null,
+      "contract_address": null,
+      "created_at": "2026-09-17T07:19:47.245362+00:00",
+      "approved_at": "2026-09-17T07:19:47.245362+00:00",
+      "github_stars": 0,
+      "github_updated_at": "2026-09-20T02:57:15+00:00",
+      "verified": true,
+      "url": "https://agraris.xyz/agent.html?id=aef7bd7e-a7d9-469d-8454-56a530970bc0"
+    },
+    {
+      "id": "01a6f7ec-c3e7-4a6f-9faf-b410a9fb473a",
+      "kind": "agent",
+      "name": "Robinhood Chain × Bankr Tools",
+      "description": "Five production-ready Bankr skills for tokenized stocks on Robinhood Chain: portfolio manager, cross-chain bridge, stock scanner, yield optimizer, and earnings agent. Ready to use in any Bankr agent.",
+      "version": "0.1.0",
+      "repo_url": "https://github.com/0xMatdis/Robinhood-Chain-Bankr-Tools",
+      "category": [
+        "trading",
+        "developer-tools"
+      ],
+      "demo_url": null,
+      "contract_address": null,
+      "created_at": "2026-09-16T10:39:37.213577+00:00",
+      "approved_at": "2026-09-16T10:39:37.213577+00:00",
+      "github_stars": 2,
+      "github_updated_at": "2026-07-17T13:04:40+00:00",
+      "verified": true,
+      "url": "https://agraris.xyz/agent.html?id=01a6f7ec-c3e7-4a6f-9faf-b410a9fb473a"
+    },
+    {
+      "id": "03127e34-7d83-4790-9350-f5071a1d37e0",
+      "kind": "agent",
+      "name": "rh-stockpair-oracle",
+      "description": "Stock-pair pricing oracle for Robinhood Chain (4663). Indexes every Uniswap v4 and v3 pool where one side is a tokenized stock or ETF: implied USD price, Chainlink deviation, market hours, and corporate actions, via a deterministic data path.",
+      "version": "1.0.0",
+      "repo_url": "https://github.com/MeMikko/rh-stockpair-oracle",
+      "category": [
+        "analytics",
+        "infrastructure"
+      ],
+      "demo_url": null,
+      "contract_address": null,
+      "created_at": "2026-09-16T10:39:37.213577+00:00",
+      "approved_at": "2026-09-16T10:39:37.213577+00:00",
+      "github_stars": 0,
+      "github_updated_at": "2026-09-07T17:02:17+00:00",
+      "verified": false,
+      "url": "https://agraris.xyz/agent.html?id=03127e34-7d83-4790-9350-f5071a1d37e0"
+    },
+    {
+      "id": "13436815-c01f-427a-bda5-1cbd23cd8842",
+      "kind": "agent",
+      "name": "Agent402",
+      "description": "500+ pay-per-call tools, metered models, and finished reports for AI agents, paid over x402 in USDC across 12 chains including USDG on Robinhood Chain. Open source, self-hostable, MCP-native.",
+      "version": "1.0.0",
+      "repo_url": "https://github.com/MikeyPetrillo/Agent402",
+      "category": [
+        "infrastructure",
+        "payments"
+      ],
+      "demo_url": "https://agent402.tools",
+      "contract_address": null,
+      "created_at": "2026-09-16T10:39:37.213577+00:00",
+      "approved_at": "2026-09-16T10:39:37.213577+00:00",
+      "github_stars": 41,
+      "github_updated_at": "2026-10-16T02:35:52+00:00",
+      "verified": true,
+      "url": "https://agraris.xyz/agent.html?id=13436815-c01f-427a-bda5-1cbd23cd8842"
+    },
+    {
+      "id": "8d619c71-985a-4f58-80c9-13293d0372c2",
+      "kind": "agent",
+      "name": "Bastion",
+      "description": "Autonomous, verifiable AI fund on Robinhood Chain. A swarm of AI agents researches, debates, sizes, and executes trades on tokenized stocks 24/7 — then proves every trade on-chain. Non-custodial, keys never leave your disk.",
+      "version": "1.0.0",
+      "repo_url": "https://github.com/adrydevel/bastion",
+      "category": [
+        "trading",
+        "autonomous-agents"
+      ],
+      "demo_url": "https://bastiontrade.xyz",
+      "contract_address": null,
+      "created_at": "2026-09-16T10:39:37.213577+00:00",
+      "approved_at": "2026-09-16T10:39:37.213577+00:00",
+      "github_stars": 1,
+      "github_updated_at": "2026-09-09T16:35:35+00:00",
+      "verified": true,
+      "url": "https://agraris.xyz/agent.html?id=8d619c71-985a-4f58-80c9-13293d0372c2"
+    },
+    {
+      "id": "9655177f-68cf-44c4-84a2-680a49b4a349",
+      "kind": "agent",
+      "name": "robinhood-chain-mcp",
+      "description": "Read-only MCP server giving AI agents live intelligence on Robinhood Chain — tokens, wallets, Chainlink feeds, heat scores, and tracking error on tokenized equities (the spread between onchain price and the underlying share price). Zero API keys, reference implementation of the open RHC Agent Schema.",
+      "version": "1.0.0",
+      "repo_url": "https://github.com/arambarnett/robinhood-chain-mcp",
+      "category": [
+        "analytics",
+        "infrastructure"
+      ],
+      "demo_url": null,
+      "contract_address": null,
+      "created_at": "2026-09-15T14:45:53.336216+00:00",
+      "approved_at": "2026-09-15T14:45:53.336216+00:00",
+      "github_stars": 0,
+      "github_updated_at": "2026-08-22T18:31:05+00:00",
+      "verified": false,
+      "url": "https://agraris.xyz/agent.html?id=9655177f-68cf-44c4-84a2-680a49b4a349"
+    },
+    {
+      "id": "f628c3b6-15e8-4779-937b-739fee06a603",
+      "kind": "agent",
+      "name": "ScanHood",
+      "description": "Token safety scanner for Robinhood Chain — honeypot and rug-pull detection, LP-lock checks, contract verification, and deployer reputation, returning a simple PASS/CAUTION/DANGER verdict via MCP.",
+      "version": "1.0.0",
+      "repo_url": "https://github.com/scanhood/scanhood",
+      "category": [
+        "analytics",
+        "risk-management"
+      ],
+      "demo_url": null,
+      "contract_address": null,
+      "created_at": "2026-09-15T14:45:53.336216+00:00",
+      "approved_at": "2026-09-15T14:45:53.336216+00:00",
+      "github_stars": 0,
+      "github_updated_at": "2026-07-30T21:36:37+00:00",
+      "verified": true,
+      "url": "https://agraris.xyz/agent.html?id=f628c3b6-15e8-4779-937b-739fee06a603"
+    },
+    {
+      "id": "78effed9-85c3-41f9-b811-f8bd094e4ca6",
+      "kind": "agent",
+      "name": "Olas (open-autonomy)",
+      "description": "Widely-used framework for building and running autonomous AI agents onchain, from Valory. Olas identity and staking registries are now deployed on Robinhood Chain, letting agent developers register and operate through the same tooling used across the broader Olas ecosystem.",
+      "version": "0.21.29",
+      "repo_url": "https://github.com/valory-xyz/open-autonomy",
+      "category": [
+        "infrastructure",
+        "developer-tools"
+      ],
+      "demo_url": null,
+      "contract_address": null,
+      "created_at": "2026-09-15T08:32:18.92073+00:00",
+      "approved_at": "2026-09-15T08:32:18.92073+00:00",
+      "github_stars": 130,
+      "github_updated_at": "2026-09-14T13:44:08+00:00",
+      "verified": true,
+      "url": "https://agraris.xyz/agent.html?id=78effed9-85c3-41f9-b811-f8bd094e4ca6"
+    },
+    {
+      "id": "af1f1411-48d1-4193-9215-80b0944aa975",
+      "kind": "agent",
+      "name": "TRENCH",
+      "description": "Local-first MCP server exposing read-only Robinhood Chain market intelligence — price, liquidity, 24h volume, and pool data pulled from live RPC and DexScreener. Does not trade and never accepts private keys.",
+      "version": "0.1.0",
+      "repo_url": "https://github.com/Floopi10/trench-mcp",
+      "category": [
+        "analytics",
+        "developer-tools"
+      ],
+      "demo_url": null,
+      "contract_address": null,
+      "created_at": "2026-09-15T07:00:43.257079+00:00",
+      "approved_at": "2026-09-15T07:00:43.257079+00:00",
+      "github_stars": 12,
+      "github_updated_at": "2026-09-25T16:29:13+00:00",
+      "verified": false,
+      "url": "https://agraris.xyz/agent.html?id=af1f1411-48d1-4193-9215-80b0944aa975"
+    },
+    {
+      "id": "bb87c1d3-1c04-4700-89e3-42b8a3b834d4",
+      "kind": "agent",
+      "name": "r0x-os",
+      "description": "USDG-native operating system for AI agents built on Robinhood Chain. Runs the official x402 facilitator, letting agents discover a priced capability, authorize a USDG payment, and invoke it in one uninterrupted call — no API keys, no subscriptions.",
+      "version": "1.0.0",
+      "repo_url": "https://github.com/nhevers/project-r0x",
+      "category": [
+        "infrastructure",
+        "payments"
+      ],
+      "demo_url": null,
+      "contract_address": null,
+      "created_at": "2026-09-15T07:00:43.257079+00:00",
+      "approved_at": "2026-09-15T07:00:43.257079+00:00",
+      "github_stars": 58,
+      "github_updated_at": "2026-07-11T22:40:03+00:00",
+      "verified": true,
+      "url": "https://agraris.xyz/agent.html?id=bb87c1d3-1c04-4700-89e3-42b8a3b834d4"
+    },
+    {
+      "id": "e803fe55-9137-4d6d-9a9f-654cd1613dab",
+      "kind": "agent",
+      "name": "Arcus Agent Gateway",
+      "description": "MCP gateway giving AI agents read-only, keyless access to market data for tokenized US equities on Robinhood Chain via Arcus DEX — quotes, corporate actions, multipliers, and sector mapping. No API keys, no writes.",
+      "version": "0.2.0",
+      "repo_url": "https://github.com/alekskram/arcus-agent-gateway",
+      "category": [
+        "analytics",
+        "infrastructure"
+      ],
+      "demo_url": null,
+      "contract_address": null,
+      "created_at": "2026-09-15T07:00:43.257079+00:00",
+      "approved_at": "2026-09-15T07:00:43.257079+00:00",
+      "github_stars": 1,
+      "github_updated_at": "2026-09-23T09:42:18+00:00",
+      "verified": false,
+      "url": "https://agraris.xyz/agent.html?id=e803fe55-9137-4d6d-9a9f-654cd1613dab"
+    },
+    {
+      "id": "123b216e-2bb2-4e48-b8f8-17555bc03032",
+      "kind": "agent",
+      "name": "RobinAGNT",
+      "description": "Decentralized dashboard for Robinhood Chain — wallet volume leaderboard, token market-cap treemap, and a fully open, key-less API anyone can build on.",
+      "version": "1.0.0",
+      "repo_url": "https://github.com/tuthouse/RobinAGNT",
+      "category": [
+        "analytics",
+        "infrastructure"
+      ],
+      "demo_url": "https://agnt.social/robinhood",
+      "contract_address": null,
+      "created_at": "2026-09-15T05:07:08.62279+00:00",
+      "approved_at": "2026-09-15T05:07:08.62279+00:00",
+      "github_stars": 2,
+      "github_updated_at": "2026-07-24T16:53:18+00:00",
+      "verified": false,
+      "url": "https://agraris.xyz/agent.html?id=123b216e-2bb2-4e48-b8f8-17555bc03032"
+    },
+    {
+      "id": "483be7ed-85e4-4b89-a8e8-bf2696ebce40",
+      "kind": "agent",
+      "name": "Cheshire Terminal Agents",
+      "description": "Unified open-source package combining an agent catalog (53 Cheshire-schema agents) with a dual-chain identity forge — register agents on Robinhood Chain (EVM/ERC-8004) and Solana with fail-closed safety.",
+      "version": "1.0.0",
+      "repo_url": "https://github.com/Solizardking/robinhood-agents",
+      "category": [
+        "identity",
+        "developer-tools"
+      ],
+      "demo_url": null,
+      "contract_address": null,
+      "created_at": "2026-09-15T05:07:08.62279+00:00",
+      "approved_at": "2026-09-15T05:07:08.62279+00:00",
+      "github_stars": 1,
+      "github_updated_at": "2026-08-11T19:55:21+00:00",
+      "verified": false,
+      "url": "https://agraris.xyz/agent.html?id=483be7ed-85e4-4b89-a8e8-bf2696ebce40"
+    },
+    {
+      "id": "588d4eef-6228-434d-ae12-939d7ee1a36c",
+      "kind": "agent",
+      "name": "Robinhood Toolkit",
+      "description": "Practical developer toolkit for Robinhood Chain — verified network parameters (checked against live RPC, not just docs) and a prompt library for coding agents to build on the chain.",
+      "version": "1.0.0",
+      "repo_url": "https://github.com/nirholas/robinhood-toolkit",
+      "category": [
+        "developer-tools",
+        "infrastructure"
+      ],
+      "demo_url": null,
+      "contract_address": null,
+      "created_at": "2026-09-15T05:07:08.62279+00:00",
+      "approved_at": "2026-09-15T05:07:08.62279+00:00",
+      "github_stars": 7,
+      "github_updated_at": "2026-10-11T01:41:21+00:00",
+      "verified": false,
+      "url": "https://agraris.xyz/agent.html?id=588d4eef-6228-434d-ae12-939d7ee1a36c"
+    },
+    {
+      "id": "ef128f89-4112-4400-8a14-b6ca58f33a8c",
+      "kind": "agent",
+      "name": "OpenTrade-agent",
+      "description": "Open-source macOS app that lets Claude Code and Codex agents trade autonomously through the official Robinhood Agentic Trading MCP. Orchestrate multiple agents, each running its own strategy, with configurable guardrails and real-time monitoring.",
+      "version": "1.0.0",
+      "repo_url": "https://github.com/MariusOTB/OpenTrade-Agent",
+      "category": [
+        "trading",
+        "developer-tools"
+      ],
+      "demo_url": null,
+      "contract_address": null,
+      "created_at": "2026-09-14T18:10:25.918934+00:00",
+      "approved_at": "2026-09-14T18:10:25.918934+00:00",
+      "github_stars": 135,
+      "github_updated_at": "2026-09-14T07:59:07+00:00",
+      "verified": true,
+      "url": "https://agraris.xyz/agent.html?id=ef128f89-4112-4400-8a14-b6ca58f33a8c"
+    },
+    {
+      "id": "65406f2c-dc74-48c0-b84e-7330afeff002",
+      "kind": "agent",
+      "name": "Bowyer",
+      "description": "The App Store for autonomous businesses. Build, discover, and grow AI agents that run as hosted MCP servers on Robinhood Chain — each agent generates reports, answers questions, and gets paid by subscribers directly to its creator's wallet.",
+      "version": "1.0.0",
+      "repo_url": "https://github.com/bowyerapp/bowyer",
+      "category": [
+        "marketplace",
+        "infrastructure"
+      ],
+      "demo_url": null,
+      "contract_address": null,
+      "created_at": "2026-09-14T18:09:36.155199+00:00",
+      "approved_at": "2026-09-14T18:09:36.155199+00:00",
+      "github_stars": 31,
+      "github_updated_at": "2026-09-06T21:09:02+00:00",
+      "verified": false,
+      "url": "https://agraris.xyz/agent.html?id=65406f2c-dc74-48c0-b84e-7330afeff002"
+    },
+    {
+      "id": "a7c27c6c-5978-471e-998b-7e58706eff41",
+      "kind": "agent",
+      "name": "OpenCatz AI",
+      "description": "Autonomous multi-agent crypto intelligence system — 15 specialist AI scouts across 7 blockchains including Robinhood Chain, covering meme token discovery, LP yield, NFT floors, and whale/perps tracking.",
+      "version": "1.0.0",
+      "repo_url": "https://github.com/dizcorvus/opencatz-ai",
+      "category": [
+        "trading",
+        "market-intelligence"
+      ],
+      "demo_url": null,
+      "contract_address": null,
+      "created_at": "2026-09-14T18:08:17.654133+00:00",
+      "approved_at": "2026-09-14T18:08:17.654133+00:00",
+      "github_stars": 9,
+      "github_updated_at": "2026-10-16T06:56:52+00:00",
+      "verified": false,
+      "url": "https://agraris.xyz/agent.html?id=a7c27c6c-5978-471e-998b-7e58706eff41"
+    },
+    {
+      "id": "390ef836-f492-4f26-b4f0-d2de8b677433",
+      "kind": "agent",
+      "name": "Githood",
+      "description": "Client SDK and CLI for the agent hub on Robinhood Chain — push an agent from the CLI or embed the SDK, and it runs live onchain. No separate GitHub account or infra needed.",
+      "version": "1.0.0",
+      "repo_url": "https://github.com/usegithood/githood",
+      "category": [
+        "infrastructure",
+        "developer-tools"
+      ],
+      "demo_url": null,
+      "contract_address": null,
+      "created_at": "2026-09-14T17:07:35.189766+00:00",
+      "approved_at": "2026-09-14T17:07:35.189766+00:00",
+      "github_stars": null,
+      "github_updated_at": null,
+      "verified": false,
+      "url": "https://agraris.xyz/agent.html?id=390ef836-f492-4f26-b4f0-d2de8b677433"
+    },
+    {
+      "id": "18ad5657-49e5-43ba-9024-fd95cc03591d",
+      "kind": "agent",
+      "name": "Sherwood Protocol",
+      "description": "Autonomous agent syndicates that pool capital and run composable onchain strategies on Robinhood Chain.",
+      "version": "1.0.0",
+      "repo_url": "https://github.com/sherwoodagent/sherwood-protocol",
+      "category": [
+        "defi",
+        "fund-management"
+      ],
+      "demo_url": null,
+      "contract_address": null,
+      "created_at": "2026-09-14T17:06:23.779754+00:00",
+      "approved_at": "2026-09-14T17:06:23.779754+00:00",
+      "github_stars": 3,
+      "github_updated_at": "2026-10-15T21:29:07+00:00",
+      "verified": false,
+      "url": "https://agraris.xyz/agent.html?id=18ad5657-49e5-43ba-9024-fd95cc03591d"
+    },
+    {
+      "id": "7039c5c6-c139-472a-90f7-eff1a336258f",
+      "kind": "agent",
+      "name": "Sherwood Agent",
+      "description": "Automated trading for the Robinhood Agentic MCP with a hard risk gate in front of every order. Paper-first, written in Rust.",
+      "version": "0.1.0",
+      "repo_url": "https://github.com/dunksmaster/sherwood-agent",
+      "category": [
+        "trading",
+        "risk-management"
+      ],
+      "demo_url": null,
+      "contract_address": null,
+      "created_at": "2026-09-14T17:04:53.269634+00:00",
+      "approved_at": "2026-09-14T17:04:53.269634+00:00",
+      "github_stars": 0,
+      "github_updated_at": "2026-09-16T10:45:44+00:00",
+      "verified": false,
+      "url": "https://agraris.xyz/agent.html?id=7039c5c6-c139-472a-90f7-eff1a336258f"
+    },
+    {
+      "id": "2be25e81-6695-46dd-8ae5-967cf787f332",
+      "kind": "agent",
+      "name": "Agex",
+      "description": "Autonomous Agent Exchange Terminal — AI agents trade trending tokens with real ETH on Robinhood Chain. Connect a wallet, deploy an agent, fund it, and watch the desk live.",
+      "version": "1.0.0",
+      "repo_url": "https://github.com/Manyachandra/agex",
+      "category": [
+        "trading",
+        "autonomous-agents"
+      ],
+      "demo_url": null,
+      "contract_address": null,
+      "created_at": "2026-09-14T17:03:07.537272+00:00",
+      "approved_at": "2026-09-14T17:03:07.537272+00:00",
+      "github_stars": 0,
+      "github_updated_at": "2026-09-16T11:03:30+00:00",
+      "verified": false,
+      "url": "https://agraris.xyz/agent.html?id=2be25e81-6695-46dd-8ae5-967cf787f332"
+    }
+  ]
+}
