@@ -106,7 +106,8 @@
     </div>
 
     <p class="page-lead">
-      Agraris data is available through Supabase's auto-generated REST API (PostgREST).
+      Agraris data is available as a static <a href="#json-api">JSON file</a>
+      and through Supabase's auto-generated REST API (PostgREST).
       This page documents read queries (GET). To publish an agent, use the
       form at <a href="publish.html">publish.html</a>.
     </p>
@@ -114,6 +115,7 @@
     <nav class="docs-toc" aria-label="On this page">
       <span class="docs-toc-title">On this page</span>
       <ol>
+        <li><a href="#json-api">JSON API</a></li>
         <li><a href="#base-url">Base URL</a></li>
         <li><a href="#authentication">Authentication</a></li>
         <li><a href="#curl-braces">Note for curl: curly braces</a></li>
@@ -136,6 +138,81 @@
     </nav>
 
     <div class="docs-content">
+      <h3 id="json-api">JSON API</h3>
+      <p>
+        The simplest way to read the registry. A single static JSON file
+        holds every published listing, agents and tools alike, newest
+        first. No key is needed. The file is regenerated automatically
+        once a day, and only changes when a listing does, so
+        <code>generated_at</code> stays the same until then. For custom
+        queries or fresher data, use the REST API below.
+      </p>
+      <pre class="code-block"><code>curl "https://agraris.xyz/api/agents.json"</code></pre>
+      <p>Shape of the file:</p>
+      <pre class="code-block"><code>{
+  "schema_version": 1,
+  "generated_at": "2026-10-16T00:00:00.000Z",
+  "count": 2,
+  "listings": [
+    {
+      "id": "…",
+      "kind": "tool",
+      "name": "…",
+      …
+      "url": "https://agraris.xyz/agent.html?id=…"
+    }
+  ]
+}</code></pre>
+      <p>
+        Each entry in <code>listings</code> has exactly these fields.
+        Fields may be added in later versions; a change that removes or
+        renames a field raises <code>schema_version</code>.
+      </p>
+      <div class="docs-table-wrap">
+        <table class="docs-table">
+          <thead>
+            <tr>
+              <th>Field</th>
+              <th>Type</th>
+              <th>Notes</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td><code>id</code></td><td>string (uuid)</td><td>Listing id</td></tr>
+            <tr><td><code>kind</code></td><td>string</td><td><code>agent</code> or <code>tool</code></td></tr>
+            <tr><td><code>name</code></td><td>string</td><td>Listing name</td></tr>
+            <tr><td><code>description</code></td><td>string</td><td>Short summary</td></tr>
+            <tr><td><code>version</code></td><td>string</td><td>e.g. "1.0.0"</td></tr>
+            <tr><td><code>repo_url</code></td><td>string</td><td>Link to source repo</td></tr>
+            <tr><td><code>category</code></td><td>string[]</td><td>Category / tool tags</td></tr>
+            <tr><td><code>demo_url</code></td><td>string | null</td><td>Optional demo link</td></tr>
+            <tr><td><code>contract_address</code></td><td>string | null</td><td>Optional address provided by the builder, not verified by Agraris</td></tr>
+            <tr><td><code>created_at</code></td><td>string (ISO 8601)</td><td>When the listing was submitted</td></tr>
+            <tr><td><code>approved_at</code></td><td>string | null</td><td>When it was approved; null for listings from before the review queue</td></tr>
+            <tr><td><code>github_stars</code></td><td>integer | null</td><td>Refreshed daily from GitHub</td></tr>
+            <tr><td><code>github_updated_at</code></td><td>string | null</td><td>Last push to the repo</td></tr>
+            <tr><td><code>verified</code></td><td>boolean</td><td>Marked "Verified" by Agraris</td></tr>
+            <tr><td><code>url</code></td><td>string</td><td>The listing's page on agraris.xyz</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>
+        Listings are sorted by when they appeared in the registry
+        (<code>approved_at</code>, or <code>created_at</code> when that is
+        null), newest first. Only approved listings are included. To keep
+        only tools (or only agents), filter on <code>kind</code>, for
+        example with <a href="https://jqlang.github.io/jq/" target="_blank" rel="noopener noreferrer">jq</a>:
+      </p>
+      <pre class="code-block"><code>curl -s "https://agraris.xyz/api/agents.json" | jq '.listings[] | select(.kind=="tool")'
+
+# Agents only
+curl -s "https://agraris.xyz/api/agents.json" | jq '.listings[] | select(.kind=="agent")'</code></pre>
+      <p>
+        A short overview for language models is at
+        <a href="llms.txt">llms.txt</a>. Being listed is not an
+        endorsement by Agraris.
+      </p>
+
       <h3 id="base-url">Base URL</h3>
       <p>
         All agent data lives behind a single endpoint — the <code>agents</code> table —
