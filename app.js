@@ -128,6 +128,7 @@ function renderAgentRow(agent) {
         <span class="agent-version">v${escapeHtml(agent.version)}</span>
         ${renderGithubBadge(agent)}
         ${renderOnchainLink(agent)}
+        ${renderLiveBadge(agent)}
       </div>
       <p class="agent-desc">${escapeHtml(agent.description)}</p>
       <div class="agent-meta">${tags}</div>
@@ -157,8 +158,11 @@ function renderEmptyState(title, body, cta = null) {
 // though this shared list doesn't include it. kind is public too: it says
 // whether a listing is an agent or a tool. The column must exist before
 // this code is deployed (supabase/migration-listing-kind.sql).
+// live_status / live_checked_at are public too: whether the demo URL
+// answered the last live check (supabase/migration-live-check.sql).
+// live_fail_count stays out; the site has no use for it.
 const AGENT_COLUMNS =
-  "id, name, description, version, repo_url, category, demo_url, created_at, verified, github_stars, github_updated_at, contract_address, kind";
+  "id, name, description, version, repo_url, category, demo_url, created_at, verified, github_stars, github_updated_at, contract_address, kind, live_status, live_checked_at";
 
 // Fetch agents from Supabase, newest first.
 async function fetchAgents({ search = "", category = "", limit = null } = {}) {
@@ -360,6 +364,48 @@ function renderGithubBadge(agent) {
       </span>${relative ? `<span class="github-updated">${escapeHtml(relative)}</span>` : ""}
     </span>
   `;
+}
+
+// ============================================
+// Live check badge (does the demo URL respond?)
+// ============================================
+//
+// live_status is written every 6 hours by the "Live check" GitHub Action
+// (scripts/live-check.js): 'up' when demo_url answered with HTTP 2xx/3xx,
+// 'down' only after 3 failed checks in a row. It says nothing about
+// whether a listing is safe or trustworthy, so the wording stays plain and
+// the "down" state is a muted amber, not red.
+//
+// Nothing is shown when there is no demo_url or no result yet (null):
+// listings without a demo are never marked down.
+
+const LIVE_CHECK_NOTE = "Only means the demo URL responded. Not an endorsement.";
+
+// "checked 3h ago". Coarse on purpose: checks run every 6 hours.
+function formatCheckedAgo(isoString) {
+  const then = new Date(isoString).getTime();
+  if (Number.isNaN(then)) return "";
+  const minutes = Math.max(0, Math.floor((Date.now() - then) / 60000));
+  if (minutes < 60) return minutes < 1 ? "checked just now" : `checked ${minutes}m ago`;
+  const hours = Math.floor(minutes / 60);
+  if (hours < 48) return `checked ${hours}h ago`;
+  return `checked ${Math.floor(hours / 24)}d ago`;
+}
+
+// { state: "up" | "down", text } or null when nothing should be shown.
+function liveCheckInfo(listing) {
+  const demo = typeof listing?.demo_url === "string" ? listing.demo_url.trim() : "";
+  const state = listing?.live_status;
+  if (!demo || (state !== "up" && state !== "down")) return null;
+  const label = state === "up" ? "Responding" : "Not responding";
+  const ago = listing.live_checked_at ? formatCheckedAgo(listing.live_checked_at) : "";
+  return { state, text: ago ? `${label} · ${ago}` : label };
+}
+
+function renderLiveBadge(listing) {
+  const info = liveCheckInfo(listing);
+  if (!info) return "";
+  return `<span class="live-badge live-badge--${info.state}" title="${escapeHtml(LIVE_CHECK_NOTE)}"><span class="live-badge-dot" aria-hidden="true"></span>${escapeHtml(info.text)}<span class="sr-only"> (${escapeHtml(LIVE_CHECK_NOTE)})</span></span>`;
 }
 
 // ============================================

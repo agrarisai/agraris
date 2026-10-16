@@ -3770,3 +3770,68 @@ html.embed-page::before {
 .category-suggest .category-chips {
   margin: 6px 0 0;
 }
+
+/* ---------- live check badge (demo URL responding) ---------- */
+
+/* Plain text with a small dot, the same weight as the GitHub stats next
+   to it. "Not responding" uses a soft amber, never red: the check only
+   says whether the demo URL answered, nothing about the listing itself.
+   Raised above .agent-row-link (z-index: 1) so the tooltip shows on cards. */
+.live-badge {
+  position: relative;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  white-space: nowrap;
+  cursor: help;
+}
+
+.live-badge--up {
+  opacity: 0.6;
+}
+
+.live-badge--down {
+  color: #8a6420;
+}
+
+:root[data-theme="dark"] .live-badge--down {
+  color: #d9b36a;
+}
+
+.live-badge-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background: currentColor;
+}
+
+.live-badge--up .live-badge-dot {
+  background: var(--text-green);
+}
+
+.live-badge--down .live-badge-dot {
+  background: #c99a45;
+}
+
+.live-note {
+  margin: -2px 0 8px;
+  font-size: 11px;
+  opacity: 0.6;
+}
+
+/* Builder's own live check on status.html. */
+.status-live {
+  margin-top: 10px;
+}
+
+.status-live-line {
+  margin: 0;
+  font-size: 13px;
+}
+
+.status-live .live-note {
+  margin: 4px 0 0;
+}

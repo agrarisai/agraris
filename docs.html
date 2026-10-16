@@ -131,6 +131,7 @@
         <li><a href="#pagination">Limit &amp; pagination</a></li>
         <li><a href="#combining">Combining parameters</a></li>
         <li><a href="#response-schema">Response schema</a></li>
+        <li><a href="#live-check">Live check</a></li>
         <li><a href="#review-queue">Review queue</a></li>
         <li><a href="#rate-limits">Rate limits &amp; fair use</a></li>
         <li><a href="#embed-widget">Embed widget</a></li>
@@ -192,6 +193,8 @@
             <tr><td><code>github_stars</code></td><td>integer | null</td><td>Refreshed daily from GitHub</td></tr>
             <tr><td><code>github_updated_at</code></td><td>string | null</td><td>Last push to the repo</td></tr>
             <tr><td><code>verified</code></td><td>boolean</td><td>Marked "Verified" by Agraris</td></tr>
+            <tr><td><code>live_status</code></td><td>string | null</td><td><code>up</code>, <code>down</code> or null; see <a href="#live-check">Live check</a></td></tr>
+            <tr><td><code>live_checked_at</code></td><td>string | null</td><td>When the demo link was last checked</td></tr>
             <tr><td><code>url</code></td><td>string</td><td>The listing's page on agraris.xyz</td></tr>
           </tbody>
         </table>
@@ -476,10 +479,37 @@ const topTradingAgents = await res.json();</code></pre>
             <tr><td><code>github_updated_at</code></td><td>timestamptz</td><td>Nullable; last push to the repo</td></tr>
             <tr><td><code>contract_address</code></td><td>text</td><td>Optional; contract or wallet address (<code>0x</code> + 40 hex) provided by the builder, not verified by Agraris</td></tr>
             <tr><td><code>kind</code></td><td>text</td><td><code>agent</code> or <code>tool</code>; filter with <code>?kind=eq.tool</code></td></tr>
+            <tr><td><code>live_status</code></td><td>text</td><td>Nullable; <code>up</code> or <code>down</code>, see <a href="#live-check">Live check</a></td></tr>
+            <tr><td><code>live_checked_at</code></td><td>timestamptz</td><td>Nullable; when the demo link was last checked</td></tr>
+            <tr><td><code>live_fail_count</code></td><td>integer</td><td>Failed checks in a row (0 after a success)</td></tr>
             <tr><td><code>approved</code></td><td>boolean</td><td>Always <code>true</code> in API responses; pending entries are not returned</td></tr>
           </tbody>
         </table>
       </div>
+
+      <h3 id="live-check">Live check</h3>
+      <p>
+        Every 6 hours Agraris requests the <code>demo_url</code> of each
+        published listing that has one (a plain <code>GET</code> over
+        https, with the User-Agent
+        <code>AgrarisLiveCheck/1.0 (+https://agraris.xyz)</code>). An HTTP
+        2xx or 3xx answer sets <code>live_status</code> to
+        <code>up</code>. A failure only counts up
+        <code>live_fail_count</code>; <code>live_status</code> becomes
+        <code>down</code> after 3 failed checks in a row, and one success
+        sets it back to <code>up</code>. <code>live_status</code> is null
+        until a listing's demo link has been checked, and is reset when
+        the demo link changes. Listings without a demo link are never
+        checked and show nothing.
+      </p>
+      <p>
+        This only means the demo URL responded. Not an endorsement: it
+        says nothing about what the demo does or about the listing
+        itself. Nothing from the response is stored. On the site, the
+        search page's "Demo responding" filter keeps listings whose
+        <code>live_status</code> is <code>up</code>.
+      </p>
+      <pre class="code-block"><code>curl -s "https://agraris.xyz/api/agents.json" | jq '.listings[] | select(.live_status=="up")'</code></pre>
 
       <h3 id="review-queue">Review queue</h3>
       <p>
