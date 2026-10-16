@@ -1,0 +1,18 @@
+# Agraris
+
+> Agraris is an open registry of AI agents and tools (MCP servers, APIs, SDKs and similar) built for Robinhood Chain. Builders submit their own listings; each one is reviewed before it is published. Listings are not an endorsement: Agraris does not vet, audit or guarantee them unless a listing is marked "Verified".
+
+Every published listing has a detail page at `https://agraris.xyz/agent.html?id=<id>`. Each listing has a `kind` of `agent` or `tool`.
+
+## Machine-readable data
+
+- [JSON API: all published listings](https://agraris.xyz/api/agents.json): one static JSON file with every approved agent and tool, newest first. Regenerated automatically once a day. Filter by the `kind` field (`agent` or `tool`).
+- [API documentation](https://agraris.xyz/docs.html): field schema for the JSON file, plus the live REST API for custom queries.
+- [RSS feed](https://agraris.xyz/rss.xml): the 50 most recently published listings.
+- [Sitemap](https://agraris.xyz/sitemap.xml): every listing page and category page.
+
+## Browse
+
+- [Search all listings](https://agraris.xyz/search.html): search and filter by category.
+- [Tools only](https://agraris.xyz/search.html?kind=tool): tools, MCP servers, APIs and SDKs.
+- [Submit a listing](https://agraris.xyz/publish.html): open form, no account needed.

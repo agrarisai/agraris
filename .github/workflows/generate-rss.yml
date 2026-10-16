@@ -54,14 +54,22 @@ jobs:
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
         run: node scripts/generate-sitemap.js
 
+      # Writes api/agents.json only when the listings changed, so an
+      # unchanged registry does not produce a commit.
+      - name: Generate api/agents.json
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: node scripts/generate-api.js
+
       - name: Commit and push generated files
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add rss.xml sitemap.xml
+          git add rss.xml sitemap.xml api/agents.json
           if git diff --cached --quiet; then
-            echo "No changes to rss.xml or sitemap.xml"
+            echo "No changes to rss.xml, sitemap.xml or api/agents.json"
             exit 0
           fi
-          git commit -m "chore: update rss.xml and sitemap.xml [skip ci]"
+          git commit -m "chore: update rss.xml, sitemap.xml and api/agents.json [skip ci]"
           git push origin HEAD:main
