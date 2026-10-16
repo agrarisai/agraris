@@ -24,6 +24,8 @@ const EXPECTED_FIELDS = [
   "github_stars",
   "github_updated_at",
   "verified",
+  "live_status",
+  "live_checked_at",
   "url",
 ];
 
@@ -33,6 +35,7 @@ const SECRET_COLUMNS = {
   status_token: "5f2b1c9e-0000-4000-8000-000000000001",
   notified_at: "2026-10-01T00:00:00Z",
   updated_at: "2026-10-02T00:00:00Z",
+  live_fail_count: 2,
   agent_edits: [{ changed_fields: ["description"], previous: { description: "old" } }],
 };
 
@@ -52,6 +55,8 @@ function row(overrides) {
     github_stars: 3,
     github_updated_at: "2026-09-03T00:00:00Z",
     verified: false,
+    live_status: "up",
+    live_checked_at: "2026-10-15T00:00:00Z",
     ...SECRET_COLUMNS,
     ...overrides,
   };
@@ -173,6 +178,13 @@ test("Supabase errors are thrown", async () => {
     api.fetchApprovedRows(mockSupabase([], { error: { message: "boom" } })),
     /Failed to read agents table: boom/
   );
+});
+
+test("live_status is passed through only as 'up', 'down' or null", () => {
+  assert.equal(api.buildListing(row({ live_status: "up" })).live_status, "up");
+  assert.equal(api.buildListing(row({ live_status: "down" })).live_status, "down");
+  assert.equal(api.buildListing(row({ live_status: null, live_checked_at: null })).live_status, null);
+  assert.equal(api.buildListing(row({ live_status: "weird" })).live_status, null);
 });
 
 test("url follows the sitemap scheme on agraris.xyz", async () => {

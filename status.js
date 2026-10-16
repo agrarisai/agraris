@@ -146,9 +146,66 @@
         editable: true,
         kind,
       });
+      if (row.id) showLiveCheck(row.id);
     } else {
       render({ label: "Pending review", name: row.name, state: "pending", editable: true, kind });
     }
+  }
+
+  // ---------- live check of the demo URL ----------
+
+  // Approved listings are readable through the normal agents API, so the
+  // live check columns come from the same public SELECT as on the cards
+  // (supabase/migration-live-check.sql). Pending listings are never
+  // checked. Built with the DOM like the rest of this page; any failure
+  // just leaves the block out.
+  async function showLiveCheck(id) {
+    let listing;
+    try {
+      const { data, error } = await supabaseClient
+        .from("agents")
+        .select("id, demo_url, live_status, live_checked_at")
+        .eq("id", id)
+        .maybeSingle();
+      if (error) throw error;
+      listing = data;
+    } catch {
+      return;
+    }
+    if (!listing || typeof listing.demo_url !== "string" || !listing.demo_url.trim()) return;
+    // The page may have been re-rendered meanwhile (e.g. an error).
+    if (root.dataset.state !== "approved" || root.querySelector(".status-live")) return;
+
+    const block = document.createElement("div");
+    block.className = "status-live";
+
+    const info = liveCheckInfo(listing);
+    const line = document.createElement("p");
+    line.className = "status-live-line";
+    if (info) {
+      const badge = document.createElement("span");
+      badge.className = `live-badge live-badge--${info.state}`;
+      badge.title = LIVE_CHECK_NOTE;
+      const dot = document.createElement("span");
+      dot.className = "live-badge-dot";
+      dot.setAttribute("aria-hidden", "true");
+      badge.append(dot, info.text);
+      line.append("Demo link: ", badge);
+    } else {
+      line.textContent = "Demo link: not checked yet. Checks run every 6 hours.";
+    }
+    block.appendChild(line);
+
+    const note = document.createElement("p");
+    note.className = "live-note";
+    note.textContent =
+      info && info.state === "down"
+        ? `Your demo link did not respond to 3 or more checks in a row. Make sure it opens over https. ${LIVE_CHECK_NOTE}`
+        : LIVE_CHECK_NOTE;
+    block.appendChild(note);
+
+    const actions = root.querySelector(".status-actions");
+    root.insertBefore(block, actions || null);
   }
 
   // ---------- edit listing ----------

@@ -8,6 +8,7 @@
   const searchInput = document.getElementById("search-input");
   const sortInput = document.getElementById("sort-input");
   const verifiedFilterInput = document.getElementById("verified-filter-input");
+  const liveFilterInput = document.getElementById("live-filter-input");
   const categoryChipsEl = document.getElementById("category-chips");
   const kindTabsEl = document.getElementById("kind-tabs");
 
@@ -121,7 +122,10 @@
 
       const matchesVerified = !verifiedFilterInput.checked || a.verified === true;
 
-      return matchesSearch && matchesCategory && matchesVerified;
+      // Same rule as the badge: a demo_url whose last live check said 'up'.
+      const matchesLive = !liveFilterInput.checked || liveCheckInfo(a)?.state === "up";
+
+      return matchesSearch && matchesCategory && matchesVerified && matchesLive;
     });
 
     renderResults(sortAgents(filtered));
@@ -169,6 +173,8 @@
   sortInput.addEventListener("change", applyFilters);
 
   verifiedFilterInput.addEventListener("change", applyFilters);
+
+  liveFilterInput.addEventListener("change", applyFilters);
 
   kindTabsEl.addEventListener("click", (e) => {
     const tab = e.target.closest(".kind-tab");

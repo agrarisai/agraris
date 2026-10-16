@@ -6,7 +6,7 @@ Every published listing has a detail page at `https://agraris.xyz/agent.html?id=
 
 ## Machine-readable data
 
-- [JSON API: all published listings](https://agraris.xyz/api/agents.json): one static JSON file with every approved agent and tool, newest first. Regenerated automatically once a day. Filter by the `kind` field (`agent` or `tool`).
+- [JSON API: all published listings](https://agraris.xyz/api/agents.json): one static JSON file with every approved agent and tool, newest first. Regenerated automatically once a day. Filter by the `kind` field (`agent` or `tool`). `live_status` (`up`, `down` or null) only says whether the listing's demo URL answered the last automatic check (every 6 hours); it is not an endorsement.
 - [API documentation](https://agraris.xyz/docs.html): field schema for the JSON file, plus the live REST API for custom queries.
 - [RSS feed](https://agraris.xyz/rss.xml): the 50 most recently published listings.
 - [Sitemap](https://agraris.xyz/sitemap.xml): every listing page and category page.

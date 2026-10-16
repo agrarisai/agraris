@@ -440,7 +440,9 @@ function initReportAgent(root, agentId) {
         <div class="agent-meta-row">
           <span class="agent-version">v${escapeHtml(agent.version)}</span>
           ${renderGithubBadge(agent)}
+          ${renderLiveBadge(agent)}
         </div>
+        ${liveCheckInfo(agent) ? `<p class="live-note">Demo check: ${escapeHtml(LIVE_CHECK_NOTE)}</p>` : ""}
         <div class="agent-meta">${tags}</div>
         <p class="detail-desc">${escapeHtml(agent.description)}</p>
         <div class="detail-links">
