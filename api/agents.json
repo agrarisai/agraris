@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-10-16T07:50:02.723Z",
+  "generated_at": "2026-10-16T08:40:44.582Z",
   "count": 31,
   "listings": [
     {
@@ -20,6 +20,8 @@
       "github_stars": 0,
       "github_updated_at": "2026-10-15T04:00:53+00:00",
       "verified": false,
+      "live_status": "up",
+      "live_checked_at": "2026-10-16T08:18:14.206+00:00",
       "url": "https://agraris.xyz/agent.html?id=fd0acb0b-12ea-4941-9d4c-0e20bd117835"
     },
     {
@@ -39,6 +41,8 @@
       "github_stars": 127,
       "github_updated_at": "2026-10-06T11:33:12+00:00",
       "verified": false,
+      "live_status": null,
+      "live_checked_at": null,
       "url": "https://agraris.xyz/agent.html?id=8fadcba7-df47-469d-b0b5-ab2a854a8211"
     },
     {
@@ -59,6 +63,8 @@
       "github_stars": 0,
       "github_updated_at": "2026-07-10T00:57:09+00:00",
       "verified": false,
+      "live_status": "up",
+      "live_checked_at": "2026-10-16T08:18:13.448+00:00",
       "url": "https://agraris.xyz/agent.html?id=b8bbdfa3-68c4-4876-940d-27163cff2bf7"
     },
     {
@@ -79,6 +85,8 @@
       "github_stars": 116,
       "github_updated_at": "2026-09-20T11:05:21+00:00",
       "verified": false,
+      "live_status": null,
+      "live_checked_at": null,
       "url": "https://agraris.xyz/agent.html?id=c4b192c6-4cd9-40c4-9323-fb5d40e2b37d"
     },
     {
@@ -99,11 +107,13 @@
       "github_stars": 69,
       "github_updated_at": "2026-10-15T15:23:14+00:00",
       "verified": false,
+      "live_status": "up",
+      "live_checked_at": "2026-10-16T08:18:14.28+00:00",
       "url": "https://agraris.xyz/agent.html?id=cc012e05-7ef9-4e5f-9621-f541f622b1ed"
     },
     {
       "id": "226b422a-f700-4ec4-8d1f-08231ab50cb2",
-      "kind": "agent",
+      "kind": "tool",
       "name": "Aleph",
       "description": "Read-only contract scanner for Robinhood Chain (chain ID 4663). Reads a token contract before you buy and reports on-chain findings with evidence for each one: verification status, ownership, mint capability, holders, and deployment origin. Available as an npm package.",
       "version": "1.0.0",
@@ -119,6 +129,8 @@
       "github_stars": null,
       "github_updated_at": null,
       "verified": true,
+      "live_status": null,
+      "live_checked_at": null,
       "url": "https://agraris.xyz/agent.html?id=226b422a-f700-4ec4-8d1f-08231ab50cb2"
     },
     {
@@ -139,6 +151,8 @@
       "github_stars": null,
       "github_updated_at": null,
       "verified": true,
+      "live_status": "down",
+      "live_checked_at": "2026-10-16T08:18:14.056+00:00",
       "url": "https://agraris.xyz/agent.html?id=d94dcf99-78ec-4335-8eb8-f1889f7f966a"
     },
     {
@@ -159,6 +173,8 @@
       "github_stars": 0,
       "github_updated_at": "2026-09-12T09:10:09+00:00",
       "verified": false,
+      "live_status": null,
+      "live_checked_at": null,
       "url": "https://agraris.xyz/agent.html?id=5924e53e-3b3f-4608-99eb-9cd2a29f0b20"
     },
     {
@@ -179,6 +195,8 @@
       "github_stars": 0,
       "github_updated_at": "2026-09-25T17:54:34+00:00",
       "verified": false,
+      "live_status": null,
+      "live_checked_at": null,
       "url": "https://agraris.xyz/agent.html?id=93e5cee6-df9a-4d12-8069-a59af10fb28e"
     },
     {
@@ -199,6 +217,8 @@
       "github_stars": 0,
       "github_updated_at": "2026-09-20T07:29:57+00:00",
       "verified": false,
+      "live_status": null,
+      "live_checked_at": null,
       "url": "https://agraris.xyz/agent.html?id=e65a1fbf-2a20-4767-b943-8975024b2962"
     },
     {
@@ -219,11 +239,13 @@
       "github_stars": 0,
       "github_updated_at": "2026-09-20T02:57:15+00:00",
       "verified": true,
+      "live_status": null,
+      "live_checked_at": null,
       "url": "https://agraris.xyz/agent.html?id=aef7bd7e-a7d9-469d-8454-56a530970bc0"
     },
     {
       "id": "01a6f7ec-c3e7-4a6f-9faf-b410a9fb473a",
-      "kind": "agent",
+      "kind": "tool",
       "name": "Robinhood Chain × Bankr Tools",
       "description": "Five production-ready Bankr skills for tokenized stocks on Robinhood Chain: portfolio manager, cross-chain bridge, stock scanner, yield optimizer, and earnings agent. Ready to use in any Bankr agent.",
       "version": "0.1.0",
@@ -239,6 +261,8 @@
       "github_stars": 2,
       "github_updated_at": "2026-07-17T13:04:40+00:00",
       "verified": true,
+      "live_status": null,
+      "live_checked_at": null,
       "url": "https://agraris.xyz/agent.html?id=01a6f7ec-c3e7-4a6f-9faf-b410a9fb473a"
     },
     {
@@ -259,6 +283,8 @@
       "github_stars": 0,
       "github_updated_at": "2026-09-07T17:02:17+00:00",
       "verified": false,
+      "live_status": null,
+      "live_checked_at": null,
       "url": "https://agraris.xyz/agent.html?id=03127e34-7d83-4790-9350-f5071a1d37e0"
     },
     {
@@ -279,6 +305,8 @@
       "github_stars": 41,
       "github_updated_at": "2026-10-16T02:35:52+00:00",
       "verified": true,
+      "live_status": "up",
+      "live_checked_at": "2026-10-16T08:18:13.672+00:00",
       "url": "https://agraris.xyz/agent.html?id=13436815-c01f-427a-bda5-1cbd23cd8842"
     },
     {
@@ -299,11 +327,13 @@
       "github_stars": 1,
       "github_updated_at": "2026-09-09T16:35:35+00:00",
       "verified": true,
+      "live_status": "down",
+      "live_checked_at": "2026-10-16T08:18:13.484+00:00",
       "url": "https://agraris.xyz/agent.html?id=8d619c71-985a-4f58-80c9-13293d0372c2"
     },
     {
       "id": "9655177f-68cf-44c4-84a2-680a49b4a349",
-      "kind": "agent",
+      "kind": "tool",
       "name": "robinhood-chain-mcp",
       "description": "Read-only MCP server giving AI agents live intelligence on Robinhood Chain — tokens, wallets, Chainlink feeds, heat scores, and tracking error on tokenized equities (the spread between onchain price and the underlying share price). Zero API keys, reference implementation of the open RHC Agent Schema.",
       "version": "1.0.0",
@@ -319,11 +349,13 @@
       "github_stars": 0,
       "github_updated_at": "2026-08-22T18:31:05+00:00",
       "verified": false,
+      "live_status": null,
+      "live_checked_at": null,
       "url": "https://agraris.xyz/agent.html?id=9655177f-68cf-44c4-84a2-680a49b4a349"
     },
     {
       "id": "f628c3b6-15e8-4779-937b-739fee06a603",
-      "kind": "agent",
+      "kind": "tool",
       "name": "ScanHood",
       "description": "Token safety scanner for Robinhood Chain — honeypot and rug-pull detection, LP-lock checks, contract verification, and deployer reputation, returning a simple PASS/CAUTION/DANGER verdict via MCP.",
       "version": "1.0.0",
@@ -339,6 +371,8 @@
       "github_stars": 0,
       "github_updated_at": "2026-07-30T21:36:37+00:00",
       "verified": true,
+      "live_status": null,
+      "live_checked_at": null,
       "url": "https://agraris.xyz/agent.html?id=f628c3b6-15e8-4779-937b-739fee06a603"
     },
     {
@@ -359,11 +393,13 @@
       "github_stars": 130,
       "github_updated_at": "2026-09-14T13:44:08+00:00",
       "verified": true,
+      "live_status": null,
+      "live_checked_at": null,
       "url": "https://agraris.xyz/agent.html?id=78effed9-85c3-41f9-b811-f8bd094e4ca6"
     },
     {
       "id": "af1f1411-48d1-4193-9215-80b0944aa975",
-      "kind": "agent",
+      "kind": "tool",
       "name": "TRENCH",
       "description": "Local-first MCP server exposing read-only Robinhood Chain market intelligence — price, liquidity, 24h volume, and pool data pulled from live RPC and DexScreener. Does not trade and never accepts private keys.",
       "version": "0.1.0",
@@ -379,6 +415,8 @@
       "github_stars": 12,
       "github_updated_at": "2026-09-25T16:29:13+00:00",
       "verified": false,
+      "live_status": null,
+      "live_checked_at": null,
       "url": "https://agraris.xyz/agent.html?id=af1f1411-48d1-4193-9215-80b0944aa975"
     },
     {
@@ -399,11 +437,13 @@
       "github_stars": 58,
       "github_updated_at": "2026-07-11T22:40:03+00:00",
       "verified": true,
+      "live_status": null,
+      "live_checked_at": null,
       "url": "https://agraris.xyz/agent.html?id=bb87c1d3-1c04-4700-89e3-42b8a3b834d4"
     },
     {
       "id": "e803fe55-9137-4d6d-9a9f-654cd1613dab",
-      "kind": "agent",
+      "kind": "tool",
       "name": "Arcus Agent Gateway",
       "description": "MCP gateway giving AI agents read-only, keyless access to market data for tokenized US equities on Robinhood Chain via Arcus DEX — quotes, corporate actions, multipliers, and sector mapping. No API keys, no writes.",
       "version": "0.2.0",
@@ -419,6 +459,8 @@
       "github_stars": 1,
       "github_updated_at": "2026-09-23T09:42:18+00:00",
       "verified": false,
+      "live_status": null,
+      "live_checked_at": null,
       "url": "https://agraris.xyz/agent.html?id=e803fe55-9137-4d6d-9a9f-654cd1613dab"
     },
     {
@@ -439,6 +481,8 @@
       "github_stars": 2,
       "github_updated_at": "2026-07-24T16:53:18+00:00",
       "verified": false,
+      "live_status": "up",
+      "live_checked_at": "2026-10-16T08:18:13.456+00:00",
       "url": "https://agraris.xyz/agent.html?id=123b216e-2bb2-4e48-b8f8-17555bc03032"
     },
     {
@@ -459,11 +503,13 @@
       "github_stars": 1,
       "github_updated_at": "2026-08-11T19:55:21+00:00",
       "verified": false,
+      "live_status": null,
+      "live_checked_at": null,
       "url": "https://agraris.xyz/agent.html?id=483be7ed-85e4-4b89-a8e8-bf2696ebce40"
     },
     {
       "id": "588d4eef-6228-434d-ae12-939d7ee1a36c",
-      "kind": "agent",
+      "kind": "tool",
       "name": "Robinhood Toolkit",
       "description": "Practical developer toolkit for Robinhood Chain — verified network parameters (checked against live RPC, not just docs) and a prompt library for coding agents to build on the chain.",
       "version": "1.0.0",
@@ -479,6 +525,8 @@
       "github_stars": 7,
       "github_updated_at": "2026-10-11T01:41:21+00:00",
       "verified": false,
+      "live_status": null,
+      "live_checked_at": null,
       "url": "https://agraris.xyz/agent.html?id=588d4eef-6228-434d-ae12-939d7ee1a36c"
     },
     {
@@ -499,6 +547,8 @@
       "github_stars": 135,
       "github_updated_at": "2026-09-14T07:59:07+00:00",
       "verified": true,
+      "live_status": null,
+      "live_checked_at": null,
       "url": "https://agraris.xyz/agent.html?id=ef128f89-4112-4400-8a14-b6ca58f33a8c"
     },
     {
@@ -519,6 +569,8 @@
       "github_stars": 31,
       "github_updated_at": "2026-09-06T21:09:02+00:00",
       "verified": false,
+      "live_status": null,
+      "live_checked_at": null,
       "url": "https://agraris.xyz/agent.html?id=65406f2c-dc74-48c0-b84e-7330afeff002"
     },
     {
@@ -539,11 +591,13 @@
       "github_stars": 9,
       "github_updated_at": "2026-10-16T06:56:52+00:00",
       "verified": false,
+      "live_status": null,
+      "live_checked_at": null,
       "url": "https://agraris.xyz/agent.html?id=a7c27c6c-5978-471e-998b-7e58706eff41"
     },
     {
       "id": "390ef836-f492-4f26-b4f0-d2de8b677433",
-      "kind": "agent",
+      "kind": "tool",
       "name": "Githood",
       "description": "Client SDK and CLI for the agent hub on Robinhood Chain — push an agent from the CLI or embed the SDK, and it runs live onchain. No separate GitHub account or infra needed.",
       "version": "1.0.0",
@@ -559,6 +613,8 @@
       "github_stars": null,
       "github_updated_at": null,
       "verified": false,
+      "live_status": null,
+      "live_checked_at": null,
       "url": "https://agraris.xyz/agent.html?id=390ef836-f492-4f26-b4f0-d2de8b677433"
     },
     {
@@ -579,6 +635,8 @@
       "github_stars": 3,
       "github_updated_at": "2026-10-15T21:29:07+00:00",
       "verified": false,
+      "live_status": null,
+      "live_checked_at": null,
       "url": "https://agraris.xyz/agent.html?id=18ad5657-49e5-43ba-9024-fd95cc03591d"
     },
     {
@@ -599,6 +657,8 @@
       "github_stars": 0,
       "github_updated_at": "2026-09-16T10:45:44+00:00",
       "verified": false,
+      "live_status": null,
+      "live_checked_at": null,
       "url": "https://agraris.xyz/agent.html?id=7039c5c6-c139-472a-90f7-eff1a336258f"
     },
     {
@@ -619,6 +679,8 @@
       "github_stars": 0,
       "github_updated_at": "2026-09-16T11:03:30+00:00",
       "verified": false,
+      "live_status": null,
+      "live_checked_at": null,
       "url": "https://agraris.xyz/agent.html?id=2be25e81-6695-46dd-8ae5-967cf787f332"
     }
   ]
