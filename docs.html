@@ -132,6 +132,7 @@
         <li><a href="#combining">Combining parameters</a></li>
         <li><a href="#response-schema">Response schema</a></li>
         <li><a href="#live-check">Live check</a></li>
+        <li><a href="#recently-updated">Recently updated</a></li>
         <li><a href="#review-queue">Review queue</a></li>
         <li><a href="#rate-limits">Rate limits &amp; fair use</a></li>
         <li><a href="#embed-widget">Embed widget</a></li>
@@ -510,6 +511,21 @@ const topTradingAgents = await res.json();</code></pre>
         <code>live_status</code> is <code>up</code>.
       </p>
       <pre class="code-block"><code>curl -s "https://agraris.xyz/api/agents.json" | jq '.listings[] | select(.live_status=="up")'</code></pre>
+
+      <h3 id="recently-updated">Recently updated</h3>
+      <p>
+        Listings whose builders edited them through "Edit listing" in the
+        last 30 days, latest edit first, one entry per listing. Only
+        approved listings are included, and only edits made after a
+        listing was published count. The function returns
+        <code>id</code>, <code>name</code>, <code>kind</code> and
+        <code>last_edited_at</code>, nothing about what was changed.
+        <code>p_limit</code> defaults to 5 and is capped at 20.
+      </p>
+      <pre class="code-block"><code>curl -X POST "https://gnydurjxrynqcbpkxopd.supabase.co/rest/v1/rpc/get_recently_updated" \
+  -H "apikey: sb_publishable_4roHAzTOTw9P0_8NXKt2IA_kXniR9pm" \
+  -H "Content-Type: application/json" \
+  -d '{"p_limit": 5}'</code></pre>
 
       <h3 id="review-queue">Review queue</h3>
       <p>

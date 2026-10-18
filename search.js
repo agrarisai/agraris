@@ -13,6 +13,16 @@
   const kindTabsEl = document.getElementById("kind-tabs");
 
   let allAgents = [];
+  // Listing id → time of the builder's latest edit (ms), for the "Recently
+  // updated" sort. Loaded the first time that sort is picked; a failed
+  // load leaves it empty, so every listing counts as "no edit".
+  let editTimes = null;
+
+  async function loadEditTimes() {
+    if (editTimes) return;
+    const rows = await fetchRecentlyUpdated(20);
+    editTimes = new Map(rows.map((r) => [String(r.id), new Date(r.last_edited_at).getTime()]));
+  }
   let debounceTimer = null;
   const activeCategories = new Set();
 
@@ -96,6 +106,18 @@
           return bv - av;
         });
         break;
+      case "updated":
+        // Listings edited by their builder in the last 30 days first, latest
+        // edit on top. Everything else stays below, newest first.
+        sorted.sort((a, b) => {
+          const av = editTimes?.get(String(a.id)) ?? null;
+          const bv = editTimes?.get(String(b.id)) ?? null;
+          if (av !== null && bv !== null) return bv - av;
+          if (av !== null) return -1;
+          if (bv !== null) return 1;
+          return new Date(b.created_at) - new Date(a.created_at);
+        });
+        break;
       case "newest":
       default:
         sorted.sort(
@@ -170,7 +192,10 @@
     debounceTimer = setTimeout(applyFilters, 200);
   });
 
-  sortInput.addEventListener("change", applyFilters);
+  sortInput.addEventListener("change", async () => {
+    if (sortInput.value === "updated") await loadEditTimes();
+    applyFilters();
+  });
 
   verifiedFilterInput.addEventListener("change", applyFilters);
 

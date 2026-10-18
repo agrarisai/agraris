@@ -127,6 +127,51 @@ async function loadTrending() {
   }
 }
 
+// Populates the small "Recently updated" section: listings whose builder
+// edited them in the last 30 days (fetchRecentlyUpdated in app.js). The
+// section stays hidden when there is nothing to show or the call fails.
+// Built with the DOM, so names never go through innerHTML.
+async function loadRecentlyUpdated() {
+  const sectionEl = document.getElementById("recent-updates-section");
+  const listEl = document.getElementById("recent-updates-list");
+  if (!sectionEl || !listEl) return;
+
+  const RECENT_UPDATES_COUNT = 5;
+  const rows = (await fetchRecentlyUpdated(RECENT_UPDATES_COUNT)).slice(0, RECENT_UPDATES_COUNT);
+
+  listEl.textContent = "";
+  rows.forEach((row) => {
+    const when = formatRelativeTime(row.last_edited_at);
+    if (!when) return;
+
+    const item = document.createElement("li");
+    item.className = "recent-update-row";
+
+    const link = document.createElement("a");
+    link.className = "recent-update-link";
+    link.href = `agent.html?id=${encodeURIComponent(row.id)}`;
+
+    const name = document.createElement("span");
+    name.className = "recent-update-name";
+    name.textContent = row.name;
+
+    const kind = document.createElement("span");
+    kind.className = "kind-badge";
+    kind.textContent = row.kind === "tool" ? "Tool" : "Agent";
+
+    link.append(name, " ", kind);
+
+    const time = document.createElement("span");
+    time.className = "recent-update-time";
+    time.textContent = when;
+
+    item.append(link, time);
+    listEl.appendChild(item);
+  });
+
+  sectionEl.hidden = listEl.children.length === 0;
+}
+
 (async function () {
   const listEl = document.getElementById("agent-list");
   const countEl = document.getElementById("agent-count");
@@ -153,6 +198,7 @@ async function loadTrending() {
 
     loadStatsBar(totalCount, toolCount);
     loadTrending();
+    loadRecentlyUpdated();
 
     if (agents.length === 0) {
       listEl.innerHTML = renderEmptyState(
