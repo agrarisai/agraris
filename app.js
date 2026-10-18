@@ -290,6 +290,29 @@ async function fetchAgentById(id) {
   return data;
 }
 
+// Listings their builders edited recently through "Edit listing", newest
+// edit first: [{ id, name, kind, last_edited_at }]. Comes from the
+// get_recently_updated RPC (supabase/migration-recently-updated.sql),
+// which only returns approved listings edited in the last 30 days, one
+// row per listing, at most 20. Edit contents are never returned.
+// Any failure (function missing, network, bad data) quietly gives [] so
+// callers simply hide what depends on it.
+async function fetchRecentlyUpdated(limit = 5) {
+  try {
+    const { data, error } = await supabaseClient.rpc("get_recently_updated", { p_limit: limit });
+    if (error || !Array.isArray(data)) return [];
+    return data.filter(
+      (row) =>
+        row &&
+        row.id &&
+        typeof row.name === "string" &&
+        !Number.isNaN(new Date(row.last_edited_at).getTime())
+    );
+  } catch {
+    return [];
+  }
+}
+
 // Fetch every agent whose id is in the given list, in one round trip
 // (used by watchlist.html instead of calling fetchAgentById per id).
 async function fetchAgentsByIds(ids) {
