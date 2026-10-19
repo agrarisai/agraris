@@ -15,6 +15,7 @@
   const categoryInput = document.getElementById("category");
   const suggestBlock = document.getElementById("category-suggest");
   const suggestChipsEl = document.getElementById("category-suggest-chips");
+  const answeringNote = document.getElementById("answering-note");
 
   // Tag ideas for tools. They are ordinary category tags (same text[]
   // column, same lowercase-with-hyphens style as "data-analysis") and the
@@ -51,6 +52,37 @@
       return false;
     }
   }
+
+  // ---------- answering a Wanted request ----------
+
+  // publish.html?wanted=<id> comes from "I built this" on wanted.html.
+  // The id is only used when it is a uuid AND the public SELECT on wanted
+  // returns it (approved, open, younger than 60 days; see
+  // supabase/migration-wanted.sql). Anything else is ignored and the form
+  // works exactly as without the parameter. The database checks the link
+  // again on insert.
+  const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+  let answeringWantedId = null;
+
+  async function loadAnswering() {
+    const raw = (new URLSearchParams(window.location.search).get("wanted") || "").trim().toLowerCase();
+    if (!UUID_PATTERN.test(raw)) return;
+    try {
+      const { data, error } = await supabaseClient
+        .from("wanted")
+        .select("id, title")
+        .eq("id", raw)
+        .maybeSingle();
+      if (error || !data || typeof data.title !== "string" || !data.title) return;
+      answeringWantedId = raw;
+      answeringNote.textContent = `Answering: ${data.title}`;
+      answeringNote.hidden = false;
+    } catch {
+      // Not reachable / not open — publish normally.
+    }
+  }
+
+  loadAnswering();
 
   // ---------- agent / tool ----------
 
@@ -210,6 +242,11 @@
       payload.kind = "tool";
     }
 
+    // Only sent when answering an open Wanted request (see loadAnswering).
+    if (answeringWantedId) {
+      payload.wanted_id = answeringWantedId;
+    }
+
     try {
       // No .select() after the insert: new entries are saved with
       // approved = false and RLS only lets the public read approved rows,
@@ -234,7 +271,12 @@
       successBlock.hidden = false;
     } catch (err) {
       console.error("Gagal publish agent:", err);
-      setMessage("Something went wrong. Please try again.", "error");
+      setMessage(
+        answeringWantedId
+          ? "Something went wrong. If the request you are answering was closed in the meantime, open the publish page again without it."
+          : "Something went wrong. Please try again.",
+        "error"
+      );
       submitBtn.disabled = false;
     }
   });

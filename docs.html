@@ -76,6 +76,7 @@
       <a href="search.html" data-nav="search">Search</a>
       <a href="search.html?kind=tool" data-nav="tools">Tools</a>
       <a href="publish.html">Publish</a>
+      <a href="wanted.html">Wanted</a>
       <a href="watchlist.html">Watchlist</a>
       <a href="search.html">Compare</a>
       <a href="token.html">Token</a>
@@ -133,6 +134,7 @@
         <li><a href="#response-schema">Response schema</a></li>
         <li><a href="#live-check">Live check</a></li>
         <li><a href="#recently-updated">Recently updated</a></li>
+        <li><a href="#wanted-board">Wanted board</a></li>
         <li><a href="#review-queue">Review queue</a></li>
         <li><a href="#rate-limits">Rate limits &amp; fair use</a></li>
         <li><a href="#embed-widget">Embed widget</a></li>
@@ -196,6 +198,7 @@
             <tr><td><code>verified</code></td><td>boolean</td><td>Marked "Verified" by Agraris</td></tr>
             <tr><td><code>live_status</code></td><td>string | null</td><td><code>up</code>, <code>down</code> or null; see <a href="#live-check">Live check</a></td></tr>
             <tr><td><code>live_checked_at</code></td><td>string | null</td><td>When the demo link was last checked</td></tr>
+            <tr><td><code>wanted_id</code></td><td>string (uuid) | null</td><td>The <a href="#wanted-board">Wanted</a> request this listing answers</td></tr>
             <tr><td><code>url</code></td><td>string</td><td>The listing's page on agraris.xyz</td></tr>
           </tbody>
         </table>
@@ -483,6 +486,7 @@ const topTradingAgents = await res.json();</code></pre>
             <tr><td><code>live_status</code></td><td>text</td><td>Nullable; <code>up</code> or <code>down</code>, see <a href="#live-check">Live check</a></td></tr>
             <tr><td><code>live_checked_at</code></td><td>timestamptz</td><td>Nullable; when the demo link was last checked</td></tr>
             <tr><td><code>live_fail_count</code></td><td>integer</td><td>Failed checks in a row (0 after a success)</td></tr>
+            <tr><td><code>wanted_id</code></td><td>uuid</td><td>Nullable; the <a href="#wanted-board">Wanted</a> request this listing answers. Set only when the listing is submitted</td></tr>
             <tr><td><code>approved</code></td><td>boolean</td><td>Always <code>true</code> in API responses; pending entries are not returned</td></tr>
           </tbody>
         </table>
@@ -526,6 +530,41 @@ const topTradingAgents = await res.json();</code></pre>
   -H "apikey: sb_publishable_4roHAzTOTw9P0_8NXKt2IA_kXniR9pm" \
   -H "Content-Type: application/json" \
   -d '{"p_limit": 5}'</code></pre>
+
+      <h3 id="wanted-board">Wanted board</h3>
+      <p>
+        On <a href="wanted.html">wanted.html</a> anyone can describe an
+        agent or tool they need, without an account. Requests are reviewed
+        before they appear, are listed for 60 days, and carry no contact
+        details. Builders answer by publishing a listing with
+        <code>wanted_id</code> set to the request's id ("I built this"
+        opens <code>publish.html?wanted=&lt;id&gt;</code>). Only requests
+        that are currently listed can be answered, and
+        <code>wanted_id</code> cannot be changed after submitting.
+      </p>
+      <p>
+        <code>get_wanted</code> returns the listed requests, newest first:
+        <code>id</code>, <code>title</code>, <code>description</code>,
+        <code>kind</code> (<code>agent</code>, <code>tool</code> or
+        <code>any</code>), <code>created_at</code> and
+        <code>answers_count</code> (approved listings that answer it).
+        <code>p_limit</code> is capped at 50.
+      </p>
+      <pre class="code-block"><code>curl -X POST "https://gnydurjxrynqcbpkxopd.supabase.co/rest/v1/rpc/get_wanted" \
+  -H "apikey: sb_publishable_4roHAzTOTw9P0_8NXKt2IA_kXniR9pm" \
+  -H "Content-Type: application/json" \
+  -d '{"p_limit": 50}'
+
+# Listings that answer one request
+curl "https://gnydurjxrynqcbpkxopd.supabase.co/rest/v1/agents?wanted_id=eq.REQUEST_ID&amp;select=id,name,kind" \
+  -H "apikey: sb_publishable_4roHAzTOTw9P0_8NXKt2IA_kXniR9pm"</code></pre>
+      <p>
+        New requests go through <code>submit_wanted</code>
+        (<code>p_title</code> up to 100 characters,
+        <code>p_description</code> up to 500, <code>p_kind</code>). Links
+        and web addresses are rejected, and new requests are paused while
+        20 are waiting for review.
+      </p>
 
       <h3 id="review-queue">Review queue</h3>
       <p>

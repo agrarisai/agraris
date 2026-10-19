@@ -101,7 +101,9 @@ function reviewWorkflowUrl() {
 
 async function fetchPending() {
   const query = [
-    "select=id,name,repo_url,description,created_at,kind",
+    // wanted(title): judul permintaan Wanted board yang dijawab, lewat FK
+    // agents.wanted_id (supabase/migration-wanted.sql).
+    "select=id,name,repo_url,description,created_at,kind,wanted_id,wanted(title)",
     filter("approved", "eq", "false"),
     "notified_at=is.null",
     "order=created_at.asc",
@@ -192,6 +194,17 @@ function buildSubject(count) {
   return `Agraris: ${count} submission baru menunggu review`;
 }
 
+// "Menjawab Wanted: <judul> (<id>)" untuk submission yang ditautkan ke
+// permintaan Wanted board; "" kalau tidak ada. Judul bisa kosong kalau
+// permintaannya sudah dihapus (FK on delete set null membuat wanted_id
+// ikut null, jadi baris ini hilang dengan sendirinya).
+function answeringLine(row) {
+  const id = String(row.wanted_id || "");
+  if (!UUID_PATTERN.test(id)) return "";
+  const title = row.wanted && typeof row.wanted.title === "string" ? row.wanted.title : "";
+  return `Menjawab Wanted: ${title ? `${safeText(title, 100)} ` : ""}(${id})`;
+}
+
 function buildText(rows, total) {
   const lines = [
     `Ada ${total} submission baru di antrean review Agraris.`,
@@ -203,6 +216,8 @@ function buildText(rows, total) {
     lines.push(`   Jenis: ${kindLabel(row.kind)}`);
     lines.push(`   ID: ${row.id}`);
     lines.push(`   Repo: ${safeText(row.repo_url, 200)}`);
+    const answering = answeringLine(row);
+    if (answering) lines.push(`   ${answering}`);
     lines.push(`   Dikirim: ${formatUtc(row.created_at)}`);
     lines.push(`   Deskripsi: ${safeText(row.description, DESCRIPTION_MAX)}`);
     lines.push("");
@@ -482,4 +497,4 @@ if (require.main === module) {
   });
 }
 
-module.exports = { buildWantedText, wantedKindLabel, notifyWanted };
+module.exports = { buildText, buildWantedText, wantedKindLabel, notifyWanted };

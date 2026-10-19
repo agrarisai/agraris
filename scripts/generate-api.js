@@ -25,7 +25,8 @@ const fs = require("fs");
 const path = require("path");
 
 // Naik hanya untuk perubahan yang merusak (field dihapus / diganti nama /
-// berubah arti). Menambah field (mis. live_status, live_checked_at) tidak.
+// berubah arti). Menambah field (mis. live_status, live_checked_at,
+// wanted_id) tidak.
 const SCHEMA_VERSION = 1;
 // Sama dengan CNAME. Halaman detail mengikuti skema sitemap.xml:
 // agent.html?id=<uuid>.
@@ -57,6 +58,9 @@ const DB_COLUMNS = [
   // live_fail_count sengaja tidak ikut.
   "live_status",
   "live_checked_at",
+  // Permintaan Wanted board yang dijawab listing ini
+  // (supabase/migration-wanted.sql); null kalau tidak ada.
+  "wanted_id",
 ];
 
 // Daftar putih field per listing di api/agents.json, sesuai urutan di
@@ -115,6 +119,7 @@ function buildListing(row) {
     verified: row.verified === true,
     live_status: row.live_status === "up" || row.live_status === "down" ? row.live_status : null,
     live_checked_at: nullable(row.live_checked_at),
+    wanted_id: nullable(row.wanted_id),
     url: `${SITE_URL}agent.html?id=${encodeURIComponent(row.id)}`,
   };
 }

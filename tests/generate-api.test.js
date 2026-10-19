@@ -26,6 +26,7 @@ const EXPECTED_FIELDS = [
   "verified",
   "live_status",
   "live_checked_at",
+  "wanted_id",
   "url",
 ];
 
@@ -57,6 +58,7 @@ function row(overrides) {
     verified: false,
     live_status: "up",
     live_checked_at: "2026-10-15T00:00:00Z",
+    wanted_id: null,
     ...SECRET_COLUMNS,
     ...overrides,
   };
@@ -185,6 +187,13 @@ test("live_status is passed through only as 'up', 'down' or null", () => {
   assert.equal(api.buildListing(row({ live_status: "down" })).live_status, "down");
   assert.equal(api.buildListing(row({ live_status: null, live_checked_at: null })).live_status, null);
   assert.equal(api.buildListing(row({ live_status: "weird" })).live_status, null);
+});
+
+test("wanted_id is passed through (uuid or null)", () => {
+  const wantedId = "c0000000-0000-4000-8000-000000000001";
+  assert.equal(api.buildListing(row({ wanted_id: wantedId })).wanted_id, wantedId);
+  assert.equal(api.buildListing(row({ wanted_id: null })).wanted_id, null);
+  assert.equal(api.buildListing(row({ wanted_id: undefined })).wanted_id, null);
 });
 
 test("url follows the sitemap scheme on agraris.xyz", async () => {

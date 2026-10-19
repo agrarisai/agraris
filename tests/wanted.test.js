@@ -197,3 +197,16 @@ test("wanted email text never contains words the board avoids", () => {
   const text = notify.buildWantedText([{ id: ID, title: "t", description: "d", kind: "tool", created_at: "2026-10-19T00:00:00Z" }], 1);
   assert.doesNotMatch(text, /\b(price|token|trending|hot|best|verified)\b/i);
 });
+
+// ---------- review-notify: listing email mentions the Wanted request ----------
+
+test("listing review email shows which Wanted request it answers", () => {
+  const base = { id: ID, name: "Book bot", repo_url: "https://github.com/x/y", description: "d", created_at: "2026-10-19T00:00:00Z", kind: "agent" };
+  const wantedId = "c0000000-0000-4000-8000-000000000001";
+  const text = notify.buildText([{ ...base, wanted_id: wantedId, wanted: { title: "Order book via evil.com" } }], 1);
+  assert.match(text, new RegExp(`Menjawab Wanted: Order book via evil\\[\\.\\]com \\(${wantedId}\\)`));
+  const plain = notify.buildText([{ ...base, wanted_id: null, wanted: null }], 1);
+  assert.doesNotMatch(plain, /Menjawab Wanted/);
+  const bad = notify.buildText([{ ...base, wanted_id: "not-a-uuid", wanted: { title: "x" } }], 1);
+  assert.doesNotMatch(bad, /Menjawab Wanted/);
+});
