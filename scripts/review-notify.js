@@ -28,6 +28,15 @@
 //   notified_at hanya untuk baris yang tercantum. Aturan "kirim dulu,
 //   tandai setelah sukses" sama dengan notifikasi antrean.
 //
+// Permintaan Wanted board (email ketiga, terpisah):
+//   Permintaan baru dari wanted.html (RPC submit_wanted, lihat
+//   supabase/migration-wanted.sql) masuk tabel wanted dengan
+//   approved = false. Run ini mengambil yang notified_at-nya masih kosong,
+//   mengirim SATU email (judul, jenis, id, deskripsi), lalu mengisi
+//   notified_at untuk baris yang tercantum saja. Aturan "kirim dulu,
+//   tandai setelah sukses" sama dengan notifikasi antrean. Persetujuan
+//   lewat workflow "Wanted queue" (scripts/wanted-action.js).
+//
 // Isi submission diperlakukan sebagai teks tak tepercaya: email hanya
 // berupa teks biasa, dan URL / domain / alamat email dari pengirim
 // ditulis dengan [.] / [:] / [at] supaya tidak bisa diklik.
@@ -77,11 +86,15 @@ function logError(message) {
   console.error(`[review-notify] ${message}`);
 }
 
-function reviewWorkflowUrl() {
+function workflowUrl(file) {
   const server = process.env.GITHUB_SERVER_URL;
   const repo = process.env.GITHUB_REPOSITORY;
   const base = server && repo ? `${server}/${repo}` : DEFAULT_REPO_URL;
-  return `${base}/actions/workflows/review-queue.yml`;
+  return `${base}/actions/workflows/${file}`;
+}
+
+function reviewWorkflowUrl() {
+  return workflowUrl("review-queue.yml");
 }
 
 // ---------- data ----------
@@ -136,6 +149,37 @@ async function fetchUnnotifiedEdits() {
 async function markEditsNotified(ids) {
   const query = [`id=in.(${ids.join(",")})`, "notified_at=is.null", "select=id"].join("&");
   const { data } = await rest("PATCH", "agent_edits", query, {
+    body: { notified_at: new Date().toISOString() },
+    prefer: "return=representation",
+  });
+  return Array.isArray(data) ? data.length : 0;
+}
+
+// Permintaan Wanted board yang pending dan belum diberi tahu.
+async function fetchPendingWanted() {
+  const query = [
+    "select=id,title,description,kind,created_at",
+    filter("approved", "eq", "false"),
+    "notified_at=is.null",
+    "order=created_at.asc",
+    `limit=${MAX_PER_EMAIL}`,
+  ].join("&");
+
+  const { data, contentRange } = await rest("GET", "wanted", query, { prefer: "count=exact" });
+  const rows = Array.isArray(data) ? data : [];
+  const total = totalFromContentRange(contentRange) ?? rows.length;
+  return { rows, total };
+}
+
+async function markWantedNotified(ids) {
+  const query = [
+    `id=in.(${ids.map(encodeURIComponent).join(",")})`,
+    filter("approved", "eq", "false"),
+    "notified_at=is.null",
+    "select=id",
+  ].join("&");
+
+  const { data } = await rest("PATCH", "wanted", query, {
     body: { notified_at: new Date().toISOString() },
     prefer: "return=representation",
   });
@@ -260,6 +304,53 @@ function buildEditsText(entries, totalRows, shownRows) {
   return lines.join("\n");
 }
 
+// 'agent' → Agent, 'tool' → Tool, lainnya → Any (nilai dipetakan, tidak
+// dicetak apa adanya).
+function wantedKindLabel(kind) {
+  if (kind === "agent") return "Agent";
+  if (kind === "tool") return "Tool";
+  return "Any";
+}
+
+function buildWantedSubject(count) {
+  return `Agraris: ${count} permintaan Wanted menunggu review`;
+}
+
+function buildWantedText(rows, total) {
+  const lines = [`Ada ${total} permintaan baru di Wanted board yang menunggu review.`, ""];
+
+  rows.forEach((row, i) => {
+    lines.push(`${i + 1}. ${safeText(row.title, 100)}`);
+    lines.push(`   Jenis: ${wantedKindLabel(row.kind)}`);
+    lines.push(`   ID: ${row.id}`);
+    lines.push(`   Dikirim: ${formatUtc(row.created_at)}`);
+    lines.push(`   Deskripsi: ${safeText(row.description, DESCRIPTION_MAX)}`);
+    lines.push("");
+  });
+
+  const remaining = total - rows.length;
+  if (remaining > 0) {
+    lines.push(`... dan ${remaining} lainnya.`, "");
+  }
+
+  lines.push(
+    "Cara menyetujui, menolak, atau menutup:",
+    `1. Buka tab Actions di GitHub: ${workflowUrl("wanted-queue.yml")}`,
+    '2. Pilih workflow "Wanted queue", lalu tekan "Run workflow".',
+    "3. Pilih action approve (atau reject), lalu isi id dari daftar di atas.",
+    "4. Action list menampilkan permintaan yang menunggu dan yang sedang tampil;",
+    "   close menutup permintaan yang sudah tampil.",
+    "",
+    "Permintaan ditulis oleh publik tanpa akun dan belum diperiksa. Tautan dan",
+    "domain sudah ditolak oleh database, tapi teks ini tetap ditulis dengan",
+    "[.] [:] [at] supaya tidak bisa diklik.",
+    "",
+    "Dikirim oleh workflow \"Review queue notify\" (scripts/review-notify.js)."
+  );
+
+  return lines.join("\n");
+}
+
 // Mengembalikan true kalau terkirim, false kalau Resend menolak.
 async function sendEmail(subject, text) {
   const res = await fetch(RESEND_ENDPOINT, {
@@ -342,13 +433,38 @@ async function notifyEdits() {
   return true;
 }
 
+async function notifyWanted() {
+  const { rows: fetched, total } = await fetchPendingWanted();
+  // id selalu uuid dari database; disaring lagi supaya filter in.(...)
+  // tidak pernah berisi nilai lain.
+  const rows = fetched.filter((row) => UUID_PATTERN.test(String(row.id)));
+
+  if (rows.length === 0) {
+    log("No new wanted requests to notify.");
+    return true;
+  }
+
+  const count = Math.max(total, rows.length);
+  const sent = await sendEmail(buildWantedSubject(count), buildWantedText(rows, count));
+  if (!sent) return false;
+
+  log(`Emailed ${rows.length} wanted request(s)${total > rows.length ? ` (${total - rows.length} more left for later runs)` : ""}.`);
+  const marked = await markWantedNotified(rows.map((row) => String(row.id)));
+  log(`Marked ${marked} wanted request(s) as notified.`);
+  return true;
+}
+
 async function main() {
   requireEnv(["SUPABASE_URL", "SUPABASE_SERVICE_ROLE_KEY", "RESEND_API_KEY", "NOTIFY_EMAIL"]);
 
-  // Dua email independen: kegagalan satu tidak menghalangi yang lain,
+  // Tiga email independen: kegagalan satu tidak menghalangi yang lain,
   // tapi run tetap merah supaya terlihat di tab Actions.
   let ok = true;
-  for (const [label, task] of [["Review notify", notifyPending], ["Edit notify", notifyEdits]]) {
+  for (const [label, task] of [
+    ["Review notify", notifyPending],
+    ["Edit notify", notifyEdits],
+    ["Wanted notify", notifyWanted],
+  ]) {
     try {
       if (!(await task())) ok = false;
     } catch (err) {
@@ -359,7 +475,11 @@ async function main() {
   if (!ok) process.exitCode = 1;
 }
 
-main().catch((err) => {
-  logError(`Review notify failed: ${redactEmails(err && err.message ? err.message : String(err))}`);
-  process.exitCode = 1;
-});
+if (require.main === module) {
+  main().catch((err) => {
+    logError(`Review notify failed: ${redactEmails(err && err.message ? err.message : String(err))}`);
+    process.exitCode = 1;
+  });
+}
+
+module.exports = { buildWantedText, wantedKindLabel, notifyWanted };
