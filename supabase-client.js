@@ -5,7 +5,7 @@
 // 2. Salin "Project URL" dan "anon public" key ke bawah ini
 // 3. File ini aman untuk publik (anon key memang didesain untuk client-side,
 //    keamanan diatur lewat Row Level Security policy di Supabase, lihat
-//    supabase/migration.sql)
+//    migration.sql)
 
 const SUPABASE_URL = "https://gnydurjxrynqcbpkxopd.supabase.co";
 const SUPABASE_ANON_KEY = "sb_publishable_4roHAzTOTw9P0_8NXKt2IA_kXniR9pm"; // ganti ini dengan Publishable key kamu
