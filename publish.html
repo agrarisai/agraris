@@ -76,6 +76,7 @@
       <a href="search.html" data-nav="search">Search</a>
       <a href="search.html?kind=tool" data-nav="tools">Tools</a>
       <a href="publish.html" class="active">Publish</a>
+      <a href="wanted.html">Wanted</a>
       <a href="watchlist.html">Watchlist</a>
       <a href="search.html">Compare</a>
       <a href="token.html">Token</a>
@@ -110,6 +111,11 @@
       <span data-text-agent="New agents are reviewed before they appear in the registry." data-text-tool="New tools are reviewed before they appear in the registry.">New agents are reviewed before
       they appear in the registry.</span>
     </p>
+
+    <!-- publish.html?wanted=<id>: shown by publish.js when the id is an open
+         request on the Wanted board; the listing is then sent with
+         wanted_id. -->
+    <p class="answering-note" id="answering-note" hidden></p>
 
     <form id="publish-form" class="reveal" novalidate>
       <fieldset class="kind-picker" id="kind-picker">
