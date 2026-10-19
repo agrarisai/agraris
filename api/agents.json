@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-10-19T02:08:45.208Z",
+  "generated_at": "2026-10-19T10:37:12.666Z",
   "count": 31,
   "listings": [
     {
@@ -21,7 +21,8 @@
       "github_updated_at": "2026-10-15T04:00:53+00:00",
       "verified": false,
       "live_status": "down",
-      "live_checked_at": "2026-10-18T20:47:13.021+00:00",
+      "live_checked_at": "2026-10-19T04:44:17.639+00:00",
+      "wanted_id": null,
       "url": "https://agraris.xyz/agent.html?id=fd0acb0b-12ea-4941-9d4c-0e20bd117835"
     },
     {
@@ -38,11 +39,12 @@
       "contract_address": null,
       "created_at": "2026-10-06T11:43:53.63821+00:00",
       "approved_at": "2026-10-06T11:43:53.63821+00:00",
-      "github_stars": 132,
+      "github_stars": 133,
       "github_updated_at": "2026-10-06T11:33:12+00:00",
       "verified": false,
       "live_status": null,
       "live_checked_at": null,
+      "wanted_id": null,
       "url": "https://agraris.xyz/agent.html?id=8fadcba7-df47-469d-b0b5-ab2a854a8211"
     },
     {
@@ -64,7 +66,8 @@
       "github_updated_at": "2026-07-10T00:57:09+00:00",
       "verified": false,
       "live_status": "up",
-      "live_checked_at": "2026-10-18T20:47:12.078+00:00",
+      "live_checked_at": "2026-10-19T04:44:16.895+00:00",
+      "wanted_id": null,
       "url": "https://agraris.xyz/agent.html?id=b8bbdfa3-68c4-4876-940d-27163cff2bf7"
     },
     {
@@ -87,6 +90,7 @@
       "verified": false,
       "live_status": null,
       "live_checked_at": null,
+      "wanted_id": null,
       "url": "https://agraris.xyz/agent.html?id=c4b192c6-4cd9-40c4-9323-fb5d40e2b37d"
     },
     {
@@ -105,10 +109,11 @@
       "created_at": "2026-10-05T13:39:11.93502+00:00",
       "approved_at": "2026-10-05T13:39:11.93502+00:00",
       "github_stars": 69,
-      "github_updated_at": "2026-10-19T01:44:59+00:00",
+      "github_updated_at": "2026-10-19T02:41:22+00:00",
       "verified": false,
       "live_status": "up",
-      "live_checked_at": "2026-10-18T20:47:13.408+00:00",
+      "live_checked_at": "2026-10-19T04:44:17.802+00:00",
+      "wanted_id": null,
       "url": "https://agraris.xyz/agent.html?id=cc012e05-7ef9-4e5f-9621-f541f622b1ed"
     },
     {
@@ -131,6 +136,7 @@
       "verified": true,
       "live_status": null,
       "live_checked_at": null,
+      "wanted_id": null,
       "url": "https://agraris.xyz/agent.html?id=226b422a-f700-4ec4-8d1f-08231ab50cb2"
     },
     {
@@ -152,7 +158,8 @@
       "github_updated_at": null,
       "verified": true,
       "live_status": "down",
-      "live_checked_at": "2026-10-18T20:47:12.083+00:00",
+      "live_checked_at": "2026-10-19T04:44:16.913+00:00",
+      "wanted_id": null,
       "url": "https://agraris.xyz/agent.html?id=d94dcf99-78ec-4335-8eb8-f1889f7f966a"
     },
     {
@@ -175,6 +182,7 @@
       "verified": false,
       "live_status": null,
       "live_checked_at": null,
+      "wanted_id": null,
       "url": "https://agraris.xyz/agent.html?id=5924e53e-3b3f-4608-99eb-9cd2a29f0b20"
     },
     {
@@ -197,6 +205,7 @@
       "verified": false,
       "live_status": null,
       "live_checked_at": null,
+      "wanted_id": null,
       "url": "https://agraris.xyz/agent.html?id=93e5cee6-df9a-4d12-8069-a59af10fb28e"
     },
     {
@@ -219,6 +228,7 @@
       "verified": false,
       "live_status": null,
       "live_checked_at": null,
+      "wanted_id": null,
       "url": "https://agraris.xyz/agent.html?id=e65a1fbf-2a20-4767-b943-8975024b2962"
     },
     {
@@ -241,6 +251,7 @@
       "verified": true,
       "live_status": null,
       "live_checked_at": null,
+      "wanted_id": null,
       "url": "https://agraris.xyz/agent.html?id=aef7bd7e-a7d9-469d-8454-56a530970bc0"
     },
     {
@@ -263,6 +274,7 @@
       "verified": true,
       "live_status": null,
       "live_checked_at": null,
+      "wanted_id": null,
       "url": "https://agraris.xyz/agent.html?id=01a6f7ec-c3e7-4a6f-9faf-b410a9fb473a"
     },
     {
@@ -285,6 +297,7 @@
       "verified": false,
       "live_status": null,
       "live_checked_at": null,
+      "wanted_id": null,
       "url": "https://agraris.xyz/agent.html?id=03127e34-7d83-4790-9350-f5071a1d37e0"
     },
     {
@@ -302,11 +315,12 @@
       "contract_address": null,
       "created_at": "2026-09-16T10:39:37.213577+00:00",
       "approved_at": "2026-09-16T10:39:37.213577+00:00",
-      "github_stars": 42,
-      "github_updated_at": "2026-10-19T01:26:50+00:00",
+      "github_stars": 43,
+      "github_updated_at": "2026-10-19T05:43:36+00:00",
       "verified": true,
       "live_status": "up",
-      "live_checked_at": "2026-10-18T20:47:12.525+00:00",
+      "live_checked_at": "2026-10-19T04:44:16.915+00:00",
+      "wanted_id": null,
       "url": "https://agraris.xyz/agent.html?id=13436815-c01f-427a-bda5-1cbd23cd8842"
     },
     {
@@ -328,7 +342,8 @@
       "github_updated_at": "2026-09-09T16:35:35+00:00",
       "verified": true,
       "live_status": "down",
-      "live_checked_at": "2026-10-18T20:47:12.408+00:00",
+      "live_checked_at": "2026-10-19T04:44:16.875+00:00",
+      "wanted_id": null,
       "url": "https://agraris.xyz/agent.html?id=8d619c71-985a-4f58-80c9-13293d0372c2"
     },
     {
@@ -351,6 +366,7 @@
       "verified": false,
       "live_status": null,
       "live_checked_at": null,
+      "wanted_id": null,
       "url": "https://agraris.xyz/agent.html?id=9655177f-68cf-44c4-84a2-680a49b4a349"
     },
     {
@@ -373,6 +389,7 @@
       "verified": true,
       "live_status": null,
       "live_checked_at": null,
+      "wanted_id": null,
       "url": "https://agraris.xyz/agent.html?id=f628c3b6-15e8-4779-937b-739fee06a603"
     },
     {
@@ -395,6 +412,7 @@
       "verified": true,
       "live_status": null,
       "live_checked_at": null,
+      "wanted_id": null,
       "url": "https://agraris.xyz/agent.html?id=78effed9-85c3-41f9-b811-f8bd094e4ca6"
     },
     {
@@ -417,6 +435,7 @@
       "verified": false,
       "live_status": null,
       "live_checked_at": null,
+      "wanted_id": null,
       "url": "https://agraris.xyz/agent.html?id=af1f1411-48d1-4193-9215-80b0944aa975"
     },
     {
@@ -439,6 +458,7 @@
       "verified": true,
       "live_status": null,
       "live_checked_at": null,
+      "wanted_id": null,
       "url": "https://agraris.xyz/agent.html?id=bb87c1d3-1c04-4700-89e3-42b8a3b834d4"
     },
     {
@@ -461,6 +481,7 @@
       "verified": false,
       "live_status": null,
       "live_checked_at": null,
+      "wanted_id": null,
       "url": "https://agraris.xyz/agent.html?id=e803fe55-9137-4d6d-9a9f-654cd1613dab"
     },
     {
@@ -482,7 +503,8 @@
       "github_updated_at": "2026-07-24T16:53:18+00:00",
       "verified": false,
       "live_status": "up",
-      "live_checked_at": "2026-10-18T20:47:12.513+00:00",
+      "live_checked_at": "2026-10-19T04:44:17.027+00:00",
+      "wanted_id": null,
       "url": "https://agraris.xyz/agent.html?id=123b216e-2bb2-4e48-b8f8-17555bc03032"
     },
     {
@@ -505,6 +527,7 @@
       "verified": false,
       "live_status": null,
       "live_checked_at": null,
+      "wanted_id": null,
       "url": "https://agraris.xyz/agent.html?id=483be7ed-85e4-4b89-a8e8-bf2696ebce40"
     },
     {
@@ -527,6 +550,7 @@
       "verified": false,
       "live_status": null,
       "live_checked_at": null,
+      "wanted_id": null,
       "url": "https://agraris.xyz/agent.html?id=588d4eef-6228-434d-ae12-939d7ee1a36c"
     },
     {
@@ -549,6 +573,7 @@
       "verified": true,
       "live_status": null,
       "live_checked_at": null,
+      "wanted_id": null,
       "url": "https://agraris.xyz/agent.html?id=ef128f89-4112-4400-8a14-b6ca58f33a8c"
     },
     {
@@ -571,6 +596,7 @@
       "verified": false,
       "live_status": null,
       "live_checked_at": null,
+      "wanted_id": null,
       "url": "https://agraris.xyz/agent.html?id=65406f2c-dc74-48c0-b84e-7330afeff002"
     },
     {
@@ -593,6 +619,7 @@
       "verified": false,
       "live_status": null,
       "live_checked_at": null,
+      "wanted_id": null,
       "url": "https://agraris.xyz/agent.html?id=a7c27c6c-5978-471e-998b-7e58706eff41"
     },
     {
@@ -615,6 +642,7 @@
       "verified": false,
       "live_status": null,
       "live_checked_at": null,
+      "wanted_id": null,
       "url": "https://agraris.xyz/agent.html?id=390ef836-f492-4f26-b4f0-d2de8b677433"
     },
     {
@@ -637,6 +665,7 @@
       "verified": false,
       "live_status": null,
       "live_checked_at": null,
+      "wanted_id": null,
       "url": "https://agraris.xyz/agent.html?id=18ad5657-49e5-43ba-9024-fd95cc03591d"
     },
     {
@@ -659,6 +688,7 @@
       "verified": false,
       "live_status": null,
       "live_checked_at": null,
+      "wanted_id": null,
       "url": "https://agraris.xyz/agent.html?id=7039c5c6-c139-472a-90f7-eff1a336258f"
     },
     {
@@ -681,6 +711,7 @@
       "verified": false,
       "live_status": null,
       "live_checked_at": null,
+      "wanted_id": null,
       "url": "https://agraris.xyz/agent.html?id=2be25e81-6695-46dd-8ae5-967cf787f332"
     }
   ]
