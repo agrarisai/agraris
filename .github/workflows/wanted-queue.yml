@@ -1,0 +1,53 @@
+name: Wanted queue
+
+# Setujui / tolak / tutup permintaan di Wanted board dari tab Actions
+# (bisa dari HP): Actions → Wanted queue → Run workflow.
+# Pola sama dengan workflow "Review queue".
+on:
+  workflow_dispatch:
+    inputs:
+      action:
+        description: "list = lihat antrean, approve = tampilkan, reject = hapus permintaan pending, close = tutup permintaan yang sedang tampil"
+        type: choice
+        options:
+          - list
+          - approve
+          - reject
+          - close
+        default: list
+        required: true
+      id:
+        description: "ID permintaan / uuid (wajib kecuali untuk list)"
+        type: string
+        required: false
+
+# Satu aksi dalam satu waktu, dan aksi yang sedang jalan tidak dibatalkan
+# oleh run berikutnya.
+concurrency:
+  group: wanted-queue
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  wanted:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      # Input diteruskan lewat env dan dibaca di Node; tidak pernah
+      # disisipkan ke perintah shell.
+      - name: Run wanted action
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          WANTED_ACTION: ${{ inputs.action }}
+          WANTED_ID: ${{ inputs.id }}
+        run: node scripts/wanted-action.js
