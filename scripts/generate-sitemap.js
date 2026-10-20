@@ -35,6 +35,7 @@ const STATIC_PAGES = [
   { file: "search.html", changefreq: "weekly", priority: "0.8" },
   { file: "publish.html", changefreq: "weekly", priority: "0.8" },
   { file: "wanted.html", changefreq: "daily", priority: "0.6" },
+  { file: "guide.html", changefreq: "monthly", priority: "0.6" },
   { file: "docs.html", changefreq: "weekly", priority: "0.8" },
   { file: "token.html", changefreq: "weekly", priority: "0.7" },
   { file: "litepaper.html", changefreq: "monthly", priority: "0.6" },

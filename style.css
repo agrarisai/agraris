@@ -4013,3 +4013,59 @@ html.embed-page::before {
   font-size: 13px;
   overflow-wrap: anywhere;
 }
+
+/* ---------- guide (guide.html) ---------- */
+
+.guide-section {
+  padding-bottom: 8px;
+}
+
+.guide-section h3 {
+  margin-top: 8px;
+}
+
+.guide-section li strong {
+  font-weight: 500;
+  color: var(--text-green-dark);
+}
+
+.guide-toc {
+  margin: 0 0 16px;
+  padding-left: 20px;
+}
+
+.guide-toc li {
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+/* Inline code may be a long URL; let it wrap instead of widening the page. */
+.guide-section code {
+  overflow-wrap: anywhere;
+}
+
+/* Short lines for beginners on phones: wrap instead of scrolling sideways
+   inside the block. Copying keeps the original line breaks. */
+.guide-section .code-block {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.guide-copy .code-block {
+  margin-bottom: 10px;
+}
+
+.guide-copy-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+  margin-bottom: 16px;
+}
+
+/* One small line linking to guide.html (docs.html, wanted.html). */
+.guide-link {
+  margin: -8px 0 20px;
+  font-size: 12px;
+  opacity: 0.8;
+}
