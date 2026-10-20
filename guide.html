@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script>
+    // Set the theme before first paint so dark mode doesn't flash light.
+    (function () {
+      var theme = null;
+      try { theme = localStorage.getItem("agraris-theme"); } catch (e) {}
+      if (theme !== "light" && theme !== "dark") {
+        theme = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+      }
+      document.documentElement.setAttribute("data-theme", theme);
+    })();
+  </script>
+  <title>Build your first agent on Robinhood Chain — Agraris</title>
+  <meta name="description" content="A short, step-by-step guide from a first idea to a listing on Agraris: pick one task, prepare a public repo, add an optional demo, publish, and keep it up to date." />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Agraris" />
+  <meta property="og:title" content="Build your first agent on Robinhood Chain — Agraris" />
+  <meta property="og:description" content="A short, step-by-step guide from a first idea to a listing on Agraris: pick one task, prepare a public repo, add an optional demo, publish, and keep it up to date." />
+  <meta property="og:image" content="https://agraris.xyz/og-image.png" />
+  <meta property="og:url" content="https://agraris.xyz/guide.html" />
+  <meta property="twitter:card" content="summary_large_image" />
+  <meta property="twitter:image" content="https://agraris.xyz/og-image.png" />
+
+  <link rel="icon" href="logo.svg" type="image/svg+xml" />
+  <link rel="alternate" type="application/rss+xml" title="Agraris — Recently published agents" href="/agraris/rss.xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,600;1,500&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <div class="wrap">
+    <header class="site-header">
+      <div class="brand-block">
+        <a class="brand" href="index.html">
+          <img src="logo.svg" alt="Agraris logo" />
+          <span class="brand-name">Agraris</span>
+        </a>
+        <p class="header-tagline">The registry for AI agents on Robinhood Chain.</p>
+        <a class="chain-badge" href="https://robinhoodchain.blockscout.com" target="_blank" rel="noopener noreferrer">
+          <span class="chain-badge-dot" aria-hidden="true"></span>
+          Live on Robinhood Chain · 4663
+        </a>
+      </div>
+      <nav class="nav">
+        <a href="index.html">Home</a>
+        <a href="search.html" data-nav="search">Search</a>
+        <a href="search.html?kind=tool" data-nav="tools">Tools</a>
+        <a href="publish.html">Publish</a>
+      </nav>
+      <div class="header-actions" id="header-actions">
+        <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Switch to dark mode" aria-pressed="false" title="Switch to dark mode">
+          <svg class="theme-icon-moon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round" aria-hidden="true"><path d="M13.5 9.6A5.75 5.75 0 0 1 6.4 2.5a5.75 5.75 0 1 0 7.1 7.1z"/></svg>
+          <svg class="theme-icon-sun" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" aria-hidden="true"><circle cx="8" cy="8" r="3"/><path d="M8 1.25v1.5M8 13.25v1.5M1.25 8h1.5M13.25 8h1.5M3.2 3.2l1.06 1.06M11.74 11.74l1.06 1.06M3.2 12.8l1.06-1.06M11.74 4.26l1.06-1.06"/></svg>
+        </button>
+        <button class="menu-toggle" id="menu-toggle" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="menu-panel">
+          <span class="menu-toggle-bars"><span></span><span></span><span></span></span>
+        </button>
+      </div>
+    </header>
+
+    <div class="menu-overlay" id="menu-overlay"></div>
+    <nav class="menu-panel" id="menu-panel" aria-hidden="true">
+      <div class="menu-panel-head">
+        <span class="menu-panel-title">Menu</span>
+        <button class="menu-close" id="menu-close" type="button" aria-label="Close menu">✕</button>
+      </div>
+      <span class="menu-group-label">Product</span>
+      <a href="index.html">Home</a>
+      <a href="search.html" data-nav="search">Search</a>
+      <a href="search.html?kind=tool" data-nav="tools">Tools</a>
+      <a href="publish.html">Publish</a>
+      <a href="wanted.html">Wanted</a>
+      <a href="guide.html" class="active">Guide</a>
+      <a href="watchlist.html">Watchlist</a>
+      <a href="search.html">Compare</a>
+      <a href="token.html">Token</a>
+      <a href="docs.html">Docs</a>
+      <a href="changelog.html">Changelog</a>
+      <a href="stats.html">Stats</a>
+      <hr class="menu-sep" />
+      <span class="menu-group-label">Company</span>
+      <a href="index.html#how-it-works">How It Works</a>
+      <a href="index.html#about" data-hash="#about">About</a>
+      <a href="index.html#privacy" data-hash="#privacy">Privacy</a>
+      <a href="index.html#terms" data-hash="#terms">Terms</a>
+      <a href="index.html#faq" data-hash="#faq">FAQ</a>
+      <a href="litepaper.html">Litepaper</a>
+      <hr class="menu-sep" />
+      <div class="menu-social">
+        <a class="footer-github" href="https://github.com/agrarisai/agraris" target="_blank" rel="noopener" aria-label="GitHub">
+          <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
+        </a>
+        <a class="footer-x" href="https://x.com/agrarisai" target="_blank" rel="noopener noreferrer" aria-label="X (Twitter)">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.42 2H21.5l-7.19 8.21L22.75 22h-6.62l-5.18-6.78L4.98 22H1.9l7.69-8.79L1.25 2h6.79l4.68 6.19L18.42 2zm-1.16 18h1.83L7.84 3.9H5.88L17.26 20z"/></svg>
+        </a>
+      </div>
+    </nav>
+
+
+    <div class="section-head section-head--first">
+      <h2>Build your first agent on Robinhood Chain</h2>
+    </div>
+
+    <p class="page-lead">
+      From a small idea to a listing on Agraris, in five steps.
+    </p>
+
+    <section class="content-page guide-section reveal" id="intro">
+      <p>
+        On Agraris, an agent is a program that does a job for someone: it
+        watches, reads, sums up or acts, often with help from an AI model.
+        Agraris lists agents and tools so people can find them. It does not
+        run them for you.
+      </p>
+      <p>
+        Listing is free. You don't need an account or a wallet. You need a
+        public code repository and a few minutes for the form.
+      </p>
+      <ol class="guide-toc">
+        <li><a href="#step-1">Pick a small idea</a></li>
+        <li><a href="#step-2">Set up a public repo</a></li>
+        <li><a href="#step-3">Add a demo link (optional)</a></li>
+        <li><a href="#step-4">Publish on Agraris</a></li>
+        <li><a href="#step-5">After your listing appears</a></li>
+      </ol>
+    </section>
+
+    <section class="content-page guide-section reveal" id="step-1">
+      <h3>Step 1. Pick a small idea</h3>
+      <p>Start with one task. Make it work end to end. Add more later.</p>
+      <p>Some ideas to get you thinking:</p>
+      <ul>
+        <li><strong>A simple alert.</strong> Watch one address and send you a message when it has a new transaction.</li>
+        <li><strong>A data summary.</strong> Once a day, write a short, plain-language summary of activity for one contract.</li>
+        <li><strong>A transaction explainer.</strong> Paste a transaction hash, get a few sentences on what happened.</li>
+      </ul>
+      <p>
+        Write your idea down in one sentence. If you need "and" twice,
+        it's probably two agents.
+      </p>
+      <p>
+        Connecting to Robinhood Chain (network settings, RPC endpoints,
+        test funds, fees): see the official Robinhood Chain docs.
+        Robinhood Chain's chain ID is 4663, and Agraris links contract
+        addresses to the explorer at robinhoodchain.blockscout.com.
+      </p>
+    </section>
+
+    <section class="content-page guide-section reveal" id="step-2">
+      <h3>Step 2. Set up a public repo</h3>
+      <p>
+        People decide whether to try your agent by reading its repo. Keep
+        it public and keep it simple. A layout like this is enough:
+      </p>
+      <pre class="code-block"><code>my-first-agent/
+├── README.md     what it does and how to run it
+├── LICENSE       the terms people can use it under
+├── .gitignore    keeps keys and local files out of git
+└── src/          your agent's code</code></pre>
+      <p>
+        Never commit private keys, API keys or passwords. Put them in a
+        local file that <code>.gitignore</code> excludes, and explain in
+        the README which ones are needed.
+      </p>
+      <p>Push it to GitHub (replace <code>you</code> with your username):</p>
+      <pre class="code-block"><code>git init
+git add README.md LICENSE .gitignore src
+git commit -m "First version"
+git branch -M main
+git remote add origin https://github.com/you/my-first-agent.git
+git push -u origin main</code></pre>
+      <p>Your README should answer four questions. Copy this checklist into it and fill it in:</p>
+      <div class="guide-copy">
+        <pre class="code-block" id="readme-checklist"><code># My first agent
+
+## What it does
+- One or two sentences. One task.
+
+## How to run it
+- What you need first (language version, keys or accounts)
+- How to install it
+- The command that starts it
+
+## License
+- The license name, and a LICENSE file in the repo
+
+## Known limitations
+- What it does not do yet
+- What can go wrong, and what to check when it does</code></pre>
+        <div class="guide-copy-row">
+          <button type="button" class="btn btn-sm" id="copy-checklist-btn">Copy checklist</button>
+          <span class="form-msg" id="copy-checklist-msg" role="status" aria-live="polite"></span>
+        </div>
+      </div>
+    </section>
+
+    <section class="content-page guide-section reveal" id="step-3">
+      <h3>Step 3. Add a demo link (optional)</h3>
+      <p>
+        If your agent has a web page people can open, add it as the demo
+        link. It must start with <code>https://</code>. No demo? That's
+        fine: nothing is shown and your listing is not marked down for it.
+      </p>
+      <p>
+        Every 6 hours, Agraris checks demo links (Live check). If yours
+        answers, the listing shows a small "Responding" label. After 3
+        failed checks in a row, it shows "Not responding".
+      </p>
+      <p class="content-note">
+        "Responding" only means the demo URL answered. It says nothing
+        about what the agent does. It is not an endorsement.
+      </p>
+    </section>
+
+    <section class="content-page guide-section reveal" id="step-4">
+      <h3>Step 4. Publish on Agraris</h3>
+      <p>
+        Open <a href="publish.html">the publish form</a>. Choose Agent or
+        Tool, then fill in the name, a short description, a version, your
+        repo link and a few category tags. The demo link and a contract
+        address are optional. Building for a request on the
+        <a href="wanted.html">Wanted board</a>? Start from its
+        "I built this" button instead (see Step 5).
+      </p>
+      <p>After you submit, you get a <strong>status link</strong>.</p>
+      <ul>
+        <li><strong>It is your key.</strong> Anyone with the link can edit your listing. Save it somewhere private and don't share it.</li>
+        <li><strong>Review comes first.</strong> New listings are checked by hand before they appear. The status link shows "Pending review" until then.</li>
+        <li><strong>You can edit later.</strong> With the status link you can change the description, version, categories, demo link and contract address. The name and repo link stay as submitted.</li>
+      </ul>
+    </section>
+
+    <section class="content-page guide-section reveal" id="step-5">
+      <h3>Step 5. After your listing appears</h3>
+      <ul>
+        <li>
+          <strong>Keep it current.</strong> When you edit your listing
+          through the status link, it shows up in the "Recently updated"
+          panel on the home page for 30 days.
+        </li>
+        <li>
+          <strong>Answer a request.</strong> The
+          <a href="wanted.html">Wanted board</a> lists agents and tools
+          people are asking for. When you build one that fits, press
+          "I built this" on that request and publish through the form
+          that opens. The link to the request is set when you submit; it
+          can't be added to a listing afterwards.
+        </li>
+      </ul>
+    </section>
+
+    <section class="content-page guide-section reveal" id="next">
+      <h3>Ready?</h3>
+      <div class="litepaper-links">
+        <a class="btn btn-solid" href="publish.html">Publish a listing</a>
+        <a class="btn" href="wanted.html">See the Wanted board</a>
+      </div>
+      <p class="content-note">A listing is not an endorsement.</p>
+    </section>
+
+    <footer class="site-footer">
+      <div class="footer-top">
+        <div class="footer-brand-block">
+          <a class="footer-brand" href="index.html">
+            <img src="logo.svg" alt="Agraris logo" />
+            <span class="footer-brand-name">Agraris</span>
+          </a>
+          <p class="footer-tagline">The registry for AI agents on Robinhood Chain.</p>
+        </div>
+        <div class="footer-social">
+          <a class="footer-github" href="https://github.com/agrarisai/agraris" target="_blank" rel="noopener" aria-label="GitHub">
+            <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
+          </a>
+          <a class="footer-x" href="https://x.com/agrarisai" target="_blank" rel="noopener noreferrer" aria-label="X (Twitter)">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.42 2H21.5l-7.19 8.21L22.75 22h-6.62l-5.18-6.78L4.98 22H1.9l7.69-8.79L1.25 2h6.79l4.68 6.19L18.42 2zm-1.16 18h1.83L7.84 3.9H5.88L17.26 20z"/></svg>
+          </a>
+        </div>
+        <div class="footer-col">
+          <span class="footer-col-title">Product</span>
+          <a href="index.html">Registry</a>
+          <a href="search.html">Compare</a>
+          <a href="token.html">Token</a>
+          <a href="rss.xml" class="footer-rss" aria-label="RSS feed">RSS</a>
+          <a href="docs.html">Docs</a>
+          <a href="changelog.html">Changelog</a>
+          <a href="stats.html">Stats</a>
+        </div>
+        <div class="footer-col">
+          <span class="footer-col-title">Company</span>
+          <a href="index.html#about">About</a>
+          <a href="index.html#privacy">Privacy</a>
+          <a href="index.html#terms">Terms</a>
+          <a href="index.html#faq">FAQ</a>
+          <a href="litepaper.html">Litepaper</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p class="footer-copyright">© 2026 Agraris. All rights reserved.</p>
+        <p class="footer-disclaimer">Agraris is an open directory of AI agents on Robinhood Chain. Listings are submitted by their creators and are not vetted, endorsed, or guaranteed by Agraris unless marked "Verified." Agraris is not affiliated with Robinhood Markets, Inc. Always do your own research before using any listed agent, especially one involving funds or trading.</p>
+      </div>
+    </footer>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-client.js"></script>
+  <script src="app.js"></script>
+  <script src="command-palette.js"></script>
+  <script src="scroll-reveal.js"></script>
+  <script src="guide.js"></script>
+</body>
+</html>
