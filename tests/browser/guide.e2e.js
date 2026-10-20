@@ -99,10 +99,33 @@ async function main() {
   assert.match(mainText, /not an endorsement/i);
   assert.match(mainText, /A listing is not an endorsement\./);
 
-  // links in the guide: only pages of this site (and the in-page TOC)
+  // links in the guide: pages of this site, the in-page TOC, and only the
+  // official Robinhood Chain docs pages below (new tab, noopener noreferrer)
+  const OFFICIAL_DOCS = [
+    ["https://docs.robinhood.com/chain/connecting", "see the official Robinhood Chain docs"],
+    ["https://docs.robinhood.com/chain/add-network-to-wallet", "adding the network to a wallet"],
+    ["https://docs.robinhood.com/chain/gas-and-fees", "gas and fees"],
+    ["https://docs.robinhood.com/chain/deploy-smart-contracts", "deploying smart contracts"],
+    ["https://docs.robinhood.com/chain", "docs home page"],
+  ];
+  const external = await page.$$eval('.guide-section a[href^="http"]', (els) =>
+    els.map((a) => ({ href: a.getAttribute("href"), text: a.textContent.trim(), target: a.getAttribute("target"), rel: a.getAttribute("rel") }))
+  );
+  assert.deepEqual(external.map((a) => [a.href, a.text]), OFFICIAL_DOCS);
+  for (const a of external) {
+    assert.equal(a.target, "_blank", `${a.href}: target`);
+    assert.deepEqual((a.rel || "").split(/\s+/).sort(), ["noopener", "noreferrer"], `${a.href}: rel`);
+  }
+  assert.doesNotMatch(mainText, /faucet|test funds/i);
+  // The docs links sit in Step 1, next to the chain ID sentence.
+  assert.equal(await page.$$eval('#step-1 a[href^="https://docs.robinhood.com/"]', (els) => els.length), 5);
+
   const links = await page.$$eval(".guide-section a", (els) => els.map((a) => a.getAttribute("href")));
   for (const href of links) {
-    assert.doesNotMatch(href, /^https?:/, `external link in guide: ${href}`);
+    if (/^https?:/.test(href)) {
+      assert.ok(OFFICIAL_DOCS.some(([u]) => u === href), `unexpected external link in guide: ${href}`);
+      continue;
+    }
     if (href.startsWith("#")) {
       assert.ok(await page.$(href), `anchor ${href} exists`);
     } else {
