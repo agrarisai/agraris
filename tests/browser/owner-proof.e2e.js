@@ -20,6 +20,7 @@ const ROOT = path.join(__dirname, "..", "..");
 const FORBIDDEN = /\b(verified|trusted|recommended|token|tokens|price|prices|undefined|NaN|null)\b/i;
 const A1 = "a0000000-0000-4000-8000-000000000001";
 const A2 = "a0000000-0000-4000-8000-000000000002";
+const A3 = "a0000000-0000-4000-8000-000000000003";
 const SIGNER = "0x2b5ad5c4795c026514f8317c7a215e218dccd6cf";
 const CONTRACT = "0x467b7a85f55bd716cb16d59f63b8ccac08852a6d";
 const TOKEN = "11111111-1111-4111-8111-111111111111";
@@ -46,7 +47,11 @@ function listing(id, name, extra = {}) {
   };
 }
 
-const AGENTS = [listing(A1, "Signed Agent"), listing(A2, "Plain Agent", { contract_address: null })];
+const AGENTS = [
+  listing(A1, "Signed Agent"),
+  listing(A2, "Plain Agent", { contract_address: null }),
+  listing(A3, "Unsigned Contract Agent", { contract_address: "0x1111111111111111111111111111111111111111" }),
+];
 const PROOFS = [{ agent_id: A1, signer: SIGNER, signed_at: "2026-10-20T08:00:00Z" }];
 
 // opts: proofs, proofsError, status (rows for get_owner_proof_status, a
@@ -174,18 +179,20 @@ async function main() {
   assert.equal(byName["Signed Agent"].badge, "Contract owner signed a message · Oct 20, 2026");
   assert.equal(byName["Signed Agent"].title, "Only means the owner wallet signed a message. Not an endorsement.");
   assert.equal(byName["Plain Agent"].badge, null);
+  assert.equal(byName["Unsigned Contract Agent"].badge, null);
   for (const t of await ownerTexts(page)) assert.doesNotMatch(t, FORBIDDEN, t);
   await page.check("#owner-filter-input");
   assert.deepEqual(await page.$$eval(".agent-row .agent-name", (els) => els.map((e) => e.textContent)), ["Signed Agent"]);
+  assert.equal(await page.$(".onchain-note"), null, "cards have no on-chain note");
   await page.uncheck("#owner-filter-input");
-  assert.equal((await page.$$(".agent-row")).length, 2);
+  assert.equal((await page.$$(".agent-row")).length, 3);
   assert.deepEqual(problems, []);
   await context.close();
 
   // --- owner_proofs unavailable → listings still load, no badges, quiet
   ({ page, context, problems } = await open("search.html", { proofsError: true }));
   await page.waitForSelector(".agent-row");
-  assert.equal((await page.$$(".agent-row")).length, 2);
+  assert.equal((await page.$$(".agent-row")).length, 3);
   assert.equal(await page.$(".owner-badge"), null);
   assert.deepEqual(problems, []);
   await context.close();
@@ -198,8 +205,36 @@ async function main() {
   assert.match(note, new RegExp(`Signed by ${SIGNER}`));
   assert.match(note, /Only means the owner wallet signed a message\. Not an endorsement\./);
   for (const t of await ownerTexts(page)) assert.doesNotMatch(t, FORBIDDEN, t);
+  // On-chain box: says what was shown, never that ownership is "verified".
+  const signedNote = await page.textContent(".onchain-note");
+  assert.equal(
+    signedNote,
+    "Address provided by the builder. The wallet returned by this contract's owner() signed a message for Agraris on Oct 20, 2026, and owner() is checked again every 6 hours. This only means the owner wallet signed a message. It is not an endorsement, and a listing does not imply volume, traction, or safety."
+  );
+  assert.doesNotMatch(signedNote, /\b(verified|verify|trusted|recommended)\b/i);
   assert.deepEqual(problems, []);
   await context.close();
+
+  // Contract but no signature: the original note, unchanged.
+  ({ page, context, problems } = await open(`agent.html?id=${A3}`));
+  await page.waitForSelector(".detail-head");
+  assert.equal(
+    await page.textContent(".onchain-note"),
+    "Address provided by the builder. Agraris does not verify ownership, and a listing does not imply volume, traction, or safety."
+  );
+  assert.equal(await page.$(".owner-note"), null);
+  assert.doesNotMatch(await page.textContent(".onchain-note"), /\b(verified|trusted|recommended)\b/i);
+  assert.deepEqual(problems, []);
+  await context.close();
+
+  // owner_proofs unavailable on the detail page → original note, no errors.
+  ({ page, context, problems } = await open(`agent.html?id=${A1}`, { proofsError: true }));
+  await page.waitForSelector(".detail-head");
+  assert.match(await page.textContent(".onchain-note"), /Agraris does not verify ownership/);
+  assert.equal(await page.$(".owner-note"), null);
+  assert.deepEqual(problems, []);
+  await context.close();
+
   ({ page, context, problems } = await open(`agent.html?id=${A2}`));
   await page.waitForSelector(".detail-head");
   assert.equal(await page.$(".owner-note"), null);

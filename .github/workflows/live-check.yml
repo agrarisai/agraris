@@ -35,6 +35,12 @@ jobs:
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
         run: node scripts/live-check.js
 
+      # @noble/curves dan @noble/hashes, versi eksak dari package-lock.json
+      # (dengan hash integritas). npm ci gagal kalau lockfile dan
+      # package.json tidak cocok, jadi versinya tidak bisa berubah diam-diam.
+      - name: Install pinned dependencies
+        run: npm ci --ignore-scripts --no-audit --no-fund
+
       # Bukti "contract owner signature" hanya berlaku selama owner()
       # kontrak masih sama dengan penanda tangan (scripts/owner-proof.js).
       # Bukti dihapus kalau owner berubah. RPC yang gagal tidak menghapus

@@ -31,7 +31,12 @@ jobs:
         with:
           node-version: "22"
 
-      # Tanpa npm install: keccak256 dan ecrecover ada di scripts/eth-lib.js.
+      # @noble/curves dan @noble/hashes, versi eksak dari package-lock.json
+      # (dengan hash integritas). npm ci gagal kalau lockfile dan
+      # package.json tidak cocok, jadi versinya tidak bisa berubah diam-diam.
+      - name: Install pinned dependencies
+        run: npm ci --ignore-scripts --no-audit --no-fund
+
       - name: Verify submitted signatures
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}

@@ -89,6 +89,20 @@ function buildEmbedSnippet(agentId, theme) {
 const ADDRESS_PATTERN = /^0x[a-fA-F0-9]{40}$/;
 const EXPLORER_ADDRESS_URL = "https://robinhoodchain.blockscout.com/address/";
 
+// Note under the address. Without a contract owner signature it says, as
+// before, that ownership is not checked. With one (owner_signed_at, see
+// app.js / supabase/migration-owner-proof.sql) it states what was shown:
+// the owner() wallet signed a message. Never an endorsement either way.
+function onchainNote(agent) {
+  const date = agent.owner_signed_at ? formatSignedDate(agent.owner_signed_at) : "";
+  if (!date) {
+    return "Address provided by the builder. Agraris does not verify ownership, and a listing does not imply volume, traction, or safety.";
+  }
+  return escapeHtml(
+    `Address provided by the builder. The wallet returned by this contract's owner() signed a message for Agraris on ${date}, and owner() is checked again every 6 hours. This only means the owner wallet signed a message. It is not an endorsement, and a listing does not imply volume, traction, or safety.`
+  );
+}
+
 function renderOnchainBlock(agent) {
   const address =
     typeof agent.contract_address === "string" ? agent.contract_address.trim() : "";
@@ -109,7 +123,7 @@ function renderOnchainBlock(agent) {
         <a class="btn btn-sm" href="${EXPLORER_ADDRESS_URL}${safe}" target="_blank" rel="noopener">View on explorer</a>
       </div>
       <div class="onchain-activity" data-address="${safe}" hidden></div>
-      <p class="onchain-note">Address provided by the builder. Agraris does not verify ownership, and a listing does not imply volume, traction, or safety.</p>
+      <p class="onchain-note">${onchainNote(agent)}</p>
     </div>
   `;
 }

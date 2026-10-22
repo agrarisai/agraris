@@ -1,0 +1,10 @@
+{
+  "name": "agraris",
+  "private": true,
+  "description": "Dependencies for the scripts in scripts/ (GitHub Actions). The site itself has no build step.",
+  "license": "UNLICENSED",
+  "dependencies": {
+    "@noble/curves": "1.9.7",
+    "@noble/hashes": "1.8.0"
+  }
+}
