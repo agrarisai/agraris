@@ -1,0 +1,40 @@
+{
+  "_comment": "personal_sign (EIP-191) vectors made with ethers@6.13.4 (Wallet.createRandom, signMessageSync), random throwaway keys. malleable = same r, s replaced by n - s and v flipped; ethers.verifyMessage rejects every malleable entry. Used by tests/owner-proof-vectors.test.js.",
+  "vectors": [
+    {
+      "address": "0x5a52da5e1cea0be06922ce121b97d7e31a1a0e64",
+      "message": "agraris.xyz asks you to sign this message to show that this wallet is the owner() of the contract below.\n\nDomain: agraris.xyz\nListing ID: a0000000-0000-4000-8000-000000000001\nContract: 0x467b7a85f55bd716cb16d59f63b8ccac08852a6d\nChain ID: 4663\nNonce: 0123456789abcdef0123456789abcdef\nExpires at: 2026-10-22T10:10:00Z\n\nSigning does not send a transaction.",
+      "hash": "0x0527ea0d0b03e3028529bdb0cd44b5cb3b506cd884935fabd10f4ad3300b6972",
+      "signature": "0x115c2b60b7d86edf0bdf71e04498fba0e7a48834e598d7e1509281ca2805574327050f4a2f6868a6464e973120c579991756d7cfbad1a0e6adaa3cc9333a5fca1c",
+      "malleable": "0x115c2b60b7d86edf0bdf71e04498fba0e7a48834e598d7e1509281ca28055743d8faf0b5d0979759b9b168cedf3a8665a3580516f476ff55122821c39cfbe1771b"
+    },
+    {
+      "address": "0xd0316dbd56b0b4e1a87f3c57503fd4050143cadf",
+      "message": "hello",
+      "hash": "0x50b2c43fd39106bafbba0da34fc430e1f91e3c96ea2acee2bc34119f92b37750",
+      "signature": "0xde3e42a11004c0faa8c87dd7ea5cb1e159a5c645545bb8c32336e9c023b9379d32692b03d33127430167a553d75ba197922d36744aca04e2c7ddf12a5cd92a7d1b",
+      "malleable": "0xde3e42a11004c0faa8c87dd7ea5cb1e159a5c645545bb8c32336e9c023b9379dcd96d4fc2cced8bcfe985aac28a45e672881a672647e9b58f7f46d62735d16c41c"
+    },
+    {
+      "address": "0x6bc38ecda152814b54601d63d537d682415e0cb1",
+      "message": "",
+      "hash": "0x5f35dce98ba4fba25530a026ed80b2cecdaa31091ba4958b99b52ea1d068adad",
+      "signature": "0x559cd40a3cd6cad727bf64b58313d4039b6fbf844de36bbf60dc742e967a574722e70095ca67aea8eaac14c92cb7e6282a8eef3f6b5561861be1b3fdda14bf501b",
+      "malleable": "0x559cd40a3cd6cad727bf64b58313d4039b6fbf844de36bbf60dc742e967a5747dd18ff6a359851571553eb36d34819d6901feda743f33eb5a3f0aa8ef62181f11c"
+    },
+    {
+      "address": "0x4cdb710d791f4a0a6fd1aa4fb91367578aee915d",
+      "message": "émoji ✓ 🚀",
+      "hash": "0x2f5923da5200f0bdc0281731dc1617901dab3d58994208b6d26254f503ddd88b",
+      "signature": "0x34790899b94da5d08daf336e035cabdf15e50c4cd1a0339075201514a85ff49f6c06ce38af983f72e9bc70e545c5d28fe319183ec92e1f3959658431e37f3ce71c",
+      "malleable": "0x34790899b94da5d08daf336e035cabdf15e50c4cd1a0339075201514a85ff49f93f931c75067c08d16438f1aba3a2d6ed795c4a7e61a8102666cda5aecb7045a1b"
+    },
+    {
+      "address": "0x9a1a0f7f1fb59d67150a30467c7c9f602144c49c",
+      "message": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+      "hash": "0xef5034cceedafbb2fbdcf11074a6654ab170406a79b828e13106e9e85edead58",
+      "signature": "0xed159cc36c935b27831216402603849bc82f91906026dba9f172e07e67ce05fb306f4023045362577d153aea6b8bfa8cabda4de6466006ef5d30d294d663a6891c",
+      "malleable": "0xed159cc36c935b27831216402603849bc82f91906026dba9f172e07e67ce05fbcf90bfdcfbac9da882eac515947405720ed48f0068e8994c62a18bf7f9d29ab81b"
+    }
+  ]
+}

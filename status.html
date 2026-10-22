@@ -106,6 +106,28 @@
       <p class="status-label">Checking…</p>
     </div>
 
+    <!-- Contract owner signature: shown by status.js for approved listings
+         with a contract address. The message to sign comes from the
+         database (request_owner_proof); the signature is checked on the
+         server by the "Owner signature" workflow, not in this page. -->
+    <section class="edit-listing owner-proof" id="owner-proof-root" aria-labelledby="owner-proof-title" hidden>
+      <h3 id="owner-proof-title">Contract owner signature</h3>
+      <p class="edit-listing-lead">
+        Show that the wallet returned by your contract's <code>owner()</code>
+        on Robinhood Chain (chain ID 4663) signed a message. Signing does not
+        send a transaction. Contracts without
+        <code>owner()</code>, or whose owner is another contract such as a
+        multisig, can't be shown this way yet.
+        Only means the owner wallet signed a message. Not an endorsement.
+      </p>
+      <p class="owner-proof-state" id="owner-proof-state" role="status" aria-live="polite"></p>
+      <pre class="code-block owner-proof-message" id="owner-proof-message" hidden></pre>
+      <div class="form-actions">
+        <button type="button" class="btn btn-solid" id="owner-proof-btn">Sign with wallet</button>
+        <span class="form-msg" id="owner-proof-msg" role="status" aria-live="polite"></span>
+      </div>
+    </section>
+
     <!-- Shown by status.js after a valid status code; values are filled
          in with .value / .textContent only. -->
     <section class="edit-listing" id="edit-root" aria-labelledby="edit-title" hidden>

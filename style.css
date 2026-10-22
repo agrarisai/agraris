@@ -4069,3 +4069,52 @@ html.embed-page::before {
   font-size: 12px;
   opacity: 0.8;
 }
+
+/* ---------- contract owner signature ---------- */
+
+/* Same quiet look as the live check label: a fact, not a seal. Raised
+   above .agent-row-link so the tooltip shows on cards. */
+.owner-badge {
+  position: relative;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  font-size: 11px;
+  opacity: 0.7;
+  cursor: help;
+  overflow-wrap: anywhere;
+}
+
+.owner-badge-lg {
+  display: block;
+  margin-bottom: 2px;
+  font-size: 12px;
+  opacity: 0.85;
+  cursor: auto;
+}
+
+.owner-note {
+  margin: -2px 0 10px;
+  font-size: 11px;
+  line-height: 1.6;
+  opacity: 0.75;
+  overflow-wrap: anywhere;
+}
+
+.owner-signer {
+  display: block;
+}
+
+.owner-proof-state {
+  margin: 0 0 12px;
+  font-size: 13px;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+
+/* The message being signed; wraps on phones. */
+.owner-proof-message {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font-size: 11px;
+}

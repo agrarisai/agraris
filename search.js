@@ -9,6 +9,7 @@
   const sortInput = document.getElementById("sort-input");
   const verifiedFilterInput = document.getElementById("verified-filter-input");
   const liveFilterInput = document.getElementById("live-filter-input");
+  const ownerFilterInput = document.getElementById("owner-filter-input");
   const categoryChipsEl = document.getElementById("category-chips");
   const kindTabsEl = document.getElementById("kind-tabs");
 
@@ -147,7 +148,10 @@
       // Same rule as the badge: a demo_url whose last live check said 'up'.
       const matchesLive = !liveFilterInput.checked || liveCheckInfo(a)?.state === "up";
 
-      return matchesSearch && matchesCategory && matchesVerified && matchesLive;
+      // Listings with a current contract owner signature (owner_proofs).
+      const matchesOwner = !ownerFilterInput.checked || Boolean(a.owner_signed_at);
+
+      return matchesSearch && matchesCategory && matchesVerified && matchesLive && matchesOwner;
     });
 
     renderResults(sortAgents(filtered));
@@ -171,7 +175,12 @@
   }
 
   try {
-    allAgents = await fetchAgents();
+    // Owner signatures load alongside; a failure only means no badges.
+    const [agents, ownerProofs] = await Promise.all([fetchAgents(), fetchOwnerProofs()]);
+    allAgents = agents.map((a) => {
+      const proof = ownerProofs.get(String(a.id));
+      return proof ? { ...a, owner_signed_at: proof.signed_at } : a;
+    });
     syncKindTabs();
     populateCategoryChips(listingsForKind());
 
@@ -200,6 +209,8 @@
   verifiedFilterInput.addEventListener("change", applyFilters);
 
   liveFilterInput.addEventListener("change", applyFilters);
+
+  ownerFilterInput.addEventListener("change", applyFilters);
 
   kindTabsEl.addEventListener("click", (e) => {
     const tab = e.target.closest(".kind-tab");

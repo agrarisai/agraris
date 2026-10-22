@@ -26,7 +26,7 @@ const path = require("path");
 
 // Naik hanya untuk perubahan yang merusak (field dihapus / diganti nama /
 // berubah arti). Menambah field (mis. live_status, live_checked_at,
-// wanted_id) tidak.
+// wanted_id, owner_signed, owner_signed_at) tidak.
 const SCHEMA_VERSION = 1;
 // Sama dengan CNAME. Halaman detail mengikuti skema sitemap.xml:
 // agent.html?id=<uuid>.
@@ -65,7 +65,9 @@ const DB_COLUMNS = [
 
 // Daftar putih field per listing di api/agents.json, sesuai urutan di
 // file. `url` dibuat di sini, bukan kolom database.
-const PUBLIC_FIELDS = [...DB_COLUMNS, "url"];
+// owner_signed / owner_signed_at berasal dari tabel owner_proofs
+// (supabase/migration-owner-proof.sql), bukan kolom agents.
+const PUBLIC_FIELDS = [...DB_COLUMNS, "owner_signed", "owner_signed_at", "url"];
 
 // category column may be stored as text or as a Postgres text[] array.
 // Normalize to a plain array of strings either way (sama dengan
@@ -101,7 +103,9 @@ function nullable(value) {
 
 // Satu baris database → satu objek listing. Objek dibangun dari nol
 // dengan field daftar putih saja; field lain di `row` diabaikan.
-function buildListing(row) {
+// proof: { signed_at } dari owner_proofs, atau null.
+function buildListing(row, proof = null) {
+  const signedAt = proof && proof.signed_at ? proof.signed_at : null;
   return {
     id: row.id,
     kind: row.kind === "tool" ? "tool" : "agent",
@@ -120,16 +124,21 @@ function buildListing(row) {
     live_status: row.live_status === "up" || row.live_status === "down" ? row.live_status : null,
     live_checked_at: nullable(row.live_checked_at),
     wanted_id: nullable(row.wanted_id),
+    // Wallet owner() kontrak menandatangani pesan (dicek di server, dicek
+    // ulang tiap 6 jam). Bukan endorsement.
+    owner_signed: Boolean(signedAt),
+    owner_signed_at: signedAt,
     url: `${SITE_URL}agent.html?id=${encodeURIComponent(row.id)}`,
   };
 }
 
-function buildListings(rows) {
+// proofs: Map agent_id → { signed_at } (fetchOwnerProofs).
+function buildListings(rows, proofs = new Map()) {
   return rows
     .filter((row) => row && row.approved !== false)
     .slice()
     .sort(byPublishedDesc)
-    .map(buildListing);
+    .map((row) => buildListing(row, proofs.get(String(row.id)) || null));
 }
 
 function buildDocument(listings, generatedAt) {
@@ -203,6 +212,31 @@ async function fetchApprovedRows(supabase) {
   return rows;
 }
 
+// Bukti tanda tangan pemilik kontrak yang berlaku saat ini. Hanya
+// agent_id dan signed_at yang diambil; listing yang belum approved
+// tersaring di buildListings().
+async function fetchOwnerProofs(supabase) {
+  const proofs = new Map();
+  for (let from = 0; ; from += PAGE_SIZE) {
+    const { data, error } = await supabase
+      .from("owner_proofs")
+      .select("agent_id, signed_at")
+      .order("agent_id", { ascending: true })
+      .range(from, from + PAGE_SIZE - 1);
+
+    if (error) {
+      throw new Error(`Failed to read owner_proofs table: ${error.message}`);
+    }
+
+    const page = data ?? [];
+    page.forEach((row) => {
+      if (row && row.agent_id && row.signed_at) proofs.set(String(row.agent_id), { signed_at: row.signed_at });
+    });
+    if (page.length < PAGE_SIZE) break;
+  }
+  return proofs;
+}
+
 async function main() {
   const SUPABASE_URL = process.env.SUPABASE_URL;
   const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -219,7 +253,8 @@ async function main() {
   const { createClient } = require("@supabase/supabase-js");
   const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
 
-  const listings = buildListings(await fetchApprovedRows(supabase));
+  const [rows, proofs] = await Promise.all([fetchApprovedRows(supabase), fetchOwnerProofs(supabase)]);
+  const listings = buildListings(rows, proofs);
   const written = writeIfChanged(OUTPUT_PATH, listings);
 
   const toolCount = listings.filter((entry) => entry.kind === "tool").length;
@@ -250,4 +285,5 @@ module.exports = {
   serialize,
   writeIfChanged,
   fetchApprovedRows,
+  fetchOwnerProofs,
 };
