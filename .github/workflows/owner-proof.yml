@@ -1,0 +1,43 @@
+name: Owner signature
+
+# Memeriksa tanda tangan "contract owner signature" yang dikirim builder
+# lewat status.html (supabase/migration-owner-proof.sql). Verifikasi
+# tanda tangan dan pembacaan owner() terjadi di sini, di server, dengan
+# service role. Pemeriksaan ulang berkala ada di workflow "Live check".
+on:
+  schedule:
+    # Tiap 15 menit (menit 7, 22, 37, 52). Jadwal GitHub bisa tertunda.
+    - cron: "7,22,37,52 * * * *"
+  workflow_dispatch: {}
+
+# Satu run dalam satu waktu: setiap nonce diputuskan tepat sekali.
+concurrency:
+  group: owner-proof
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      # Tanpa npm install: keccak256 dan ecrecover ada di scripts/eth-lib.js.
+      - name: Verify submitted signatures
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          # RPC publik Robinhood Chain mainnet (chain ID 4663), dari
+          # https://docs.robinhood.com/chain/connecting. Disimpan sebagai
+          # secret supaya tidak tercetak di log.
+          ROBINHOOD_CHAIN_RPC_URL: ${{ secrets.ROBINHOOD_CHAIN_RPC_URL }}
+        run: node scripts/owner-proof.js verify

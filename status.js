@@ -50,6 +50,12 @@
 
   let editButton = null;
 
+  const ownerRoot = document.getElementById("owner-proof-root");
+  const ownerState = document.getElementById("owner-proof-state");
+  const ownerMessage = document.getElementById("owner-proof-message");
+  const ownerBtn = document.getElementById("owner-proof-btn");
+  const ownerMsg = document.getElementById("owner-proof-msg");
+
   function readToken() {
     const fromHash = new URLSearchParams(window.location.hash.slice(1)).get("t");
     if (fromHash) return fromHash.trim();
@@ -147,6 +153,7 @@
         kind,
       });
       if (row.id) showLiveCheck(row.id);
+      if (currentToken) loadOwnerProof(currentToken);
     } else {
       render({ label: "Pending review", name: row.name, state: "pending", editable: true, kind });
     }
@@ -207,6 +214,132 @@
     const actions = root.querySelector(".status-actions");
     root.insertBefore(block, actions || null);
   }
+
+  // ---------- contract owner signature ----------
+
+  // Sentences for the reason codes written by scripts/owner-proof.js.
+  const OWNER_REASONS = {
+    expired: "The last signing request expired before it was signed. Start again.",
+    replaced: "The last signing request was replaced by a newer one.",
+    listing_unavailable: "The listing was not available when the signature was checked.",
+    contract_changed: "The contract address changed after signing. Sign again for the new address.",
+    message_mismatch: "The signed message could not be matched. Start again.",
+    bad_signature: "The signature could not be read. Start again.",
+    not_a_contract: "There is no contract at this address on Robinhood Chain (chain ID 4663), so it can't be shown with this feature.",
+    no_owner: "This contract has no owner() we can read (or it is the zero address), so it can't be shown with this feature yet.",
+    owner_is_contract: "This contract's owner() is another contract (for example a multisig), so it can't be shown with this feature yet.",
+    not_owner: "The wallet that signed is not the contract's current owner(). Sign with the owner wallet.",
+    check_failed: "The signature could not be checked for a day. Please sign again.",
+    owner_changed: "The contract's owner() changed after you signed, so the signature no longer applies. The new owner can sign again.",
+  };
+
+  const NO_WALLET_TEXT =
+    "No browser wallet found. Open this status link in a browser that has the owner wallet (for example a wallet extension). Keep the link private.";
+
+  let currentToken = "";
+  let ownerBusy = false;
+
+  function setOwnerMsg(text, type) {
+    ownerMsg.textContent = text;
+    ownerMsg.className = `form-msg${type ? ` ${type}` : ""}`;
+  }
+
+  function ownerStateText(row) {
+    if (row.signer && row.signed_at) {
+      return `Contract owner signed a message · ${formatSignedDate(row.signed_at)}. Signed by ${row.signer}. Checked again every 6 hours.`;
+    }
+    if (row.last_status === "submitted") {
+      return "Signature received. It is checked on our server within about 15 minutes; reload this page later.";
+    }
+    if (row.last_status === "rejected" || row.last_status === "revoked" || row.last_status === "expired") {
+      return OWNER_REASONS[row.last_reason] || "The last signature was not accepted. Start again.";
+    }
+    return "No owner signature yet.";
+  }
+
+  async function loadOwnerProof(token) {
+    let row;
+    try {
+      const { data, error } = await supabaseClient.rpc("get_owner_proof_status", { p_token: token });
+      if (error || !Array.isArray(data)) return;
+      row = data[0];
+    } catch {
+      return;
+    }
+    if (!row || typeof row.contract_address !== "string" || !row.contract_address) {
+      ownerRoot.hidden = true;
+      return;
+    }
+
+    ownerRoot.hidden = false;
+    ownerState.textContent = ownerStateText(row);
+    ownerBtn.textContent = row.signer ? "Sign again" : "Sign with wallet";
+    const hasWallet = Boolean(window.ethereum && typeof window.ethereum.request === "function");
+    ownerBtn.disabled = !hasWallet || row.last_status === "submitted";
+    setOwnerMsg(hasWallet ? "" : NO_WALLET_TEXT, "");
+  }
+
+  function utf8Hex(text) {
+    return `0x${Array.from(new TextEncoder().encode(text), (b) => b.toString(16).padStart(2, "0")).join("")}`;
+  }
+
+  async function signOwnerProof() {
+    if (ownerBusy || !currentToken) return;
+    const wallet = window.ethereum;
+    if (!wallet || typeof wallet.request !== "function") {
+      setOwnerMsg(NO_WALLET_TEXT, "error");
+      return;
+    }
+
+    ownerBusy = true;
+    ownerBtn.disabled = true;
+    setOwnerMsg("Preparing the message…", "");
+    try {
+      const { data, error } = await supabaseClient.rpc("request_owner_proof", { p_token: currentToken });
+      if (error) {
+        setOwnerMsg(error.code === VALIDATION_ERROR_CODE && typeof error.message === "string" ? error.message : "Could not start right now. Please try again later.", "error");
+        return;
+      }
+      const req = Array.isArray(data) ? data[0] : null;
+      if (!req || typeof req.message !== "string" || typeof req.nonce !== "string") {
+        setOwnerMsg(NOT_FOUND_TEXT, "error");
+        return;
+      }
+      ownerMessage.textContent = req.message;
+      ownerMessage.hidden = false;
+
+      setOwnerMsg("Confirm in your wallet…", "");
+      let signature;
+      try {
+        const accounts = await wallet.request({ method: "eth_requestAccounts" });
+        const account = Array.isArray(accounts) ? accounts[0] : null;
+        if (typeof account !== "string") throw new Error("no account");
+        signature = await wallet.request({ method: "personal_sign", params: [utf8Hex(req.message), account] });
+      } catch (err) {
+        setOwnerMsg(err && err.code === 4001 ? "Signing was cancelled." : "The wallet did not return a signature.", "error");
+        return;
+      }
+
+      const sub = await supabaseClient.rpc("submit_owner_proof", {
+        p_token: currentToken,
+        p_nonce: req.nonce,
+        p_signature: String(signature || ""),
+      });
+      if (sub.error) {
+        setOwnerMsg(sub.error.code === VALIDATION_ERROR_CODE && typeof sub.error.message === "string" ? sub.error.message : "Could not send the signature right now. Please try again later.", "error");
+        return;
+      }
+      setOwnerMsg("", "");
+      await loadOwnerProof(currentToken);
+    } catch {
+      setOwnerMsg("Something went wrong. Please try again later.", "error");
+    } finally {
+      ownerBusy = false;
+      if (ownerMsg.classList.contains("error")) ownerBtn.disabled = false;
+    }
+  }
+
+  ownerBtn.addEventListener("click", signOwnerProof);
 
   // ---------- edit listing ----------
 
@@ -412,6 +545,7 @@
       return;
     }
 
+    currentToken = token;
     renderRow(row);
     initEditor(token);
   }

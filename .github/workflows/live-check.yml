@@ -34,3 +34,14 @@ jobs:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
         run: node scripts/live-check.js
+
+      # Bukti "contract owner signature" hanya berlaku selama owner()
+      # kontrak masih sama dengan penanda tangan (scripts/owner-proof.js).
+      # Bukti dihapus kalau owner berubah. RPC yang gagal tidak menghapus
+      # apa pun.
+      - name: Re-check owner signatures
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          ROBINHOOD_CHAIN_RPC_URL: ${{ secrets.ROBINHOOD_CHAIN_RPC_URL }}
+        run: node scripts/owner-proof.js recheck

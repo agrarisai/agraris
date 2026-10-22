@@ -415,7 +415,8 @@ function initReportAgent(root, agentId) {
   }
 
   try {
-    const agent = await fetchAgentById(id);
+    const [agent, ownerProof] = await Promise.all([fetchAgentById(id), fetchOwnerProof(id)]);
+    if (agent && ownerProof) agent.owner_signed_at = ownerProof.signed_at;
     const categories = normalizeCategories(agent.category);
     const tags = categories
       .map((c) => `<span class="tag">${escapeHtml(c)}</span>`)
@@ -443,6 +444,11 @@ function initReportAgent(root, agentId) {
           ${renderLiveBadge(agent)}
         </div>
         ${liveCheckInfo(agent) ? `<p class="live-note">Demo check: ${escapeHtml(LIVE_CHECK_NOTE)}</p>` : ""}
+        ${
+          ownerSignedText(agent)
+            ? `<p class="owner-note"><span class="owner-badge owner-badge-lg">${escapeHtml(ownerSignedText(agent))}</span><span class="owner-signer">Signed by <code>${escapeHtml(ownerProof.signer)}</code>, the wallet returned by the contract's owner().</span> ${escapeHtml(OWNER_SIGNED_NOTE)}</p>`
+            : ""
+        }
         <div class="agent-meta">${tags}</div>
         <p class="detail-desc">${escapeHtml(agent.description)}</p>
         <div class="detail-links">

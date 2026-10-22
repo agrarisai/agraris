@@ -138,6 +138,7 @@
         <li><a href="#live-check">Live check</a></li>
         <li><a href="#recently-updated">Recently updated</a></li>
         <li><a href="#wanted-board">Wanted board</a></li>
+        <li><a href="#owner-signature">Contract owner signature</a></li>
         <li><a href="#review-queue">Review queue</a></li>
         <li><a href="#rate-limits">Rate limits &amp; fair use</a></li>
         <li><a href="#embed-widget">Embed widget</a></li>
@@ -202,6 +203,8 @@
             <tr><td><code>live_status</code></td><td>string | null</td><td><code>up</code>, <code>down</code> or null; see <a href="#live-check">Live check</a></td></tr>
             <tr><td><code>live_checked_at</code></td><td>string | null</td><td>When the demo link was last checked</td></tr>
             <tr><td><code>wanted_id</code></td><td>string (uuid) | null</td><td>The <a href="#wanted-board">Wanted</a> request this listing answers</td></tr>
+            <tr><td><code>owner_signed</code></td><td>boolean</td><td><code>true</code> while the contract's <code>owner()</code> wallet has a current signature; see <a href="#owner-signature">Contract owner signature</a></td></tr>
+            <tr><td><code>owner_signed_at</code></td><td>string | null</td><td>When that signature was received</td></tr>
             <tr><td><code>url</code></td><td>string</td><td>The listing's page on agraris.xyz</td></tr>
           </tbody>
         </table>
@@ -568,6 +571,43 @@ curl "https://gnydurjxrynqcbpkxopd.supabase.co/rest/v1/agents?wanted_id=eq.REQUE
         and web addresses are rejected, and new requests are paused while
         20 are waiting for review.
       </p>
+
+      <h3 id="owner-signature">Contract owner signature</h3>
+      <p>
+        A builder whose listing has a contract address can show that the
+        wallet returned by the contract's <code>owner()</code> signed a
+        message. This starts from the listing's status link on
+        <a href="status.html">status.html</a>, with a browser wallet
+        (<code>personal_sign</code>, EIP-191). The message is made by the
+        database and names <code>agraris.xyz</code>, the listing id, the
+        contract address, chain ID 4663, a one-time nonce and an expiry 10
+        minutes ahead.
+      </p>
+      <p>
+        The signature is checked on our server, not in the browser: a
+        GitHub Actions workflow recovers the signing address and reads
+        <code>owner()</code> from Robinhood Chain (chain ID 4663). The
+        listing gets the label "Contract owner signed a message" only when
+        both match and the owner is a regular wallet. Contracts without
+        <code>owner()</code>, with a zero owner, or whose owner is another
+        contract (for example a multisig) can't be shown this way. The
+        owner is read again every 6 hours, and the label is removed when it
+        changes or when the listing's contract address changes.
+      </p>
+      <p>
+        Only means the owner wallet signed a message. Not an endorsement.
+        It is separate from the manual <code>verified</code> flag.
+      </p>
+      <p>
+        Current signatures are readable in <code>owner_proofs</code>
+        (<code>agent_id</code>, <code>signer</code>, <code>signed_at</code>;
+        approved listings only), and as <code>owner_signed</code> /
+        <code>owner_signed_at</code> in the JSON file.
+      </p>
+      <pre class="code-block"><code>curl "https://gnydurjxrynqcbpkxopd.supabase.co/rest/v1/owner_proofs?select=agent_id,signer,signed_at" \
+  -H "apikey: sb_publishable_4roHAzTOTw9P0_8NXKt2IA_kXniR9pm"
+
+curl -s "https://agraris.xyz/api/agents.json" | jq '.listings[] | select(.owner_signed)'</code></pre>
 
       <h3 id="review-queue">Review queue</h3>
       <p>

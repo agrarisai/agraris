@@ -129,6 +129,7 @@ function renderAgentRow(agent) {
         ${renderGithubBadge(agent)}
         ${renderOnchainLink(agent)}
         ${renderLiveBadge(agent)}
+        ${renderOwnerBadge(agent)}
       </div>
       <p class="agent-desc">${escapeHtml(agent.description)}</p>
       <div class="agent-meta">${tags}</div>
@@ -428,6 +429,66 @@ function renderLiveBadge(listing) {
   const info = liveCheckInfo(listing);
   if (!info) return "";
   return `<span class="live-badge live-badge--${info.state}" title="${escapeHtml(LIVE_CHECK_NOTE)}"><span class="live-badge-dot" aria-hidden="true"></span>${escapeHtml(info.text)}<span class="sr-only"> (${escapeHtml(LIVE_CHECK_NOTE)})</span></span>`;
+}
+
+// ============================================
+// Contract owner signature badge
+// ============================================
+//
+// owner_proofs (supabase/migration-owner-proof.sql) holds one row per
+// listing whose contract's owner() wallet signed a message. The signature
+// and owner() are checked on the server by the "Owner signature" workflow
+// (scripts/owner-proof.js) and re-checked every 6 hours; the row is
+// removed when the owner changes. The public can only read agent_id,
+// signer and signed_at, and only for approved listings.
+//
+// Pages that want the badge merge owner_signed_at onto the listing; a
+// listing without it shows nothing.
+
+const OWNER_SIGNED_NOTE = "Only means the owner wallet signed a message. Not an endorsement.";
+
+function formatSignedDate(isoString) {
+  const d = new Date(isoString);
+  if (Number.isNaN(d.getTime())) return "";
+  return d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric", timeZone: "UTC" });
+}
+
+function ownerSignedText(listing) {
+  const date = listing && listing.owner_signed_at ? formatSignedDate(listing.owner_signed_at) : "";
+  return date ? `Contract owner signed a message · ${date}` : "";
+}
+
+function renderOwnerBadge(listing) {
+  const text = ownerSignedText(listing);
+  if (!text) return "";
+  return `<span class="owner-badge" title="${escapeHtml(OWNER_SIGNED_NOTE)}">${escapeHtml(text)}<span class="sr-only"> (${escapeHtml(OWNER_SIGNED_NOTE)})</span></span>`;
+}
+
+// agent_id → { signer, signed_at } for every approved listing that has a
+// valid owner signature. Any failure gives an empty map (no badges).
+async function fetchOwnerProofs() {
+  try {
+    const { data, error } = await supabaseClient.from("owner_proofs").select("agent_id, signer, signed_at");
+    if (error || !Array.isArray(data)) return new Map();
+    return new Map(data.filter((r) => r && r.agent_id && r.signed_at).map((r) => [String(r.agent_id), r]));
+  } catch {
+    return new Map();
+  }
+}
+
+// { signer, signed_at } for one listing, or null (none / failure).
+async function fetchOwnerProof(agentId) {
+  try {
+    const { data, error } = await supabaseClient
+      .from("owner_proofs")
+      .select("signer, signed_at")
+      .eq("agent_id", agentId)
+      .maybeSingle();
+    if (error || !data || !data.signed_at) return null;
+    return data;
+  } catch {
+    return null;
+  }
 }
 
 // ============================================

@@ -27,6 +27,8 @@ const EXPECTED_FIELDS = [
   "live_status",
   "live_checked_at",
   "wanted_id",
+  "owner_signed",
+  "owner_signed_at",
   "url",
 ];
 
@@ -93,7 +95,7 @@ function mockSupabase(rows, { error } = {}) {
         then(resolve, reject) {
           if (error) return Promise.resolve({ data: null, error }).then(resolve, reject);
           let data = rows.filter((r) => q.filters.every(([c, v]) => r[c] === v));
-          data = data.slice().sort((a, b) => a.id.localeCompare(b.id));
+          data = data.slice().sort((a, b) => String(a.id ?? a.agent_id).localeCompare(String(b.id ?? b.agent_id)));
           if (q.range) data = data.slice(q.range[0], q.range[1] + 1);
           // Supabase hanya mengembalikan kolom yang diminta.
           const cols = q.select.split(",").map((s) => s.trim());
@@ -194,6 +196,32 @@ test("wanted_id is passed through (uuid or null)", () => {
   assert.equal(api.buildListing(row({ wanted_id: wantedId })).wanted_id, wantedId);
   assert.equal(api.buildListing(row({ wanted_id: null })).wanted_id, null);
   assert.equal(api.buildListing(row({ wanted_id: undefined })).wanted_id, null);
+});
+
+test("owner_signed / owner_signed_at come from owner_proofs only", async () => {
+  const signedId = "00000000-0000-4000-8000-00000000000a";
+  const proofs = await api.fetchOwnerProofs(
+    mockSupabase([
+      { agent_id: signedId, signed_at: "2026-10-20T08:00:00Z", signer: "0xsecret", nonce: "secretnonce", owner_at_check: "0xsecret" },
+    ])
+  );
+  const listings = api.buildListings(
+    [row({ id: signedId, name: "Signed" }), row({ id: "00000000-0000-4000-8000-00000000000b", name: "Plain" })],
+    proofs
+  );
+  const byName = Object.fromEntries(listings.map((l) => [l.name, l]));
+  assert.equal(byName.Signed.owner_signed, true);
+  assert.equal(byName.Signed.owner_signed_at, "2026-10-20T08:00:00Z");
+  assert.equal(byName.Plain.owner_signed, false);
+  assert.equal(byName.Plain.owner_signed_at, null);
+  const text = api.serialize(api.buildDocument(listings, "2026-10-22T00:00:00.000Z"));
+  assert.ok(!text.includes("secretnonce") && !text.includes("0xsecret"), "nonce / signer internals never leak");
+  // A bare row (no owner_signed_at column in agents) never sets it.
+  assert.equal(api.buildListing(row({ owner_signed_at: "2026-01-01T00:00:00Z" })).owner_signed, false);
+});
+
+test("owner_proofs read errors are thrown", async () => {
+  await assert.rejects(api.fetchOwnerProofs(mockSupabase([], { error: { message: "nope" } })), /owner_proofs/);
 });
 
 test("url follows the sitemap scheme on agraris.xyz", async () => {
