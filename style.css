@@ -4118,3 +4118,76 @@ html.embed-page::before {
   overflow-wrap: anywhere;
   font-size: 11px;
 }
+
+/* ---------- builders (builders.html, builder.html, detail page) ---------- */
+
+.builder-note {
+  margin: -6px 0 22px;
+  font-size: 11px;
+  line-height: 1.6;
+  opacity: 0.7;
+}
+
+.builder-lead {
+  overflow-wrap: anywhere;
+}
+
+/* A to Z list of GitHub owners with their listing counts. */
+.builders-list {
+  list-style: none;
+  margin: 0 0 16px;
+  padding: 0;
+  border-top: 1px solid var(--line-soft);
+}
+
+.builders-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  column-gap: 12px;
+  row-gap: 2px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--line-soft);
+}
+
+.builders-handle {
+  min-width: 0;
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 600;
+  color: inherit;
+  text-decoration: none;
+  overflow-wrap: anywhere;
+}
+
+.builders-handle:hover {
+  text-decoration: underline;
+}
+
+.builders-count-text {
+  font-size: 11px;
+  opacity: 0.6;
+  white-space: nowrap;
+}
+
+.builders-empty {
+  padding: 24px 0;
+  font-size: 13px;
+}
+
+.builders-other {
+  margin: 0 0 40px;
+  font-size: 11px;
+  opacity: 0.6;
+}
+
+#builder-list {
+  margin-bottom: 8px;
+}
+
+.builder-more {
+  margin: 0 0 18px;
+  font-size: 13px;
+  overflow-wrap: anywhere;
+}

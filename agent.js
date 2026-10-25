@@ -288,6 +288,44 @@ function buildReceipt(address, info, counters) {
   return receipt;
 }
 
+// "More from <owner> (N)" under the listing, linking to builder.html, when
+// the GitHub owner of this listing's repo URL has more than one approved
+// listing. N is that owner's total number of listings (the count shown on
+// the profile). The owner comes from builder-lib.js, so it is always a
+// lowercase [a-z0-9-] handle before it is used in the query or the DOM.
+// The query narrows by repo_url; builder-lib.js then applies the exact
+// rules. Any failure leaves the line hidden.
+async function loadBuilderMore(root, agent) {
+  const el = root.querySelector("#builder-more");
+  const B = window.AgrarisBuilder;
+  if (!el || !B) return;
+  const handle = B.builderFromRepoUrl(agent.repo_url);
+  if (!handle) return;
+
+  let rows;
+  try {
+    const { data, error } = await supabaseClient
+      .from("agents")
+      .select("id, repo_url, kind")
+      .ilike("repo_url", `%github.com/${handle}/%`);
+    if (error || !Array.isArray(data)) return;
+    rows = data;
+  } catch {
+    return;
+  }
+
+  const group = B.groupByBuilder(rows).get(handle);
+  const total = group ? group.listings.length : 0;
+  if (total < 2) return;
+
+  const a = document.createElement("a");
+  a.href = B.builderPageUrl(handle);
+  a.textContent = `More from ${handle} (${total})`;
+  el.textContent = "";
+  el.appendChild(a);
+  el.hidden = false;
+}
+
 async function loadOnchainActivity(root) {
   const box = root.querySelector(".onchain-activity");
   if (!box) return; // no valid address -> no block, no request
@@ -482,6 +520,8 @@ function initReportAgent(root, agentId) {
         <div>${escapeHtml(formatDate(agent.created_at))}</div>
       </div>
 
+      <p class="builder-more" id="builder-more" hidden></p>
+
       ${renderOnchainBlock(agent)}
 
       <div class="badge-section reveal">
@@ -549,6 +589,7 @@ function initReportAgent(root, agentId) {
     initCopyLinkButton(container);
     initCopyAddressButton(container);
     loadOnchainActivity(container);
+    loadBuilderMore(container, agent);
     initCopyBadgeButton(container);
     initEmbedSnippet(container, agent.id);
     initReportAgent(container, agent.id);
