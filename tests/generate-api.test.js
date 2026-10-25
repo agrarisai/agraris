@@ -29,6 +29,7 @@ const EXPECTED_FIELDS = [
   "wanted_id",
   "owner_signed",
   "owner_signed_at",
+  "builder_github",
   "url",
 ];
 
@@ -222,6 +223,14 @@ test("owner_signed / owner_signed_at come from owner_proofs only", async () => {
 
 test("owner_proofs read errors are thrown", async () => {
   await assert.rejects(api.fetchOwnerProofs(mockSupabase([], { error: { message: "nope" } })), /owner_proofs/);
+});
+
+test("builder_github is the lowercase GitHub owner, or null", () => {
+  assert.equal(api.buildListing(row({ repo_url: "https://github.com/Example/agent" })).builder_github, "example");
+  assert.equal(api.buildListing(row({ repo_url: "https://gitlab.com/example/agent" })).builder_github, null);
+  assert.equal(api.buildListing(row({ repo_url: "https://github.com.evil.com/example/agent" })).builder_github, null);
+  assert.equal(api.buildListing(row({ repo_url: null })).builder_github, null);
+  assert.equal(api.SCHEMA_VERSION, 1);
 });
 
 test("url follows the sitemap scheme on agraris.xyz", async () => {

@@ -78,6 +78,7 @@
       <a href="publish.html">Publish</a>
       <a href="wanted.html">Wanted</a>
       <a href="guide.html">Guide</a>
+      <a href="builders.html">Builders</a>
       <a href="watchlist.html">Watchlist</a>
       <a href="search.html">Compare</a>
       <a href="token.html">Token</a>
@@ -139,6 +140,7 @@
         <li><a href="#recently-updated">Recently updated</a></li>
         <li><a href="#wanted-board">Wanted board</a></li>
         <li><a href="#owner-signature">Contract owner signature</a></li>
+        <li><a href="#builders">Builders</a></li>
         <li><a href="#review-queue">Review queue</a></li>
         <li><a href="#rate-limits">Rate limits &amp; fair use</a></li>
         <li><a href="#embed-widget">Embed widget</a></li>
@@ -205,6 +207,7 @@
             <tr><td><code>wanted_id</code></td><td>string (uuid) | null</td><td>The <a href="#wanted-board">Wanted</a> request this listing answers</td></tr>
             <tr><td><code>owner_signed</code></td><td>boolean</td><td><code>true</code> while the contract's <code>owner()</code> wallet has a current signature; see <a href="#owner-signature">Contract owner signature</a></td></tr>
             <tr><td><code>owner_signed_at</code></td><td>string | null</td><td>When that signature was received</td></tr>
+            <tr><td><code>builder_github</code></td><td>string | null</td><td>Lowercase GitHub owner from <code>repo_url</code>; null when the repo is not on github.com. See <a href="#builders">Builders</a></td></tr>
             <tr><td><code>url</code></td><td>string</td><td>The listing's page on agraris.xyz</td></tr>
           </tbody>
         </table>
@@ -608,6 +611,25 @@ curl "https://gnydurjxrynqcbpkxopd.supabase.co/rest/v1/agents?wanted_id=eq.REQUE
   -H "apikey: sb_publishable_4roHAzTOTw9P0_8NXKt2IA_kXniR9pm"
 
 curl -s "https://agraris.xyz/api/agents.json" | jq '.listings[] | select(.owner_signed)'</code></pre>
+
+      <h3 id="builders">Builders</h3>
+      <p>
+        <a href="builders.html">builders.html</a> lists every GitHub account
+        that has at least one approved listing, in alphabetical order, and
+        <code>builder.html?u=&lt;owner&gt;</code> shows that account's
+        listings. The account is read from each listing's
+        <code>repo_url</code>: only <code>https://github.com/&lt;owner&gt;/&lt;repo&gt;</code>
+        (or <code>www.github.com</code>) counts, the owner is lowercased and
+        must match <code>^[a-z0-9-]{1,39}$</code>. Other repo links have no
+        builder.
+      </p>
+      <p>
+        Grouped by the GitHub owner in each listing's repo URL. Anyone can
+        list a repo, so this does not show who submitted it. Not an
+        endorsement.
+      </p>
+      <p>The same value is <code>builder_github</code> in the JSON file:</p>
+      <pre class="code-block"><code>curl -s "https://agraris.xyz/api/agents.json" | jq '.listings[] | select(.builder_github=="OWNER")'</code></pre>
 
       <h3 id="review-queue">Review queue</h3>
       <p>

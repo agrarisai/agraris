@@ -23,10 +23,11 @@
 
 const fs = require("fs");
 const path = require("path");
+const { builderFromRepoUrl } = require("../builder-lib.js");
 
 // Naik hanya untuk perubahan yang merusak (field dihapus / diganti nama /
 // berubah arti). Menambah field (mis. live_status, live_checked_at,
-// wanted_id, owner_signed, owner_signed_at) tidak.
+// wanted_id, owner_signed, owner_signed_at, builder_github) tidak.
 const SCHEMA_VERSION = 1;
 // Sama dengan CNAME. Halaman detail mengikuti skema sitemap.xml:
 // agent.html?id=<uuid>.
@@ -67,7 +68,9 @@ const DB_COLUMNS = [
 // file. `url` dibuat di sini, bukan kolom database.
 // owner_signed / owner_signed_at berasal dari tabel owner_proofs
 // (supabase/migration-owner-proof.sql), bukan kolom agents.
-const PUBLIC_FIELDS = [...DB_COLUMNS, "owner_signed", "owner_signed_at", "url"];
+// builder_github dihitung dari repo_url (builder-lib.js): pemilik GitHub
+// huruf kecil, atau null kalau repo_url bukan github.com/<owner>/<repo>.
+const PUBLIC_FIELDS = [...DB_COLUMNS, "owner_signed", "owner_signed_at", "builder_github", "url"];
 
 // category column may be stored as text or as a Postgres text[] array.
 // Normalize to a plain array of strings either way (sama dengan
@@ -128,6 +131,7 @@ function buildListing(row, proof = null) {
     // ulang tiap 6 jam). Bukan endorsement.
     owner_signed: Boolean(signedAt),
     owner_signed_at: signedAt,
+    builder_github: builderFromRepoUrl(row.repo_url),
     url: `${SITE_URL}agent.html?id=${encodeURIComponent(row.id)}`,
   };
 }

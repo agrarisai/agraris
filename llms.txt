@@ -6,7 +6,7 @@ Every published listing has a detail page at `https://agraris.xyz/agent.html?id=
 
 ## Machine-readable data
 
-- [JSON API: all published listings](https://agraris.xyz/api/agents.json): one static JSON file with every approved agent and tool, newest first. Regenerated automatically once a day. Filter by the `kind` field (`agent` or `tool`). `live_status` (`up`, `down` or null) only says whether the listing's demo URL answered the last automatic check (every 6 hours); it is not an endorsement. `owner_signed` / `owner_signed_at` say that the wallet returned by the listed contract's `owner()` on Robinhood Chain signed a message for Agraris, checked on the server and re-checked every 6 hours; it only means the owner wallet signed a message and is not an endorsement.
+- [JSON API: all published listings](https://agraris.xyz/api/agents.json): one static JSON file with every approved agent and tool, newest first. Regenerated automatically once a day. Filter by the `kind` field (`agent` or `tool`). `live_status` (`up`, `down` or null) only says whether the listing's demo URL answered the last automatic check (every 6 hours); it is not an endorsement. `owner_signed` / `owner_signed_at` say that the wallet returned by the listed contract's `owner()` on Robinhood Chain signed a message for Agraris, checked on the server and re-checked every 6 hours; it only means the owner wallet signed a message and is not an endorsement. `builder_github` is the lowercase GitHub owner from the listing's `repo_url` (null when the repo is not on github.com); anyone can list a repo, so it does not show who submitted the listing.
 - [API documentation](https://agraris.xyz/docs.html): field schema for the JSON file, plus the live REST API for custom queries.
 - [RSS feed](https://agraris.xyz/rss.xml): the 50 most recently published listings.
 - [Sitemap](https://agraris.xyz/sitemap.xml): every listing page and category page.
@@ -15,4 +15,5 @@ Every published listing has a detail page at `https://agraris.xyz/agent.html?id=
 
 - [Search all listings](https://agraris.xyz/search.html): search and filter by category.
 - [Tools only](https://agraris.xyz/search.html?kind=tool): tools, MCP servers, APIs and SDKs.
+- [Builders](https://agraris.xyz/builders.html): listings grouped by the GitHub owner in their repo URL, A to Z. One owner: `https://agraris.xyz/builder.html?u=<owner>`.
 - [Submit a listing](https://agraris.xyz/publish.html): open form, no account needed.
