@@ -115,6 +115,12 @@
       they appear in the registry.</span>
     </p>
 
+    <ul class="trust-chips" aria-label="How publishing works">
+      <li>No login</li>
+      <li>No wallet</li>
+      <li>Reviewed first</li>
+    </ul>
+
     <!-- publish.html?wanted=<id>: shown by publish.js when the id is an open
          request on the Wanted board; the listing is then sent with
          wanted_id. -->
@@ -122,7 +128,7 @@
 
     <form id="publish-form" class="reveal" novalidate>
       <fieldset class="kind-picker" id="kind-picker">
-        <legend>What are you listing?</legend>
+        <legend class="form-sec">Type</legend>
         <div class="kind-picker-options">
           <label class="kind-option is-selected">
             <input type="radio" name="kind" value="agent" checked />
@@ -141,6 +147,8 @@
         </div>
       </fieldset>
 
+      <div class="form-sec">Details</div>
+
       <div class="field">
         <label for="name"><span data-text-agent="Agent name" data-text-tool="Tool name">Agent name</span> <span class="required-mark">*</span></label>
         <input type="text" id="name" name="name" required maxlength="120" />
@@ -158,11 +166,6 @@
       </div>
 
       <div class="field">
-        <label for="repo_url">Repo / GitHub link <span class="required-mark">*</span></label>
-        <input type="url" id="repo_url" name="repo_url" required placeholder="https://github.com/…" />
-      </div>
-
-      <div class="field">
         <label for="category"><span data-text-agent="Category / tools" data-text-tool="Category">Category / tools</span> <span class="required-mark">*</span></label>
         <input type="text" id="category" name="category" required placeholder="e.g. trading, browsing, data-analysis" data-placeholder-agent="e.g. trading, browsing, data-analysis" data-placeholder-tool="e.g. mcp-server, api, data" />
         <span class="hint">Separate multiple tags with commas.</span>
@@ -172,6 +175,13 @@
           <span class="hint">Suggested tags:</span>
           <div class="category-chips" id="category-suggest-chips"></div>
         </div>
+      </div>
+
+      <div class="form-sec">Links</div>
+
+      <div class="field">
+        <label for="repo_url">Repo / GitHub link <span class="required-mark">*</span></label>
+        <input type="url" id="repo_url" name="repo_url" required placeholder="https://github.com/…" />
       </div>
 
       <div class="field">

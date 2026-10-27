@@ -4952,3 +4952,125 @@ html::after {
 .wn-timeline > .skeleton-row {
   margin-bottom: 12px;
 }
+
+/* ---------- publish form: one card, clear sections ---------- */
+
+.trust-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0 0 18px;
+  padding: 0;
+  list-style: none;
+}
+
+.trust-chips li {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--panel);
+  font-size: 10px;
+}
+
+.trust-chips li::before {
+  content: "✓";
+  color: var(--text-green);
+}
+
+#publish-form {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 22px 18px 20px;
+  box-shadow: 0 6px 18px rgba(var(--shadow-rgb), 0.07);
+}
+
+.form-sec {
+  margin: 24px 0 14px;
+  padding: 16px 0 0;
+  border-top: 1px solid var(--line-soft);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-green-dark);
+}
+
+.kind-picker .form-sec {
+  margin: 0 0 12px;
+  padding: 0;
+  border: 0;
+}
+
+.kind-picker {
+  margin-bottom: 0;
+}
+
+/* Agent / Tool as a segmented control (radios stay in the DOM, visually
+   hidden, so keyboard and screen readers work as before). */
+.kind-picker-options {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px;
+  padding: 4px;
+  background: var(--cream);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+}
+
+.kind-option {
+  position: relative;
+  flex: none;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 11px 6px;
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+}
+
+.kind-option input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.kind-option:focus-within {
+  outline: 2px solid var(--green);
+  outline-offset: 1px;
+}
+
+.kind-option.is-selected {
+  background: var(--green);
+  color: var(--on-green);
+  box-shadow: 0 3px 8px rgba(var(--overlay-rgb), 0.25);
+}
+
+.kind-option .kind-option-hint {
+  margin-top: 2px;
+  font-size: 10px;
+}
+
+.field input[type="text"],
+.field input[type="url"],
+.field textarea,
+.field select {
+  border-radius: 8px;
+  padding: 11px 12px;
+}
+
+#publish-form .btn-solid,
+#publish-form #submit-btn {
+  width: 100%;
+  min-height: 50px;
+  border-radius: 10px;
+  box-shadow: 0 8px 18px rgba(var(--overlay-rgb), 0.22);
+}
+
+#publish-form .form-actions {
+  flex-direction: column;
+  align-items: stretch;
+}
