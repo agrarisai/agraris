@@ -4382,3 +4382,55 @@ html.embed-page::before {
     padding: 14px 2px;
   }
 }
+
+/* ---------- hero: simplified (final overrides) ---------- */
+
+.hero-banner--bg,
+.hero-eyebrow {
+  display: none;
+}
+
+.hero {
+  padding: 56px 0 28px;
+}
+
+.hero h1 {
+  font-size: 46px;
+  max-width: 14ch;
+  margin-bottom: 14px;
+}
+
+.hero p.tagline {
+  font-size: 16px;
+  max-width: 40ch;
+  margin-bottom: 26px;
+}
+
+.hero-actions .btn-cta {
+  box-shadow: none;
+}
+
+.stats-bar {
+  background: transparent;
+  border: none;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  border-radius: 0;
+  box-shadow: none;
+  margin: 12px 0 22px;
+}
+
+.stats-bar-value {
+  font-size: 24px;
+}
+
+@media (max-width: 560px) {
+  .hero {
+    padding: 36px 0 20px;
+  }
+
+  .hero h1 {
+    font-size: 34px;
+    max-width: none;
+  }
+}
