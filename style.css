@@ -4605,3 +4605,44 @@ html::after {
     flex-basis: 320px;
   }
 }
+
+/* ---------- header: full-bleed translucent bar ---------- */
+
+/* The header lives inside the centered .wrap, so a solid background made it
+   read as a box against the animated page background. The bar is now drawn
+   by a full-width pseudo-element behind the content. */
+.site-header {
+  background-color: transparent;
+  border-bottom: none;
+  isolation: isolate;
+}
+
+.site-header::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 100vw;
+  transform: translateX(-50%);
+  background-color: var(--cream);
+  background-color: color-mix(in srgb, var(--cream) 86%, transparent);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--line);
+}
+
+/* The closed off-canvas menu's shadow bled onto the right screen edge as a
+   dark strip. Only cast it while the panel is open. */
+.menu-panel {
+  box-shadow: none;
+  visibility: hidden;
+  transition: transform 0.25s ease, visibility 0s linear 0.25s;
+}
+
+.menu-panel.is-open {
+  box-shadow: -8px 0 24px rgba(var(--overlay-rgb), 0.15);
+  visibility: visible;
+  transition: transform 0.25s ease, visibility 0s;
+}
