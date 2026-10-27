@@ -200,6 +200,34 @@ select:focus-visible {
   border-color: var(--green);
 }
 
+/* Official $AGRARIS contract address, shown under the chain badge on every
+   page. Plain text (no script): one tap selects the whole address. */
+.header-ca {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 2px 6px;
+  margin: 8px 0 0;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  line-height: 1.4;
+  color: var(--ink);
+  opacity: 0.75;
+}
+
+.header-ca-label {
+  font-weight: 700;
+  color: var(--text-green-dark);
+}
+
+.header-ca-address {
+  font-family: inherit;
+  font-size: inherit;
+  overflow-wrap: anywhere;
+  user-select: all;
+  -webkit-user-select: all;
+}
+
 .chain-badge-dot {
   width: 6px;
   height: 6px;
@@ -3561,6 +3589,10 @@ html.embed-page::before {
   .chain-badge {
     font-size: 9px;
     padding: 2px 7px;
+  }
+
+  .header-ca {
+    font-size: 9px;
   }
 }
 
