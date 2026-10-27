@@ -5074,3 +5074,10 @@ html::after {
   flex-direction: column;
   align-items: stretch;
 }
+
+/* Logo tile: the SVG carries its own cream background, which showed as a
+   hard square in dark mode. Round it like an app icon. */
+.brand img,
+.footer-brand img {
+  border-radius: 22%;
+}
