@@ -4646,3 +4646,51 @@ html::after {
   visibility: visible;
   transition: transform 0.25s ease, visibility 0s;
 }
+
+/* ---------- tidy header + hero text ---------- */
+
+@media (max-width: 560px) {
+  .site-header {
+    padding: 8px 0 6px;
+    gap: 4px 12px;
+  }
+
+  /* The hero already says what Agraris is; drop the duplicate tagline. */
+  .header-tagline {
+    display: none;
+  }
+
+  .chain-badge {
+    margin-top: 2px;
+  }
+
+  .header-ca {
+    margin: 0;
+  }
+}
+
+.hero h1 {
+  text-wrap: balance;
+  letter-spacing: -0.015em;
+}
+
+.hero p.tagline {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 17px;
+  line-height: 1.6;
+  max-width: 34ch;
+  text-wrap: pretty;
+  opacity: 0.72;
+}
+
+@media (max-width: 560px) {
+  .hero h1 {
+    font-size: 33px;
+  }
+
+  .hero p.tagline {
+    font-size: 16px;
+    max-width: 34ch;
+  }
+}
