@@ -4228,6 +4228,46 @@ html.embed-page::before {
   overflow-wrap: anywhere;
 }
 
+/* ---------- animated background: slow drifting light ---------- */
+
+/* Oversized fixed layer of soft green/gold glows that drifts and breathes.
+   Only transform/opacity animate (GPU-cheap). Sits above the grid
+   (html::before) and under all content (z-index -1). */
+html::after {
+  content: "";
+  position: fixed;
+  z-index: -1;
+  inset: -25%;
+  pointer-events: none;
+  background:
+    radial-gradient(38% 34% at 20% 25%, rgba(var(--green-rgb), 0.16), transparent 70%),
+    radial-gradient(34% 30% at 80% 18%, rgba(196, 160, 90, 0.16), transparent 70%),
+    radial-gradient(40% 36% at 70% 80%, rgba(var(--green-rgb), 0.12), transparent 70%),
+    radial-gradient(30% 28% at 15% 85%, rgba(196, 160, 90, 0.12), transparent 70%);
+  animation: bg-drift 38s ease-in-out infinite alternate;
+  will-change: transform;
+}
+
+@keyframes bg-drift {
+  0% {
+    transform: translate3d(-3%, -2%, 0) rotate(0deg) scale(1);
+  }
+  50% {
+    transform: translate3d(3%, 2%, 0) rotate(6deg) scale(1.08);
+  }
+  100% {
+    transform: translate3d(-2%, 4%, 0) rotate(-4deg) scale(1.02);
+  }
+}
+
+:root[data-theme="dark"]::after {
+  opacity: 0.6;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html::after {
+    animation: none;
+
 /* ---------- home carousels (Trending / Recently published) ---------- */
 
 .carousel {
