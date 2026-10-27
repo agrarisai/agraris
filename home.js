@@ -127,119 +127,130 @@ async function loadTrending() {
   }
 }
 
-// Populates the small "Recently updated" section: listings whose builder
-// edited them in the last 30 days (fetchRecentlyUpdated in app.js). The
-// section stays hidden when there is nothing to show or the call fails.
-// Built with the DOM, so names never go through innerHTML.
-async function loadRecentlyUpdated() {
-  const sectionEl = document.getElementById("recent-updates-section");
-  const listEl = document.getElementById("recent-updates-list");
-  if (!sectionEl || !listEl) return;
+// "What's new": newly published listings and builder edits merged into one
+// newest-first timeline, grouped Today / This week / Earlier. A listing that
+// was both published and edited keeps only its (newer) newest event.
+const WN_LIMIT = 8;
 
-  const RECENT_UPDATES_COUNT = 5;
-  const rows = (await fetchRecentlyUpdated(RECENT_UPDATES_COUNT)).slice(0, RECENT_UPDATES_COUNT);
-
-  listEl.textContent = "";
-  rows.forEach((row) => {
-    const when = formatRelativeTime(row.last_edited_at);
-    if (!when) return;
-
-    const item = document.createElement("li");
-    item.className = "recent-update-row";
-
-    const link = document.createElement("a");
-    link.className = "recent-update-link";
-    link.href = `agent.html?id=${encodeURIComponent(row.id)}`;
-
-    const name = document.createElement("span");
-    name.className = "recent-update-name";
-    name.textContent = row.name;
-
-    const kind = document.createElement("span");
-    kind.className = "kind-badge";
-    kind.textContent = row.kind === "tool" ? "Tool" : "Agent";
-
-    link.append(name, " ", kind);
-
-    const time = document.createElement("span");
-    time.className = "recent-update-time";
-    time.textContent = when;
-
-    item.append(link, time);
-    listEl.appendChild(item);
-  });
-
-  sectionEl.hidden = listEl.children.length === 0;
+function wnAgo(iso) {
+  const sec = Math.max(0, Math.round((Date.now() - new Date(iso).getTime()) / 1000));
+  const units = [["w", 604800], ["d", 86400], ["h", 3600], ["m", 60]];
+  for (const [u, n] of units) {
+    if (sec >= n) return `${Math.floor(sec / n)}${u} ago`;
+  }
+  return "just now";
 }
 
-// Turns a .carousel list into a swipeable strip with progress dots.
-function initCarousel(listEl) {
-  if (!listEl || listEl.dataset.carousel) return;
-  listEl.dataset.carousel = "1";
-  const dots = document.createElement("div");
-  dots.className = "carousel-dots";
-  dots.setAttribute("aria-hidden", "true");
-  listEl.insertAdjacentElement("afterend", dots);
-  const update = () => {
-    const cards = Array.from(listEl.querySelectorAll(".agent-row"));
-    if (cards.length < 2) { dots.innerHTML = ""; return; }
-    const max = listEl.scrollWidth - listEl.clientWidth;
-    const idx = max <= 4 ? 0 : Math.round((listEl.scrollLeft / max) * (cards.length - 1));
-    dots.innerHTML = cards.map((_, i) => `<i${i === idx ? ' class="on"' : ""}></i>`).join("");
-  };
-  listEl.addEventListener("scroll", () => requestAnimationFrame(update), { passive: true });
-  new MutationObserver(update).observe(listEl, { childList: true });
-  window.addEventListener("resize", update);
-  update();
+function wnGroup(iso) {
+  const days = (Date.now() - new Date(iso).getTime()) / 86400000;
+  if (days < 1) return "Today";
+  if (days < 7) return "This week";
+  return "Earlier";
+}
+
+function renderWnItem(ev) {
+  const href = `agent.html?id=${encodeURIComponent(ev.id)}`;
+  const kind = ev.kind === "tool" ? '<span class="kind-badge">Tool</span>' : "";
+  const badge = ev.type === "new" ? '<span class="wn-new">NEW</span>' : "";
+  const tags = (ev.categories || [])
+    .slice(0, 2)
+    .map((c) => `<span class="tag">${escapeHtml(c)}</span>`)
+    .join("");
+  const meta =
+    ev.type === "updated"
+      ? `<div class="wn-updated">↻ Updated ${wnAgo(ev.at)}</div>`
+      : `${ev.description ? `<p class="wn-desc">${escapeHtml(ev.description)}</p>` : ""}${tags ? `<div class="wn-tags">${tags}</div>` : ""}`;
+  return `
+    <a class="wn-item" href="${href}">
+      <div class="wn-head"><span class="wn-name">${escapeHtml(ev.name)}</span>${kind}${badge}<span class="wn-time">${wnAgo(ev.at)}</span></div>
+      ${meta}
+    </a>`;
+}
+
+async function loadWhatsNew(published) {
+  const listEl = document.getElementById("wn-list");
+  const sectionEl = document.getElementById("whats-new");
+  if (!listEl || !sectionEl) return;
+
+  const updated = await fetchRecentlyUpdated(WN_LIMIT);
+  const byId = new Map();
+
+  published.forEach((a) =>
+    byId.set(a.id, {
+      id: a.id,
+      name: a.name,
+      kind: a.kind,
+      description: a.description,
+      categories: normalizeCategories(a.category),
+      type: "new",
+      at: a.created_at,
+    })
+  );
+  updated.forEach((u) => {
+    const prev = byId.get(u.id);
+    const at = u.last_edited_at;
+    if (prev && new Date(prev.at) >= new Date(at)) return;
+    if (prev) {
+      // Edited after publishing: show as one updated event, keep its tags.
+      byId.set(u.id, { ...prev, type: "updated", at });
+    } else {
+      byId.set(u.id, { id: u.id, name: u.name, kind: u.kind, type: "updated", at });
+    }
+  });
+
+  const events = Array.from(byId.values())
+    .filter((ev) => !Number.isNaN(new Date(ev.at).getTime()))
+    .sort((a, b) => new Date(b.at) - new Date(a.at))
+    .slice(0, WN_LIMIT);
+
+  if (events.length === 0) {
+    listEl.innerHTML = renderEmptyState(
+      "No listings yet",
+      "The registry is empty right now — be the first to publish.",
+      { href: "publish.html", label: "Publish an agent" }
+    );
+    listEl.removeAttribute("aria-busy");
+    return;
+  }
+
+  let html = "";
+  let last = "";
+  events.forEach((ev) => {
+    const group = wnGroup(ev.at);
+    if (group !== last) {
+      html += `<div class="wn-day">${group}</div>`;
+      last = group;
+    }
+    html += renderWnItem(ev);
+  });
+  listEl.innerHTML = html;
+  listEl.removeAttribute("aria-busy");
 }
 
 (async function () {
-  const listEl = document.getElementById("agent-list");
+  const listEl = document.getElementById("wn-list");
   initCarousel(document.getElementById("trending-list"));
-  initCarousel(listEl);
-  const countEl = document.getElementById("agent-count");
-
-  const RECENT_LIMIT = 4;
-
   enableCompareSelection();
 
   try {
-    // totalCount is the number of AGENTS (tools are not counted in it).
-    // The tool count only decorates the heading and the stats bar, and
-    // must never take the list down with it, so a failed count becomes
-    // null: the heading leaves tools out and the stats bar keeps "—".
-    const [agents, totalCount, toolCount] = await Promise.all([
-      fetchAgents({ limit: RECENT_LIMIT }),
+    // totalCount is the number of AGENTS (tools are not counted in it); a
+    // failed tool count becomes null and only leaves the stats bar at "—".
+    const [published, totalCount, toolCount] = await Promise.all([
+      fetchAgents({ limit: WN_LIMIT }),
       fetchAgentCount(),
       fetchAgentCount({ kind: "tool" }).catch(() => null),
     ]);
 
-    const countParts = [];
-    if (totalCount) countParts.push(`${totalCount} agent${totalCount === 1 ? "" : "s"}`);
-    if (toolCount) countParts.push(`${toolCount} tool${toolCount === 1 ? "" : "s"}`);
-    countEl.textContent = countParts.join(" · ");
-
     loadStatsBar(totalCount, toolCount);
     loadTrending();
-    loadRecentlyUpdated();
-
-    if (agents.length === 0) {
-      listEl.innerHTML = renderEmptyState(
-        "No agents published yet",
-        "The registry is empty right now — be the first to publish an agent and put it in front of builders on Robinhood Chain.",
-        { href: "publish.html", label: "Publish an agent" }
-      );
-      return;
-    }
-
-    listEl.innerHTML = agents.map(renderAgentRow).join("");
-    observeReveal(listEl);
+    await loadWhatsNew(published);
   } catch (err) {
-    listEl.innerHTML = renderEmptyState(
-      "Couldn't load agents",
-      "Check your Supabase connection and try again."
-    );
-  } finally {
-    listEl.removeAttribute("aria-busy");
+    if (listEl) {
+      listEl.innerHTML = renderEmptyState(
+        "Couldn't load listings",
+        "Check your connection and try again."
+      );
+      listEl.removeAttribute("aria-busy");
+    }
   }
 })();
