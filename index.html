@@ -233,64 +233,31 @@
       </div>
     </div>
 
-    <div class="listing-panel">
+    <!-- Published + edited listings merged into one newest-first timeline
+         (home.js loadWhatsNew). -->
+    <section class="whats-new" id="whats-new" aria-labelledby="whats-new-title">
       <div class="section-head">
-        <h2>Recently published</h2>
-        <span class="section-count" id="agent-count"></span>
+        <h2 id="whats-new-title">What's new</h2>
       </div>
+      <p class="whats-new-lead">Published and updated listings, newest first.</p>
 
-      <div class="agent-list carousel" id="agent-list" aria-busy="true">
+      <div class="wn-timeline" id="wn-list" aria-busy="true">
         <div class="skeleton-row" aria-hidden="true">
           <div class="skeleton-block skeleton-name"></div>
           <div class="skeleton-block skeleton-line"></div>
           <div class="skeleton-block skeleton-line skeleton-line--short"></div>
-          <div class="skeleton-tags">
-            <div class="skeleton-block skeleton-tag"></div>
-            <div class="skeleton-block skeleton-tag"></div>
-          </div>
         </div>
         <div class="skeleton-row" aria-hidden="true">
           <div class="skeleton-block skeleton-name"></div>
           <div class="skeleton-block skeleton-line"></div>
           <div class="skeleton-block skeleton-line skeleton-line--short"></div>
-          <div class="skeleton-tags">
-            <div class="skeleton-block skeleton-tag"></div>
-            <div class="skeleton-block skeleton-tag"></div>
-          </div>
         </div>
-        <div class="skeleton-row" aria-hidden="true">
-          <div class="skeleton-block skeleton-name"></div>
-          <div class="skeleton-block skeleton-line"></div>
-          <div class="skeleton-block skeleton-line skeleton-line--short"></div>
-          <div class="skeleton-tags">
-            <div class="skeleton-block skeleton-tag"></div>
-            <div class="skeleton-block skeleton-tag"></div>
-          </div>
-        </div>
-        <div class="skeleton-row" aria-hidden="true">
-          <div class="skeleton-block skeleton-name"></div>
-          <div class="skeleton-block skeleton-line"></div>
-          <div class="skeleton-block skeleton-line skeleton-line--short"></div>
-          <div class="skeleton-tags">
-            <div class="skeleton-block skeleton-tag"></div>
-            <div class="skeleton-block skeleton-tag"></div>
-          </div>
-        </div>
-        <span class="sr-only">Loading agents…</span>
+        <span class="sr-only">Loading recent listings…</span>
       </div>
 
       <div class="listing-panel-actions">
-        <a class="btn" href="search.html">View all agents</a>
+        <a class="btn" href="search.html">View all listings</a>
       </div>
-    </div>
-
-    <!-- Listings their builders edited in the last 30 days (Edit listing on
-         status.html). Hidden until home.js has at least one to show. -->
-    <section class="recent-updates-section" id="recent-updates-section" hidden>
-      <div class="section-head">
-        <h2>Recently updated</h2>
-      </div>
-      <ul class="recent-updates-list" id="recent-updates-list"></ul>
     </section>
 
     <div class="section-head reveal" id="how-it-works">
