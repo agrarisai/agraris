@@ -4267,5 +4267,132 @@ html::after {
 @media (prefers-reduced-motion: reduce) {
   html::after {
     animation: none;
+
+/* ---------- home carousels (Trending / Recently published) ---------- */
+
+.carousel {
+  flex-direction: row;
+  gap: 14px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-padding-left: 2px;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  margin: 0 -4px;
+  padding: 6px 4px 14px;
+}
+
+.carousel::-webkit-scrollbar {
+  display: none;
+}
+
+.carousel > .agent-row,
+.carousel > .skeleton-row {
+  flex: 0 0 min(82%, 330px);
+  scroll-snap-align: start;
+}
+
+.carousel > .agent-row {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 22px 20px 18px;
+  border-radius: 12px;
+  background: linear-gradient(160deg, var(--panel) 0%, var(--cream) 140%);
+  border-color: var(--line);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.5) inset,
+    0 6px 18px rgba(var(--shadow-rgb), 0.1);
+  overflow: hidden;
+}
+
+.carousel > .agent-row::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--green), rgba(var(--green-rgb), 0.15));
+}
+
+.carousel > .agent-row:hover {
+  transform: translateY(-3px);
+  border-color: var(--green);
+  box-shadow: 0 12px 26px rgba(var(--shadow-rgb), 0.18);
+}
+
+.carousel .agent-row-top {
+  margin: 0;
+}
+
+.carousel .agent-name {
+  font-size: 20px;
+  letter-spacing: -0.01em;
+}
+
+.carousel .agent-desc {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  margin: 2px 0 10px;
+  line-height: 1.55;
+}
+
+.carousel .agent-meta {
+  margin-top: auto;
+  padding-top: 12px;
+  border-top: 1px solid var(--line-soft);
+  flex-wrap: nowrap;
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(90deg, #000 85%, transparent);
+  mask-image: linear-gradient(90deg, #000 85%, transparent);
+}
+
+.carousel .agent-meta .tag {
+  flex: 0 0 auto;
+}
+
+.carousel > .trending-card {
+  padding-right: 20px;
+}
+
+.carousel .trending-rank {
+  top: 14px;
+  right: 14px;
+  padding: 5px 9px;
+  border-radius: 999px;
+  font-size: 10px;
+  letter-spacing: 0.04em;
+}
+
+.carousel .trending-card .agent-row-top {
+  padding-right: 40px;
+}
+
+.carousel-dots {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 2px;
+}
+
+.carousel-dots i {
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--line);
+  transition: width 0.2s ease, background 0.2s ease;
+}
+
+.carousel-dots i.on {
+  width: 18px;
+  background: var(--green);
+}
+
+@media (min-width: 900px) {
+  .carousel > .agent-row,
+  .carousel > .skeleton-row {
+    flex-basis: 320px;
   }
 }

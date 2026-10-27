@@ -172,8 +172,31 @@ async function loadRecentlyUpdated() {
   sectionEl.hidden = listEl.children.length === 0;
 }
 
+// Turns a .carousel list into a swipeable strip with progress dots.
+function initCarousel(listEl) {
+  if (!listEl || listEl.dataset.carousel) return;
+  listEl.dataset.carousel = "1";
+  const dots = document.createElement("div");
+  dots.className = "carousel-dots";
+  dots.setAttribute("aria-hidden", "true");
+  listEl.insertAdjacentElement("afterend", dots);
+  const update = () => {
+    const cards = Array.from(listEl.querySelectorAll(".agent-row"));
+    if (cards.length < 2) { dots.innerHTML = ""; return; }
+    const max = listEl.scrollWidth - listEl.clientWidth;
+    const idx = max <= 4 ? 0 : Math.round((listEl.scrollLeft / max) * (cards.length - 1));
+    dots.innerHTML = cards.map((_, i) => `<i${i === idx ? ' class="on"' : ""}></i>`).join("");
+  };
+  listEl.addEventListener("scroll", () => requestAnimationFrame(update), { passive: true });
+  new MutationObserver(update).observe(listEl, { childList: true });
+  window.addEventListener("resize", update);
+  update();
+}
+
 (async function () {
   const listEl = document.getElementById("agent-list");
+  initCarousel(document.getElementById("trending-list"));
+  initCarousel(listEl);
   const countEl = document.getElementById("agent-count");
 
   const RECENT_LIMIT = 4;
