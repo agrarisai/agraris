@@ -4743,3 +4743,14 @@ html::after {
     letter-spacing: 0.06em;
   }
 }
+
+/* Carousel must never trap vertical page scrolling: no inner vertical
+   scroll area, no scroll chaining lock, and proximity (not mandatory) snap
+   so a diagonal swipe falls through to the page. */
+.carousel {
+  overflow-y: hidden;
+  overscroll-behavior-x: contain;
+  overscroll-behavior-y: auto;
+  touch-action: pan-x pan-y pinch-zoom;
+  scroll-snap-type: x proximity;
+}
