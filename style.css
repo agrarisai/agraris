@@ -5093,3 +5093,46 @@ html::after {
 .section-link:hover {
   text-decoration: underline;
 }
+
+/* What's new: clearer day labels and separated items. */
+.wn-day {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 26px 0 12px;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  color: var(--text-green-dark);
+  opacity: 1;
+}
+
+.wn-day::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--line);
+}
+
+.wn-day::before {
+  top: 50%;
+  margin-top: -5px;
+  width: 10px;
+  height: 10px;
+}
+
+.wn-item {
+  margin: 0 0 10px;
+  padding: 14px 16px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(var(--shadow-rgb), 0.06);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.wn-item:hover {
+  background: var(--panel);
+  border-color: var(--green);
+  box-shadow: 0 6px 16px rgba(var(--shadow-rgb), 0.12);
+}
