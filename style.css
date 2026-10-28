@@ -5346,3 +5346,34 @@ html::after {
   }
   .section-head--topic::before { width: 52px; height: 4px; top: -2px; }
 }
+
+/* menu: Guide, Watchlist, Compare join the big list, right after Stats */
+.menu-panel > a:nth-of-type(6),
+.menu-panel > a:nth-of-type(8),
+.menu-panel > a:nth-of-type(9) {
+  grid-column: 1 / -1;
+  order: 2;
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  font-family: var(--font-display);
+  font-size: 24px;
+  font-weight: 500;
+  line-height: 1.15;
+  padding: 11px 0;
+  border-bottom: 1px solid var(--line-soft);
+  opacity: 1;
+}
+.menu-panel > a:nth-of-type(6)::after,
+.menu-panel > a:nth-of-type(8)::after,
+.menu-panel > a:nth-of-type(9)::after {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 400;
+  opacity: 0.5;
+}
+.menu-panel > a:nth-of-type(6)::after { content: "08"; }
+.menu-panel > a:nth-of-type(8)::after { content: "09"; }
+.menu-panel > a:nth-of-type(9)::after { content: "10"; }
+.menu-panel > a:nth-of-type(13) { margin-bottom: 0; }
+.menu-panel > a:nth-of-type(9) { margin-bottom: 18px; }
