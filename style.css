@@ -5478,3 +5478,17 @@ html::after {
     background: transparent;
   }
 }
+
+/* ---------- menu: landscape photo background ---------- */
+.menu-panel {
+  background:
+    linear-gradient(to bottom, rgba(232, 220, 200, 0.95) 0%, rgba(232, 220, 200, 0.86) 50%, rgba(232, 220, 200, 0.4) 100%),
+    url("images/hero-light.webp") 72% bottom / cover no-repeat,
+    var(--cream);
+}
+:root[data-theme="dark"] .menu-panel {
+  background:
+    linear-gradient(to bottom, rgba(20, 28, 22, 0.94) 0%, rgba(20, 28, 22, 0.8) 50%, rgba(20, 28, 22, 0.35) 100%),
+    url("images/hero-dark.webp") 72% bottom / cover no-repeat,
+    var(--cream);
+}
