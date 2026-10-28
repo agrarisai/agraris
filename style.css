@@ -5136,3 +5136,35 @@ html::after {
   border-color: var(--green);
   box-shadow: 0 6px 16px rgba(var(--shadow-rgb), 0.12);
 }
+
+/* What's new cards: same premium treatment as the Trending cards
+   (gradient surface, green accent bar, soft shadow). */
+.wn-item {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(160deg, var(--panel) 0%, var(--cream) 140%);
+  border-color: var(--line);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.5) inset,
+    0 6px 18px rgba(var(--shadow-rgb), 0.1);
+}
+
+.wn-item::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--green), rgba(var(--green-rgb), 0.15));
+}
+
+.wn-item:hover {
+  background: linear-gradient(160deg, var(--panel) 0%, var(--cream) 140%);
+  border-color: var(--green);
+  box-shadow: 0 12px 26px rgba(var(--shadow-rgb), 0.18);
+  transform: translateY(-2px);
+}
+
+.wn-item {
+  padding-top: 17px;
+}
