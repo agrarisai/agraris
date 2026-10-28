@@ -5277,3 +5277,46 @@ html::after {
   padding: 22px 0 0;
 }
 .menu-social svg { width: 24px; height: 24px; }
+
+/* ---------- how it works: timeline (phones) ---------- */
+@media (max-width: 560px) {
+  .how-it-works {
+    position: relative;
+    gap: 0;
+    padding-left: 56px;
+    margin: 12px 0 36px;
+  }
+  .how-it-works::before {
+    content: "";
+    position: absolute;
+    left: 19px;
+    top: 20px;
+    bottom: 20px;
+    width: 2px;
+    background: linear-gradient(var(--green), rgba(var(--green-rgb), 0.15));
+  }
+  .how-step,
+  .how-step:first-child {
+    position: relative;
+    padding: 0 0 30px;
+    border: none;
+  }
+  .how-step:last-child { padding-bottom: 0; }
+  .how-step-num {
+    position: absolute;
+    left: -56px;
+    top: 0;
+    width: 40px;
+    height: 40px;
+    margin: 0;
+    border-radius: 50%;
+    background: var(--green);
+    color: var(--on-green);
+    display: grid;
+    place-items: center;
+    font-size: 17px;
+    box-shadow: 0 0 0 6px rgba(var(--green-rgb), 0.14);
+  }
+  .how-step-title { font-size: 20px; margin-bottom: 6px; padding-top: 2px; }
+  .how-step-desc { font-size: 13px; line-height: 1.65; opacity: 0.82; }
+}
