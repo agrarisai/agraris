@@ -5377,3 +5377,104 @@ html::after {
 .menu-panel > a:nth-of-type(9)::after { content: "10"; }
 .menu-panel > a:nth-of-type(13) { margin-bottom: 0; }
 .menu-panel > a:nth-of-type(9) { margin-bottom: 18px; }
+
+/* ---------- hero: photo landscape, left aligned ---------- */
+.hero {
+  position: relative;
+  overflow: visible;
+  text-align: left;
+  padding: 34px 0 150px;
+}
+.hero::before {
+  content: "";
+  position: absolute;
+  z-index: 0;
+  top: -14px;
+  bottom: -90px;
+  left: 50%;
+  width: 100vw;
+  margin-left: -50vw;
+  background: url("images/hero-light.webp") 72% bottom / cover no-repeat;
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 20%, #000 84%, transparent 100%);
+  mask-image: linear-gradient(to bottom, transparent 0, #000 20%, #000 84%, transparent 100%);
+  pointer-events: none;
+}
+:root[data-theme="dark"] .hero::before {
+  background-image: url("images/hero-dark.webp");
+}
+.hero > * { position: relative; z-index: 1; }
+.hero h1 {
+  margin: 0 0 14px;
+  font-size: 40px;
+  line-height: 1.08;
+  text-wrap: balance;
+}
+.hero p.tagline {
+  margin: 0 0 24px;
+  max-width: 31ch;
+  opacity: 0.78;
+}
+.hero-actions {
+  max-width: 290px;
+  margin: 0;
+}
+.stats-bar {
+  position: relative;
+  z-index: 2;
+  background: color-mix(in srgb, var(--panel) 86%, transparent);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+}
+@media (max-width: 560px) {
+  .hero { padding: 28px 0 140px; }
+  .hero h1 { font-size: 36px; }
+  .hero p.tagline { font-size: 15px; max-width: 30ch; }
+  .hero-actions { max-width: 270px; }
+}
+@media (min-width: 900px) {
+  .hero { padding-bottom: 170px; }
+  .hero::before { background-position: 70% 74%; }
+  .hero h1 { font-size: 52px; }
+}
+
+/* ---------- hero: editorial polish (matches the reference) ---------- */
+.hero-eyebrow {
+  display: block;
+  margin: 0 0 14px;
+  font-size: 12px;
+  letter-spacing: 0.18em;
+  color: var(--ink);
+  opacity: 0.7;
+}
+.hero-eyebrow span { display: none; }
+.hero h1 {
+  font-size: 44px;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  max-width: 12ch;
+}
+.hero-actions .btn-solid::after {
+  content: "\2192";
+  margin-left: 10px;
+}
+.hero-actions .btn-ghost {
+  background: color-mix(in srgb, var(--cream) 38%, transparent);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  color: var(--ink);
+  border: 1.5px solid color-mix(in srgb, var(--ink) 55%, transparent);
+}
+.hero-actions .btn-ghost:hover {
+  background: var(--green);
+  border-color: var(--green);
+  color: var(--on-green);
+}
+@media (max-width: 560px) {
+  .hero h1 { font-size: 42px; }
+  .theme-toggle,
+  .cmdk-trigger,
+  .menu-toggle {
+    border-color: transparent;
+    background: transparent;
+  }
+}
