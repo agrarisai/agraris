@@ -5081,3 +5081,15 @@ html::after {
 .footer-brand img {
   border-radius: 22%;
 }
+
+/* "View all →" link on the right of a section heading (home Trending). */
+.section-link {
+  font-size: 12px;
+  color: var(--text-green-dark);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.section-link:hover {
+  text-decoration: underline;
+}
