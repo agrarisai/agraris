@@ -186,6 +186,10 @@
 
     const initialQuery = new URLSearchParams(window.location.search).get("q");
     if (initialQuery) searchInput.value = initialQuery;
+    // search.html?sort=stars (the Trending "View all" link on the home page).
+    if (new URLSearchParams(window.location.search).get("sort") === "stars") {
+      sortInput.value = "stars";
+    }
     applyFilters();
   } catch (err) {
     listEl.innerHTML = renderEmptyState(
