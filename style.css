@@ -5377,3 +5377,62 @@ html::after {
 .menu-panel > a:nth-of-type(9)::after { content: "10"; }
 .menu-panel > a:nth-of-type(13) { margin-bottom: 0; }
 .menu-panel > a:nth-of-type(9) { margin-bottom: 18px; }
+
+/* ---------- hero: photo landscape, left aligned ---------- */
+.hero {
+  position: relative;
+  overflow: visible;
+  text-align: left;
+  padding: 34px 0 150px;
+}
+.hero::before {
+  content: "";
+  position: absolute;
+  z-index: 0;
+  top: -14px;
+  bottom: -90px;
+  left: 50%;
+  width: 100vw;
+  margin-left: -50vw;
+  background: url("images/hero-light.webp") 72% bottom / cover no-repeat;
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 20%, #000 84%, transparent 100%);
+  mask-image: linear-gradient(to bottom, transparent 0, #000 20%, #000 84%, transparent 100%);
+  pointer-events: none;
+}
+:root[data-theme="dark"] .hero::before {
+  background-image: url("images/hero-dark.webp");
+}
+.hero > * { position: relative; z-index: 1; }
+.hero h1 {
+  margin: 0 0 14px;
+  font-size: 40px;
+  line-height: 1.08;
+  text-wrap: balance;
+}
+.hero p.tagline {
+  margin: 0 0 24px;
+  max-width: 31ch;
+  opacity: 0.78;
+}
+.hero-actions {
+  max-width: 290px;
+  margin: 0;
+}
+.stats-bar {
+  position: relative;
+  z-index: 2;
+  background: color-mix(in srgb, var(--panel) 86%, transparent);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+}
+@media (max-width: 560px) {
+  .hero { padding: 28px 0 140px; }
+  .hero h1 { font-size: 36px; }
+  .hero p.tagline { font-size: 15px; max-width: 30ch; }
+  .hero-actions { max-width: 270px; }
+}
+@media (min-width: 900px) {
+  .hero { padding-bottom: 170px; }
+  .hero::before { background-position: 70% 74%; }
+  .hero h1 { font-size: 52px; }
+}
