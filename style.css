@@ -5436,3 +5436,45 @@ html::after {
   .hero::before { background-position: 70% 74%; }
   .hero h1 { font-size: 52px; }
 }
+
+/* ---------- hero: editorial polish (matches the reference) ---------- */
+.hero-eyebrow {
+  display: block;
+  margin: 0 0 14px;
+  font-size: 12px;
+  letter-spacing: 0.18em;
+  color: var(--ink);
+  opacity: 0.7;
+}
+.hero-eyebrow span { display: none; }
+.hero h1 {
+  font-size: 44px;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  max-width: 12ch;
+}
+.hero-actions .btn-solid::after {
+  content: "\2192";
+  margin-left: 10px;
+}
+.hero-actions .btn-ghost {
+  background: color-mix(in srgb, var(--cream) 38%, transparent);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  color: var(--ink);
+  border: 1.5px solid color-mix(in srgb, var(--ink) 55%, transparent);
+}
+.hero-actions .btn-ghost:hover {
+  background: var(--green);
+  border-color: var(--green);
+  color: var(--on-green);
+}
+@media (max-width: 560px) {
+  .hero h1 { font-size: 42px; }
+  .theme-toggle,
+  .cmdk-trigger,
+  .menu-toggle {
+    border-color: transparent;
+    background: transparent;
+  }
+}
