@@ -5168,3 +5168,112 @@ html::after {
 .wn-item {
   padding-top: 17px;
 }
+
+/* ---------- full-screen menu (editorial) ---------- */
+.menu-overlay { display: none; }
+
+.menu-panel {
+  inset: 0;
+  width: auto;
+  border-left: none;
+  background: var(--cream);
+  display: grid;
+  grid-template-columns: repeat(3, auto);
+  justify-content: stretch;
+  align-content: start;
+  gap: 0 14px;
+  padding: 18px 28px 32px;
+  transform: none;
+  opacity: 0;
+  box-shadow: none;
+  transition: opacity 0.2s ease, visibility 0s linear 0.2s;
+  counter-reset: mn;
+}
+.menu-panel.is-open {
+  opacity: 1;
+  box-shadow: none;
+  transition: opacity 0.2s ease, visibility 0s;
+}
+.menu-panel > * { grid-column: 1 / -1; }
+.menu-panel-head { margin-bottom: 14px; }
+.menu-panel-title { font-size: 18px; color: var(--text-green); }
+.menu-close { font-size: 22px; opacity: 0.7; }
+.menu-group-label, .menu-sep { display: none; }
+
+/* small links: 3-column mono grid */
+.menu-panel > a {
+  grid-column: auto;
+  order: 3;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  padding: 7px 0;
+  border-bottom: none;
+  opacity: 0.8;
+}
+.menu-panel > a:first-of-type { margin-top: 0; }
+
+/* big links: Home, Search, Tools, Wanted, Builders, Token, Stats */
+.menu-panel > a:nth-of-type(1),
+.menu-panel > a:nth-of-type(2),
+.menu-panel > a:nth-of-type(3),
+.menu-panel > a:nth-of-type(5),
+.menu-panel > a:nth-of-type(7),
+.menu-panel > a:nth-of-type(10),
+.menu-panel > a:nth-of-type(13) {
+  grid-column: 1 / -1;
+  order: 1;
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  font-family: var(--font-display);
+  font-size: 24px;
+  font-weight: 500;
+  line-height: 1.15;
+  padding: 11px 0;
+  border-bottom: 1px solid var(--line-soft);
+  opacity: 1;
+  counter-increment: mn;
+}
+.menu-panel > a:nth-of-type(1)::after,
+.menu-panel > a:nth-of-type(2)::after,
+.menu-panel > a:nth-of-type(3)::after,
+.menu-panel > a:nth-of-type(5)::after,
+.menu-panel > a:nth-of-type(7)::after,
+.menu-panel > a:nth-of-type(10)::after,
+.menu-panel > a:nth-of-type(13)::after {
+  content: "0" counter(mn);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 400;
+  opacity: 0.5;
+}
+.menu-panel > a.active { color: var(--text-green); font-weight: 600; }
+.menu-panel > a:nth-of-type(13) { margin-bottom: 18px; }
+
+/* spacing before the small-link grid */
+.menu-panel > a:nth-of-type(8) { margin-top: 0; }
+
+/* Publish = primary green button */
+.menu-panel > a:nth-of-type(4) {
+  grid-column: 1 / -1;
+  order: 5;
+  margin-top: 26px;
+  text-align: center;
+  background: var(--green);
+  color: var(--on-green);
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 600;
+  padding: 14px;
+  border-radius: 12px;
+  opacity: 1;
+}
+.menu-panel > a:nth-of-type(4):hover { background: var(--green-dark); color: var(--on-green); }
+
+.menu-social {
+  order: 6;
+  justify-content: center;
+  gap: 22px;
+  padding: 22px 0 0;
+}
+.menu-social svg { width: 24px; height: 24px; }
