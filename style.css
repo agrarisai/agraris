@@ -5492,3 +5492,117 @@ html::after {
     url("images/hero-dark.webp") 72% bottom / cover no-repeat,
     var(--cream);
 }
+
+/* ---------- GitHub activity (label, detail strip, Most active) ----------
+   Code activity only: neutral wording, no judgement. */
+.act-on {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+  color: var(--text-green);
+}
+.act-on i {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--green);
+  display: inline-block;
+}
+.activity-strip {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 10px 0 2px;
+  font-size: 13px;
+  color: var(--text-green);
+}
+.activity-strip.quiet {
+  color: inherit;
+  opacity: 0.65;
+}
+.activity-bars {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 3px;
+  height: 15px;
+}
+.activity-bars i {
+  width: 5px;
+  border-radius: 1px;
+  background: var(--line);
+  display: block;
+}
+.activity-bars i.on {
+  background: var(--green);
+}
+.activity-note {
+  font-size: 11.5px;
+  opacity: 0.6;
+  margin: 4px 0 8px;
+}
+.most-active {
+  margin-top: 8px;
+}
+.most-active-note {
+  pointer-events: none;
+}
+.ma-list {
+  display: grid;
+}
+.ma-row {
+  display: grid;
+  grid-template-columns: 28px 1fr 84px;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--line-soft);
+  color: inherit;
+  text-decoration: none;
+}
+.ma-row:active {
+  opacity: 0.75;
+}
+.ma-rank {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  opacity: 0.55;
+}
+.ma-name {
+  display: flex;
+  flex-direction: column;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 17px;
+  color: var(--ink);
+  min-width: 0;
+}
+:root[data-theme="dark"] .ma-name {
+  color: inherit;
+}
+.ma-name small {
+  font-family: var(--font-mono);
+  font-weight: 400;
+  font-size: 11.5px;
+  opacity: 0.65;
+  margin-top: 2px;
+}
+.ma-bar {
+  height: 6px;
+  border-radius: 9px;
+  background: var(--line-soft);
+  overflow: hidden;
+}
+.ma-bar b {
+  display: block;
+  height: 100%;
+  background: var(--green);
+  border-radius: 9px;
+}
+.ma-footnote {
+  font-size: 11.5px;
+  opacity: 0.6;
+  margin: 10px 0 24px;
+}

@@ -165,6 +165,49 @@ function renderEmptyState(title, body, cta = null) {
 const AGENT_COLUMNS =
   "id, name, description, version, repo_url, category, demo_url, created_at, verified, github_stars, github_updated_at, contract_address, kind, live_status, live_checked_at";
 
+// GitHub activity (commits in the last 7 days) lives in its own column,
+// github_activity, filled daily by the "Generate feeds" workflow
+// (scripts/update-github-stats.js). It is fetched separately from
+// AGENT_COLUMNS on purpose: if the column does not exist yet, this fails
+// quietly and every page works exactly as before, just without the
+// activity label. Code activity only: not proof of usage, not an
+// endorsement.
+const activityById = {};
+let activityPromise = null;
+
+function normalizeActivity(value) {
+  if (!value || typeof value !== "object") return null;
+  const c7 = Number(value.c7);
+  if (!Number.isFinite(c7) || c7 < 0) return null;
+  const d = Array.isArray(value.d) ? value.d.slice(0, 7).map((n) => Math.max(0, Number(n) || 0)) : [];
+  while (d.length < 7) d.unshift(0);
+  const last = typeof value.last === "string" && !Number.isNaN(new Date(value.last).getTime()) ? value.last : null;
+  return { c7: Math.floor(c7), d, last };
+}
+
+function loadActivity() {
+  if (!activityPromise) {
+    activityPromise = (async () => {
+      try {
+        const { data, error } = await supabaseClient.from("agents").select("id, github_activity");
+        if (error || !Array.isArray(data)) return;
+        for (const row of data) {
+          const a = normalizeActivity(row.github_activity);
+          if (a) activityById[row.id] = a;
+        }
+      } catch {
+        /* activity is optional */
+      }
+    })();
+  }
+  return activityPromise;
+}
+
+function getActivity(agentOrId) {
+  const id = typeof agentOrId === "string" ? agentOrId : agentOrId && agentOrId.id;
+  return (id && activityById[id]) || null;
+}
+
 // Fetch agents from Supabase, newest first.
 async function fetchAgents({ search = "", category = "", limit = null } = {}) {
   let query = supabaseClient
@@ -194,6 +237,7 @@ async function fetchAgents({ search = "", category = "", limit = null } = {}) {
     throw error;
   }
 
+  await loadActivity();
   return data || [];
 }
 
@@ -212,6 +256,8 @@ async function fetchAgentsByCategory(category) {
     console.error("Gagal mengambil data agent berdasarkan kategori:", error);
     throw error;
   }
+
+  await loadActivity();
 
   return data || [];
 }
@@ -288,6 +334,7 @@ async function fetchAgentById(id) {
     throw error;
   }
 
+  await loadActivity();
   return data;
 }
 
@@ -328,6 +375,8 @@ async function fetchAgentsByIds(ids) {
     console.error("Gagal mengambil data watchlist:", error);
     throw error;
   }
+
+  await loadActivity();
 
   return data || [];
 }
@@ -379,14 +428,38 @@ function renderGithubBadge(agent) {
   const relative = agent.github_updated_at
     ? formatRelativeTime(agent.github_updated_at)
     : "";
+  // A listing with commits in the last 7 days gets a plain "Active this
+  // week" label instead of "Updated X ago". Quiet listings keep "Updated
+  // X ago": no negative wording, and a listing is never an endorsement.
+  const activity = getActivity(agent);
+  const activeLabel =
+    activity && activity.c7 > 0
+      ? `<span class="act-on" title="${activity.c7} commit${activity.c7 === 1 ? "" : "s"} in the last 7 days"><i aria-hidden="true"></i>Active this week</span>`
+      : "";
 
   return `
     <span class="github-badge">
       <span class="github-stat" title="GitHub stars">
         <svg class="github-star-icon" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 .25a.75.75 0 0 1 .673.418l1.882 3.815 4.21.612a.75.75 0 0 1 .416 1.279l-3.046 2.97.719 4.192a.75.75 0 0 1-1.088.791L8 12.347l-3.766 1.98a.75.75 0 0 1-1.088-.79l.72-4.194L.818 6.374a.75.75 0 0 1 .416-1.28l4.21-.611L7.327.668A.75.75 0 0 1 8 .25z"/></svg>${formatGithubStars(agent.github_stars)}
-      </span>${relative ? `<span class="github-updated">${escapeHtml(relative)}</span>` : ""}
+      </span>${activeLabel || (relative ? `<span class="github-updated">${escapeHtml(relative)}</span>` : "")}
     </span>
   `;
+}
+
+// 7-day activity strip for the detail page: one bar per day (oldest first,
+// today last) plus a plain sentence. Returns "" when there is no data.
+function renderActivityStrip(agent) {
+  const a = getActivity(agent);
+  if (!a) return "";
+  const max = Math.max(1, ...a.d);
+  const bars = a.d
+    .map((n) => `<i class="${n ? "on" : ""}" style="height:${3 + Math.round((11 * n) / max)}px" title="${n} commit${n === 1 ? "" : "s"}"></i>`)
+    .join("");
+  const text =
+    a.c7 > 0
+      ? `${a.c7}${a.c7 >= 100 ? "+" : ""} commit${a.c7 === 1 ? "" : "s"} this week${a.last ? ` · last commit ${escapeHtml(formatRelativeTime(a.last).replace(/^Updated /, ""))}` : ""}`
+      : "No commits in the last 7 days";
+  return `<div class="activity-strip${a.c7 > 0 ? "" : " quiet"}" aria-label="GitHub activity, last 7 days"><span class="activity-bars" aria-hidden="true">${bars}</span><span>${text}</span></div><p class="activity-note">Code activity only. It does not show usage, and a listing is not an endorsement.</p>`;
 }
 
 // ============================================

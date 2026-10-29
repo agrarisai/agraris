@@ -234,6 +234,17 @@
       </div>
     </div>
 
+    <!-- Listings with commits in the last 7 days (home.js loadMostActive).
+         Hidden when there is nothing to show. Code activity only. -->
+    <section class="most-active" id="most-active" aria-labelledby="most-active-title" hidden>
+      <div class="section-head">
+        <h2 id="most-active-title">Most active this week</h2>
+        <span class="section-link most-active-note">Updated daily</span>
+      </div>
+      <div class="ma-list" id="ma-list"></div>
+      <p class="ma-footnote">Code activity only. A listing is not an endorsement.</p>
+    </section>
+
     <!-- Published + edited listings merged into one newest-first timeline
          (home.js loadWhatsNew). -->
     <section class="whats-new" id="whats-new" aria-labelledby="whats-new-title">
