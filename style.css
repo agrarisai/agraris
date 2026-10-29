@@ -5606,3 +5606,45 @@ html::after {
   opacity: 0.6;
   margin: 10px 0 24px;
 }
+
+/* ---------- Most active: each listing is its own card, names differ from
+   the section heading (mono semibold vs the big serif heading) ---------- */
+.ma-list {
+  gap: 10px;
+  margin-top: 6px;
+}
+.ma-row {
+  grid-template-columns: 34px 1fr 72px;
+  padding: 14px 16px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--panel);
+}
+.ma-row:hover {
+  border-color: var(--green);
+}
+.ma-rank {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-green);
+  opacity: 1;
+}
+.ma-name {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  font-size: 15px;
+  letter-spacing: -0.01em;
+  color: var(--text-green-dark, var(--text-green));
+}
+:root[data-theme="dark"] .ma-name {
+  color: var(--text-green);
+}
+.ma-name small {
+  font-weight: 400;
+  font-size: 11.5px;
+  color: var(--ink);
+  opacity: 0.6;
+}
+:root[data-theme="dark"] .ma-name small {
+  color: inherit;
+}
