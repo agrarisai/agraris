@@ -495,6 +495,7 @@ function initReportAgent(root, agentId) {
           ${renderGithubBadge(agent)}
           ${renderLiveBadge(agent)}
         </div>
+        ${renderActivityStrip(agent)}
         ${liveCheckInfo(agent) ? `<p class="live-note">Demo check: ${escapeHtml(LIVE_CHECK_NOTE)}</p>` : ""}
         ${
           ownerSignedText(agent)

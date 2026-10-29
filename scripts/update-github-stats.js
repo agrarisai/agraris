@@ -25,6 +25,7 @@
 //                                menyediakan token ini lewat secrets.GITHUB_TOKEN.
 
 const { createClient } = require("@supabase/supabase-js");
+const { summarizeCommits } = require("./activity-lib");
 
 const SUPABASE_URL = process.env.SUPABASE_URL;
 const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -80,6 +81,21 @@ async function fetchGithubRepoInfo(owner, repo) {
   };
 }
 
+// Commit 7 hari terakhir di branch default. Repo kosong (409) atau gagal
+// membaca = null: aktivitas dilewati, bintang tetap diperbarui.
+async function fetchGithubActivity(owner, repo) {
+  const headers = { Accept: "application/vnd.github+json" };
+  if (GITHUB_TOKEN) headers.Authorization = `Bearer ${GITHUB_TOKEN}`;
+  const since = new Date(Date.now() - 7 * 86400000).toISOString();
+  const res = await fetch(
+    `https://api.github.com/repos/${owner}/${repo}/commits?since=${encodeURIComponent(since)}&per_page=100`,
+    { headers }
+  );
+  if (res.status === 409) return summarizeCommits([]);
+  if (!res.ok) throw new Error(`GitHub commits API responded ${res.status} for ${owner}/${repo}`);
+  return summarizeCommits(await res.json());
+}
+
 async function main() {
   const { data: agents, error } = await supabase
     .from("agents")
@@ -114,6 +130,19 @@ async function main() {
 
       if (updateError) {
         throw new Error(`Supabase update failed: ${updateError.message}`);
+      }
+
+      // Aktivitas terpisah dan tidak fatal: kolom github_activity mungkin
+      // belum ada (migrasi belum dijalankan) atau commit gagal dibaca.
+      try {
+        const activity = await fetchGithubActivity(parsed.owner, parsed.repo);
+        const { error: actError } = await supabase
+          .from("agents")
+          .update({ github_activity: activity })
+          .eq("id", agent.id);
+        if (actError) throw new Error(actError.message);
+      } catch (actErr) {
+        console.warn(`Activity skipped for ${parsed.owner}/${parsed.repo}: ${actErr.message}`);
       }
 
       updated++;

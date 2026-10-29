@@ -127,6 +127,48 @@ async function loadTrending() {
   }
 }
 
+// "Most active this week": listings with commits in the last 7 days, most
+// commits first (top 5). GitHub activity is filled daily by the "Generate
+// feeds" workflow. Hidden when nothing qualifies or the column is missing.
+// Code activity only: it does not show usage and is not an endorsement.
+async function loadMostActive() {
+  const sectionEl = document.getElementById("most-active");
+  const listEl = document.getElementById("ma-list");
+  if (!sectionEl || !listEl) return;
+
+  try {
+    const agents = await fetchAgents();
+    const ranked = agents
+      .map((agent) => ({ agent, activity: getActivity(agent) }))
+      .filter((x) => x.activity && x.activity.c7 > 0)
+      .sort((a, b) => b.activity.c7 - a.activity.c7 || a.agent.name.localeCompare(b.agent.name))
+      .slice(0, 5);
+
+    if (ranked.length === 0) {
+      sectionEl.hidden = true;
+      return;
+    }
+
+    const max = ranked[0].activity.c7;
+    listEl.innerHTML = ranked
+      .map(({ agent, activity }, i) => {
+        const pct = Math.max(6, Math.round((100 * activity.c7) / max));
+        const n = activity.c7;
+        return `
+          <a class="ma-row reveal" data-reveal-stagger href="agent.html?id=${encodeURIComponent(agent.id)}">
+            <span class="ma-rank" aria-hidden="true">${String(i + 1).padStart(2, "0")}</span>
+            <span class="ma-name">${escapeHtml(agent.name)}<small>${n}${n >= 100 ? "+" : ""} commit${n === 1 ? "" : "s"} this week</small></span>
+            <span class="ma-bar" aria-hidden="true"><b style="width:${pct}%"></b></span>
+          </a>`;
+      })
+      .join("");
+    sectionEl.hidden = false;
+    observeReveal(listEl);
+  } catch {
+    sectionEl.hidden = true;
+  }
+}
+
 // "What's new": newly published listings and builder edits merged into one
 // newest-first timeline, grouped Today / This week / Earlier. A listing that
 // was both published and edited keeps only its (newer) newest event.
@@ -264,6 +306,7 @@ function initCarousel(listEl) {
 
     loadStatsBar(totalCount, toolCount);
     loadTrending();
+    loadMostActive();
     await loadWhatsNew(published);
   } catch (err) {
     if (listEl) {
