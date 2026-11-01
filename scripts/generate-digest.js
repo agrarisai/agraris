@@ -6,8 +6,8 @@
 //
 // Alur:
 //   1. Ambil dari Supabase: agent yang tampil 7 hari terakhir
-//      (coalesce(approved_at, created_at)), top 3
-//      agent berdasarkan github_stars, dan total jumlah agent.
+//      (coalesce(approved_at, created_at)), top 5 listing berdasarkan
+//      commit 7 hari (github_activity.c7), dan total jumlah agent.
 //   2. Susun draf singkat berbahasa Inggris (lihat buildDraft()).
 //   3. Tulis draf ke GitHub job summary (halaman run di tab Actions).
 //   4. Kirim draf ke NOTIFY_EMAIL lewat Resend.
@@ -34,11 +34,12 @@
 
 const fs = require("fs");
 const { createClient } = require("@supabase/supabase-js");
+const { normalizeActivity } = require("./activity-lib");
 
 // ---------- pengaturan yang mudah diubah ----------
 
 const LOOKBACK_DAYS = 7;
-const TOP_STARRED_COUNT = 3;
+const TOP_ACTIVE_COUNT = 5;
 const SITE_LABEL = "agraris.xyz";
 const SITE_URL = "https://agraris.xyz/";
 
@@ -117,13 +118,14 @@ async function fetchDigestData(supabase, since) {
       .or(
         `approved_at.gte.${since.toISOString()},and(approved_at.is.null,created_at.gte.${since.toISOString()})`
       ),
+    // Aktivitas commit 7 hari ada di kolom terpisah (github_activity,
+    // supabase/migration-github-activity.sql). Kegagalan di sini tidak
+    // menggagalkan digest: bagian "Most active" cukup dilewati.
     supabase
       .from("agents")
-      .select("id, name, github_stars, kind")
+      .select("id, name, kind, github_activity")
       .eq("approved", true)
-      .not("github_stars", "is", null)
-      .order("github_stars", { ascending: false })
-      .limit(TOP_STARRED_COUNT),
+      .not("github_activity", "is", null),
     // The headline total counts AGENTS only; tools are counted separately
     // (agents.kind, supabase/migration-listing-kind.sql).
     supabase
@@ -138,8 +140,19 @@ async function fetchDigestData(supabase, since) {
       .eq("kind", "tool"),
   ]);
 
-  for (const res of [newRes, topRes, countRes, toolCountRes]) {
+  for (const res of [newRes, countRes, toolCountRes]) {
     if (res.error) throw new Error(`Supabase query failed: ${res.error.message}`);
+  }
+
+  let topActive = [];
+  if (topRes.error) {
+    log(`Skipping "Most active": ${topRes.error.message}`);
+  } else {
+    topActive = (topRes.data ?? [])
+      .map((a) => ({ ...a, c7: (normalizeActivity(a.github_activity) || { c7: 0 }).c7 }))
+      .filter((a) => a.c7 > 0)
+      .sort((a, b) => b.c7 - a.c7 || String(a.name).localeCompare(String(b.name)))
+      .slice(0, TOP_ACTIVE_COUNT);
   }
 
   const publishedAt = (a) => new Date(a.approved_at || a.created_at).getTime();
@@ -147,7 +160,7 @@ async function fetchDigestData(supabase, since) {
 
   return {
     newAgents,
-    topStarred: topRes.data ?? [],
+    topActive,
     total: countRes.count ?? 0,
     tools: toolCountRes.count ?? 0,
   };
@@ -161,7 +174,7 @@ function listingName(a) {
   return a.kind === "tool" ? `${a.name} (tool)` : a.name;
 }
 
-function buildDraft({ rangeLabel, newAgents, topStarred, total, tools = 0 }) {
+function buildDraft({ rangeLabel, newAgents, topActive = [], total, tools = 0 }) {
   const lines = [`Agraris weekly, ${rangeLabel}`, ""];
 
   // Bagian "New this week" dihilangkan kalau tidak ada listing baru.
@@ -171,10 +184,11 @@ function buildDraft({ rangeLabel, newAgents, topStarred, total, tools = 0 }) {
     lines.push("");
   }
 
-  if (topStarred.length > 0) {
-    lines.push("Most starred right now");
-    topStarred.forEach((a) =>
-      lines.push(`- ${listingName(a)} (${a.github_stars.toLocaleString("en-US")} stars)`)
+  // Aktivitas kode saja, bukan bukti pemakaian dan bukan endorsement.
+  if (topActive.length > 0) {
+    lines.push("Most active this week (GitHub commits)");
+    topActive.forEach((a) =>
+      lines.push(`- ${listingName(a)} (${a.c7.toLocaleString("en-US")} commit${a.c7 === 1 ? "" : "s"})`)
     );
     lines.push("");
   }
@@ -305,7 +319,7 @@ async function main() {
 
   const data = await fetchDigestData(supabase, since);
   log(
-    `New this week: ${data.newAgents.length}, top starred: ${data.topStarred.length}, total agents: ${data.total}, total tools: ${data.tools}.`
+    `New this week: ${data.newAgents.length}, most active: ${data.topActive.length}, total agents: ${data.total}, total tools: ${data.tools}.`
   );
 
   const draft = buildDraft({ rangeLabel: formatRange(since, now), ...data });
