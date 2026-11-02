@@ -44,10 +44,11 @@
     msgEl.className = `form-msg${type ? " " + type : ""}`;
   }
 
+  // https:// only, same rule as the database (supabase/migration-harden-insert.sql).
   function isValidUrl(value) {
     try {
-      new URL(value);
-      return true;
+      const url = new URL(value);
+      return url.protocol === "https:" && url.hostname !== "" && !/\s/.test(value);
     } catch {
       return false;
     }
@@ -181,12 +182,12 @@
     }
 
     if (!isValidUrl(repoUrl)) {
-      setMessage("Repo link must be a valid URL.", "error");
+      setMessage("Repo link must be a valid URL starting with https://.", "error");
       return;
     }
 
     if (demoUrl && !isValidUrl(demoUrl)) {
-      setMessage("Demo link must be a valid URL.", "error");
+      setMessage("Demo link must be a valid URL starting with https://.", "error");
       return;
     }
 

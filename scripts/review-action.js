@@ -161,7 +161,7 @@ function matchFilters({ id, name }) {
 
 async function findRows(target, approved) {
   const query = [
-    "select=id,name,repo_url,created_at,kind",
+    "select=id,name,repo_url,demo_url,created_at,kind",
     filter("approved", "eq", approved ? "true" : "false"),
     ...matchFilters(target),
     "order=created_at.asc",
@@ -172,10 +172,10 @@ async function findRows(target, approved) {
 }
 
 function pendingTable(rows) {
-  const lines = ["| Name | Jenis | ID | Repo | Dikirim |", "| --- | --- | --- | --- | --- |"];
+  const lines = ["| Name | Jenis | ID | Repo | Demo | Dikirim |", "| --- | --- | --- | --- | --- | --- |"];
   for (const row of rows) {
     lines.push(
-      `| ${safeMd(row.name, MAX_NAME_LENGTH)} | ${kindLabel(row.kind)} | \`${String(row.id)}\` | ${safeMd(row.repo_url, 200)} | ${formatUtc(row.created_at)} |`
+      `| ${safeMd(row.name, MAX_NAME_LENGTH)} | ${kindLabel(row.kind)} | \`${String(row.id)}\` | ${safeMd(row.repo_url, 200)} | ${row.demo_url ? safeMd(row.demo_url, 200) : "-"} | ${formatUtc(row.created_at)} |`
     );
   }
   return lines.join("\n");
@@ -185,7 +185,7 @@ function pendingTable(rows) {
 
 async function listPending() {
   const query = [
-    "select=id,name,repo_url,created_at,kind",
+    "select=id,name,repo_url,demo_url,created_at,kind",
     filter("approved", "eq", "false"),
     "order=created_at.asc",
     `limit=${LIST_LIMIT}`,

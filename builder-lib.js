@@ -111,7 +111,17 @@
     return parts.join(" · ");
   }
 
+  // Returns the trimmed URL only when it is a plain https:// link without
+  // whitespace, otherwise "". Used before putting a listing's repo_url or
+  // demo_url into an href (blocks javascript:, data: and the like).
+  function safeHttpsUrl(value) {
+    if (typeof value !== "string") return "";
+    const url = value.trim();
+    return /^https:\/\/[^/?#\s]+\S*$/i.test(url) ? url : "";
+  }
+
   return {
+    safeHttpsUrl,
     HANDLE_PATTERN,
     isBuilderHandle,
     normalizeHandle,

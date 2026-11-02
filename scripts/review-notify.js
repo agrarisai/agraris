@@ -103,7 +103,7 @@ async function fetchPending() {
   const query = [
     // wanted(title): judul permintaan Wanted board yang dijawab, lewat FK
     // agents.wanted_id (supabase/migration-wanted.sql).
-    "select=id,name,repo_url,description,created_at,kind,wanted_id,wanted(title)",
+    "select=id,name,repo_url,demo_url,description,created_at,kind,wanted_id,wanted(title)",
     filter("approved", "eq", "false"),
     "notified_at=is.null",
     "order=created_at.asc",
@@ -216,6 +216,7 @@ function buildText(rows, total) {
     lines.push(`   Jenis: ${kindLabel(row.kind)}`);
     lines.push(`   ID: ${row.id}`);
     lines.push(`   Repo: ${safeText(row.repo_url, 200)}`);
+    lines.push(`   Demo: ${row.demo_url ? safeText(row.demo_url, 200) : "(kosong)"}`);
     const answering = answeringLine(row);
     if (answering) lines.push(`   ${answering}`);
     lines.push(`   Dikirim: ${formatUtc(row.created_at)}`);
