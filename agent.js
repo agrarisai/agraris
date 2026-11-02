@@ -51,6 +51,23 @@ function initCopyBadgeButton(root) {
   const codeEl = root.querySelector("#badge-markdown");
   if (!btn || !codeEl) return;
 
+  // A new listing has no badges/<id>.svg until the next daily feed run:
+  // show and copy the generic badge instead of a broken image.
+  const preview = root.querySelector("#badge-preview");
+  if (preview) {
+    preview.addEventListener(
+      "error",
+      () => {
+        preview.src = "badge.svg";
+        preview.removeAttribute("height");
+        preview.width = 150;
+        preview.height = 24;
+        codeEl.textContent = codeEl.textContent.replace(/badges\/[^)]+\.svg/, "badge.svg");
+      },
+      { once: true }
+    );
+  }
+
   const defaultLabel = btn.textContent;
 
   btn.addEventListener("click", () => {
@@ -528,9 +545,9 @@ function initReportAgent(root, agentId) {
       <div class="badge-section reveal">
         <div class="detail-row-label">Add this badge to your README</div>
         <div class="badge-block">
-          <img class="badge-preview" src="badge.svg" width="150" height="24" alt="Listed on Agraris badge" />
+          <img class="badge-preview" id="badge-preview" src="badges/${escapeHtml(agent.id)}.svg" height="22" alt="Listed on Agraris badge" />
           <div class="badge-code-row">
-            <code class="badge-code" id="badge-markdown">[![Listed on Agraris](https://agraris.xyz/badge.svg)](https://agraris.xyz/agent.html?id=${escapeHtml(agent.id)})</code>
+            <code class="badge-code" id="badge-markdown">[![Listed on Agraris](https://agraris.xyz/badges/${escapeHtml(agent.id)}.svg)](https://agraris.xyz/agent.html?id=${escapeHtml(agent.id)})</code>
             <button type="button" class="btn btn-sm" id="copy-badge-btn">Copy markdown</button>
           </div>
         </div>

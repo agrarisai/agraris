@@ -62,14 +62,23 @@ jobs:
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
         run: node scripts/generate-api.js
 
+      # README badges per listing (badges/<id>.svg). Non-fatal: the site
+      # falls back to the generic badge.svg if a file is missing.
+      - name: Generate badges
+        continue-on-error: true
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: node scripts/generate-badges.js
+
       - name: Commit and push generated files
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add rss.xml sitemap.xml api/agents.json
+          git add -A rss.xml sitemap.xml api/agents.json badges
           if git diff --cached --quiet; then
-            echo "No changes to rss.xml, sitemap.xml or api/agents.json"
+            echo "No changes to generated files"
             exit 0
           fi
-          git commit -m "chore: update rss.xml, sitemap.xml and api/agents.json [skip ci]"
+          git commit -m "chore: update rss.xml, sitemap.xml, api/agents.json and badges [skip ci]"
           git push origin HEAD:main
