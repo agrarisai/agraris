@@ -522,10 +522,14 @@ function initReportAgent(root, agentId) {
         <div class="agent-meta">${tags}</div>
         <p class="detail-desc">${escapeHtml(agent.description)}</p>
         <div class="detail-links">
-          <a class="btn btn-solid" href="${escapeHtml(agent.repo_url)}" target="_blank" rel="noopener noreferrer">View repo</a>
           ${
-            agent.demo_url
-              ? `<a class="btn" href="${escapeHtml(agent.demo_url)}" target="_blank" rel="noopener noreferrer">View demo</a>`
+            B.safeHttpsUrl(agent.repo_url)
+              ? `<a class="btn btn-solid" href="${escapeHtml(B.safeHttpsUrl(agent.repo_url))}" target="_blank" rel="noopener noreferrer">View repo</a>`
+              : ""
+          }
+          ${
+            B.safeHttpsUrl(agent.demo_url)
+              ? `<a class="btn" href="${escapeHtml(B.safeHttpsUrl(agent.demo_url))}" target="_blank" rel="noopener noreferrer">View demo</a>`
               : ""
           }
           <button type="button" class="btn" id="copy-link-btn">Copy link</button>

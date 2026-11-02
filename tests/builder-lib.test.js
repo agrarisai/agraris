@@ -145,3 +145,12 @@ test("countText", () => {
   assert.equal(b.countText(0, 3), "3 tools");
   assert.equal(b.countText(0, 0), "");
 });
+
+test("safeHttpsUrl allows only plain https links", () => {
+  const { safeHttpsUrl } = require("../builder-lib.js");
+  assert.equal(safeHttpsUrl("https://github.com/a/b"), "https://github.com/a/b");
+  assert.equal(safeHttpsUrl("  https://example.com/x?y=1#z  "), "https://example.com/x?y=1#z");
+  for (const bad of ["javascript:alert(1)", "JaVaScRiPt:alert(1)", "data:text/html,hi", "http://github.com/a/b", "github.com/a/b", "https://", "https:// a.com", "https://a b.com", "", null, undefined, 5]) {
+    assert.equal(safeHttpsUrl(bad), "", String(bad));
+  }
+});
