@@ -8,6 +8,9 @@
 // created_at): when an agent became public, not when it was submitted.
 // Nothing about pending submissions is fetched or shown.
 //
+// Every figure counts all approved listings (agents and tools together);
+// only the "Agents · tools" tile splits them.
+//
 // Charts are inline SVG drawn in real pixels from the measured container
 // width (and redrawn on resize), so SVG text never shrinks on phones and
 // nothing overflows sideways. Every chart value is also printed as text
@@ -181,11 +184,11 @@ function computeStats(agents, now) {
 
 function renderTiles(s) {
   const tiles = [
-    ["Total agents", fmtCount(s.total)],
+    ["Total listings", fmtCount(s.total)],
     ["Added in the last 7 days", s.lastWeek === null ? NO_DATA : `+${fmtNumber(s.lastWeek)}`],
     ["Added in the last 30 days", s.lastMonth === null ? NO_DATA : `+${fmtNumber(s.lastMonth)}`],
-    // Approved tools only. Every other number on this page counts agents.
-    ["Tools", fmtCount(s.tools)],
+    // The only place agents and tools are split.
+    ["Agents · tools", `${fmtCount(s.agents)} · ${fmtCount(s.tools)}`],
   ];
 
   return `
@@ -212,7 +215,7 @@ function renderGrowth(s) {
     return `
       <section class="stats-section stats-card reveal" aria-labelledby="stats-growth-title">
         ${title}
-        <p class="stats-empty">No agents yet.</p>
+        <p class="stats-empty">No listings yet.</p>
       </section>`;
   }
 
@@ -246,20 +249,20 @@ function renderGrowth(s) {
   return `
     <section class="stats-section stats-card reveal" aria-labelledby="stats-growth-title">
       ${title}
-      <p class="stats-chart-caption">Total agents at the end of each week (weeks start Monday, UTC)</p>
+      <p class="stats-chart-caption">Total listings at the end of each week (weeks start Monday, UTC)</p>
       <div class="stats-chart" id="chart-growth" aria-hidden="true"></div>
       <table class="sr-only">
-        <caption>Total agents per week, last ${g.length} weeks</caption>
+        <caption>Total listings per week, last ${g.length} weeks</caption>
         <thead><tr><th scope="col">Week of</th><th scope="col">Total</th><th scope="col">Added that week</th></tr></thead>
         <tbody>${rows}</tbody>
       </table>
-      <p class="stats-note">Counted from the date an agent was approved (or published, for older listings).</p>
+      <p class="stats-note">Counted from the date a listing was approved (or published, for older listings).</p>
     </section>`;
 }
 
 function renderSummary(s) {
   const items = [
-    ["Verified agents", fmtCount(s.verified)],
+    ["Verified listings", fmtCount(s.verified)],
     ["With an on-chain address", fmtCount(s.withAddress)],
     ["GitHub repo updated in the last 30 days", fmtCount(s.githubRecent)],
   ];
@@ -296,7 +299,7 @@ function renderCategories(s) {
     s.categories.length === 0
       ? `<p class="stats-empty">No categories yet.</p>`
       : `
-        <div class="cat-chart" role="list" aria-label="Agents by category, most first">
+        <div class="cat-chart" role="list" aria-label="Listings by category, most first">
           ${s.categories
             .map((c, i) => `<div class="cat-item" role="listitem"${i >= CATEGORY_PREVIEW_COUNT ? " hidden" : ""}>${renderCategoryRow(c)}</div>`)
             .join("")}
@@ -309,7 +312,7 @@ function renderCategories(s) {
 
   return `
     <section class="stats-section stats-card reveal" aria-labelledby="stats-cat-title">
-      <h3 id="stats-cat-title">Agents by category</h3>
+      <h3 id="stats-cat-title">Listings by category</h3>
       ${body}
       <p class="stats-note">An agent can belong to more than one category.</p>
     </section>`;
@@ -320,7 +323,7 @@ function renderWeekly(s) {
     return `
       <section class="stats-section stats-card reveal" aria-labelledby="stats-week-title">
         <h3 id="stats-week-title">Agents added per week</h3>
-        <p class="stats-empty">No agents yet.</p>
+        <p class="stats-empty">No listings yet.</p>
       </section>`;
   }
 
@@ -344,7 +347,7 @@ function renderWeekly(s) {
           </table>
         </div>
       </details>
-      <p class="stats-note">Counted by approval date. Includes agents added by the Agraris team after review.</p>
+      <p class="stats-note">Counted by approval date. Includes listings added by the Agraris team after review.</p>
     </section>`;
 }
 
@@ -385,9 +388,7 @@ function renderFooterNote(loadedAt, loadedWithTools) {
     <section class="stats-section stats-footnote reveal">
       <p>Agraris is a directory. These numbers describe the registry, not on-chain volume or traction.</p>
       <p class="stats-note">${
-        loadedWithTools
-          ? "All numbers are computed from approved listings only. Agent figures do not include tools."
-          : "All numbers are computed from approved agents only."
+        "All numbers are computed from approved listings only, agents and tools together."
       }</p>
       <p class="stats-asof">Data as of <time datetime="${loadedAt.toISOString()}">${escapeHtml(asOf)}</time></p>
       <div class="stats-copy-row">
@@ -472,7 +473,7 @@ function weekLabel(w) {
   return `Week of ${fmtWeekLong(w.start)}: ${fmtNumber(w.added)} added, ${fmtNumber(w.total)} total`;
 }
 
-// Column chart of agents added per week, full history. (The running
+// Column chart of listings added per week, full history. (The running
 // total is drawn by drawGrowthChart.)
 function drawWeekChart(container, weeks) {
   const W = Math.floor(container.clientWidth);
@@ -491,7 +492,7 @@ function drawWeekChart(container, weeks) {
   const y = (v) => padT + plotH - (v / yMax) * plotH;
   const xCenter = (i) => padL + band * i + band / 2;
 
-  const summary = `Column chart of agents added per week, ${n} week${n === 1 ? "" : "s"}, from the week of ${fmtWeekLong(weeks[0].start)}. Peak: ${fmtNumber(Math.max(...values))} in one week.`;
+  const summary = `Column chart of listings added per week, ${n} week${n === 1 ? "" : "s"}, from the week of ${fmtWeekLong(weeks[0].start)}. Peak: ${fmtNumber(Math.max(...values))} in one week.`;
 
   const svg = svgEl("svg", {
     viewBox: `0 0 ${W} ${H}`,
@@ -657,16 +658,15 @@ function buildWeeklySummary(s) {
   const plural = (n, word) => `${fmtNumber(n)} ${word}${n === 1 ? "" : "s"}`;
   const parts = [];
   if (s.lastWeek === null) {
-    parts.push(`Agraris: ${plural(s.total, "agent")} listed.`);
+    parts.push(`Agraris: ${plural(s.total, "listing")}.`);
   } else {
-    parts.push(`Agraris this week: +${plural(s.lastWeek, "agent")} (${fmtNumber(s.total)} total).`);
+    parts.push(`Agraris this week: +${plural(s.lastWeek, "listing")} (${fmtNumber(s.total)} total).`);
   }
-  // Tools are mentioned only when there are any, so the text is unchanged
-  // until the first tool is approved.
-  if (s.tools > 0) parts.push(`${plural(s.tools, "tool")} listed.`);
+  // Agents and tools are split only when there are tools.
+  if (s.tools > 0) parts.push(`${plural(s.agents, "agent")} and ${plural(s.tools, "tool")}.`);
   const top = [...new Set(s.categories.map((c) => plainTag(c.name)).filter(Boolean))].slice(0, 3);
   if (top.length) parts.push(`Top categories: ${top.join(", ")}.`);
-  parts.push(`${plural(s.withAddress, "agent")} list an on-chain address.`);
+  parts.push(`${plural(s.withAddress, "listing")} list an on-chain address.`);
   parts.push("agraris.xyz/stats");
   return parts.join(" ");
 }
@@ -756,11 +756,11 @@ function initCopyStatsLink(root) {
 (async function () {
   const root = document.getElementById("stats-root");
 
-  // Agents and tools come back in one query and are split right here, so
-  // every figure below (computeStats and everything it feeds) only ever
-  // sees agents. Tools are counted separately for the "Tools" tile. A row
-  // without a kind counts as an agent, like isTool() in app.js.
+  // Agents and tools come back in one query. Every figure counts both
+  // (listings); the split is only kept for the "Agents · tools" tile. A
+  // row without a kind counts as an agent, like isTool() in app.js.
   let agents;
+  let rows;
   let toolCount;
   try {
     const { data, error } = await supabaseClient
@@ -768,7 +768,7 @@ function initCopyStatsLink(root) {
       .select(STATS_COLUMNS)
       .eq("approved", true);
     if (error) throw error;
-    const rows = data || [];
+    rows = data || [];
     agents = rows.filter((row) => row.kind !== "tool");
     toolCount = rows.length - agents.length;
   } catch (err) {
@@ -780,8 +780,9 @@ function initCopyStatsLink(root) {
   }
 
   const loadedAt = new Date();
-  const stats = computeStats(agents, loadedAt);
+  const stats = computeStats(rows, loadedAt);
   stats.tools = toolCount;
+  stats.agents = agents.length;
 
   root.innerHTML = [
     renderTiles(stats),
@@ -794,7 +795,7 @@ function initCopyStatsLink(root) {
       stats.recent,
       (a) => `Approved ${escapeHtml(fmtDate(a.approved_at))}`,
       "Newest approvals first.",
-      "No agents yet."
+      "No listings yet."
     ),
     renderWeekly(stats),
     renderList(
