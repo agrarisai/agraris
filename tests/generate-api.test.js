@@ -23,6 +23,7 @@ const EXPECTED_FIELDS = [
   "approved_at",
   "github_stars",
   "github_updated_at",
+  "github_commits_7d",
   "verified",
   "live_status",
   "live_checked_at",
@@ -58,6 +59,7 @@ function row(overrides) {
     approved_at: "2026-09-02T00:00:00Z",
     github_stars: 3,
     github_updated_at: "2026-09-03T00:00:00Z",
+    github_activity: { c7: 12, d: [0, 1, 2, 3, 2, 2, 2], last: "2026-09-03T00:00:00Z" },
     verified: false,
     live_status: "up",
     live_checked_at: "2026-10-15T00:00:00Z",
@@ -122,7 +124,10 @@ test("only whitelisted columns are requested from Supabase", async () => {
   await api.fetchApprovedRows(client);
   const requested = client.calls[0].select.split(",").map((s) => s.trim());
   for (const col of requested) {
-    assert.ok(EXPECTED_FIELDS.includes(col), `unexpected column requested: ${col}`);
+    // github_activity (jsonb) is read from the database but only its c7
+    // count is published, as github_commits_7d.
+    const published = col === "github_activity" ? "github_commits_7d" : col;
+    assert.ok(EXPECTED_FIELDS.includes(published), `unexpected column requested: ${col}`);
   }
   assert.deepEqual(client.calls[0].filters, [["approved", true]]);
 });
@@ -268,4 +273,17 @@ test("file is only rewritten when the data changes", async () => {
   assert.equal(doc.listings[0].github_stars, 4);
 
   fs.rmSync(dir, { recursive: true, force: true });
+});
+
+test("github_commits_7d comes from github_activity.c7 and the raw object never leaks", () => {
+  const [a, b, c] = api.buildListings([
+    row({}),
+    row({ id: "00000000-0000-4000-8000-000000000011", github_activity: null }),
+    row({ id: "00000000-0000-4000-8000-000000000012", github_activity: { c7: "x" } }),
+  ]);
+  assert.equal(a.github_commits_7d, 12);
+  assert.equal(b.github_commits_7d, null);
+  assert.equal(c.github_commits_7d, null);
+  assert.ok(!("github_activity" in a));
+  assert.ok(!api.serialize(api.buildDocument([a], "2026-10-16T00:00:00.000Z")).includes('"d"'));
 });

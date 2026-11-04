@@ -1,8 +1,12 @@
 {
   "name": "agraris",
+  "version": "0.1.0",
   "private": true,
-  "description": "Dependencies for the scripts in scripts/ (GitHub Actions). The site itself has no build step.",
+  "description": "Dependencies for the scripts in scripts/ (GitHub Actions). The site itself has no build step. Also ships agraris-mcp, a read-only MCP server (mcp/server.js).",
   "license": "UNLICENSED",
+  "bin": {
+    "agraris-mcp": "mcp/server.js"
+  },
   "dependencies": {
     "@noble/curves": "1.9.7",
     "@noble/hashes": "1.8.0"

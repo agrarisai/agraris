@@ -24,6 +24,7 @@
 const fs = require("fs");
 const path = require("path");
 const { builderFromRepoUrl } = require("../builder-lib.js");
+const { normalizeActivity } = require("./activity-lib.js");
 
 // Naik hanya untuk perubahan yang merusak (field dihapus / diganti nama /
 // berubah arti). Menambah field (mis. live_status, live_checked_at,
@@ -54,6 +55,9 @@ const DB_COLUMNS = [
   "approved_at",
   "github_stars",
   "github_updated_at",
+  // Aktivitas commit 7 hari (supabase/migration-github-activity.sql). Hanya
+  // jumlah commit (c7) yang keluar, sebagai github_commits_7d.
+  "github_activity",
   "verified",
   // Hasil live check demo_url (supabase/migration-live-check.sql).
   // live_fail_count sengaja tidak ikut.
@@ -70,7 +74,13 @@ const DB_COLUMNS = [
 // (supabase/migration-owner-proof.sql), bukan kolom agents.
 // builder_github dihitung dari repo_url (builder-lib.js): pemilik GitHub
 // huruf kecil, atau null kalau repo_url bukan github.com/<owner>/<repo>.
-const PUBLIC_FIELDS = [...DB_COLUMNS, "owner_signed", "owner_signed_at", "builder_github", "url"];
+const PUBLIC_FIELDS = [
+  ...DB_COLUMNS.map((col) => (col === "github_activity" ? "github_commits_7d" : col)),
+  "owner_signed",
+  "owner_signed_at",
+  "builder_github",
+  "url",
+];
 
 // category column may be stored as text or as a Postgres text[] array.
 // Normalize to a plain array of strings either way (sama dengan
@@ -123,6 +133,11 @@ function buildListing(row, proof = null) {
     approved_at: nullable(row.approved_at),
     github_stars: nullable(row.github_stars),
     github_updated_at: nullable(row.github_updated_at),
+    // Commit dalam 7 hari terakhir (dibatasi 100 per repo); null bila belum ada data.
+    github_commits_7d: (() => {
+      const activity = normalizeActivity(row.github_activity);
+      return activity ? activity.c7 : null;
+    })(),
     verified: row.verified === true,
     live_status: row.live_status === "up" || row.live_status === "down" ? row.live_status : null,
     live_checked_at: nullable(row.live_checked_at),
