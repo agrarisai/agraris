@@ -140,6 +140,7 @@
         <li><a href="#live-check">Live check</a></li>
         <li><a href="#recently-updated">Recently updated</a></li>
         <li><a href="#wanted-board">Wanted board</a></li>
+        <li><a href="#mcp-server">MCP server</a></li>
         <li><a href="#owner-signature">Contract owner signature</a></li>
         <li><a href="#builders">Builders</a></li>
         <li><a href="#review-queue">Review queue</a></li>
@@ -202,6 +203,7 @@
             <tr><td><code>approved_at</code></td><td>string | null</td><td>When it was approved; null for listings from before the review queue</td></tr>
             <tr><td><code>github_stars</code></td><td>integer | null</td><td>Refreshed daily from GitHub</td></tr>
             <tr><td><code>github_updated_at</code></td><td>string | null</td><td>Last push to the repo</td></tr>
+            <tr><td><code>github_commits_7d</code></td><td>integer | null</td><td>GitHub commits in the last 7 days (counted up to 100 per repo); null when there is no data. Code activity only, not usage</td></tr>
             <tr><td><code>verified</code></td><td>boolean</td><td>Marked "Verified" by Agraris</td></tr>
             <tr><td><code>live_status</code></td><td>string | null</td><td><code>up</code>, <code>down</code> or null; see <a href="#live-check">Live check</a></td></tr>
             <tr><td><code>live_checked_at</code></td><td>string | null</td><td>When the demo link was last checked</td></tr>
@@ -612,6 +614,29 @@ curl "https://gnydurjxrynqcbpkxopd.supabase.co/rest/v1/agents?wanted_id=eq.REQUE
   -H "apikey: sb_publishable_4roHAzTOTw9P0_8NXKt2IA_kXniR9pm"
 
 curl -s "https://agraris.xyz/api/agents.json" | jq '.listings[] | select(.owner_signed)'</code></pre>
+
+      <h3 id="mcp-server">MCP server</h3>
+      <p>
+        <code>agraris-mcp</code> is a read-only
+        <a href="https://modelcontextprotocol.io" target="_blank" rel="noopener noreferrer">MCP</a>
+        server that lets an AI agent search this registry. It reads the
+        public JSON file above, needs no account or key, and writes nothing.
+        Tools: <code>search_listings</code>, <code>get_listing</code>,
+        <code>list_categories</code> and <code>most_active</code>.
+      </p>
+      <p>Add it to an MCP client (Claude Desktop, Claude Code, Cursor and others):</p>
+      <pre class="code-block"><code>{
+  "mcpServers": {
+    "agraris": {
+      "command": "npx",
+      "args": ["-y", "github:agrarisai/agraris"]
+    }
+  }
+}</code></pre>
+      <p>
+        Needs Node.js 18 or newer. Listing text is written by builders, so
+        treat it as data, not instructions. A listing is not an endorsement.
+      </p>
 
       <h3 id="builders">Builders</h3>
       <p>
