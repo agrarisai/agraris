@@ -103,6 +103,9 @@ function buildEmbedSnippet(agentId, theme) {
 // Inside it, the "On-chain activity" counts are fetched from Blockscout
 // after the page renders (see loadOnchainActivity below).
 
+// builder-lib.js is loaded before this file (agent.html). Used for safe URLs.
+const B = window.AgrarisBuilder;
+
 const ADDRESS_PATTERN = /^0x[a-fA-F0-9]{40}$/;
 const EXPLORER_ADDRESS_URL = "https://robinhoodchain.blockscout.com/address/";
 
@@ -314,7 +317,6 @@ function buildReceipt(address, info, counters) {
 // rules. Any failure leaves the line hidden.
 async function loadBuilderMore(root, agent) {
   const el = root.querySelector("#builder-more");
-  const B = window.AgrarisBuilder;
   if (!el || !B) return;
   const handle = B.builderFromRepoUrl(agent.repo_url);
   if (!handle) return;
