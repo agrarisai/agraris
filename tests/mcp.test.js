@@ -150,3 +150,18 @@ test("stdio end to end: newline-delimited JSON, nothing else on stdout", async (
     assert.equal(byId(null).error.code, -32700);
   });
 });
+
+// The npm package in mcp/ must stay in step with the server it ships.
+test("mcp/package.json matches the server (name, version, bin, no dependencies)", () => {
+  const fs = require("node:fs");
+  const path = require("node:path");
+  const pkg = JSON.parse(fs.readFileSync(path.join(__dirname, "..", "mcp", "package.json"), "utf8"));
+  const src = fs.readFileSync(path.join(__dirname, "..", "mcp", "server.js"), "utf8");
+  const ver = /const SERVER_VERSION = "([^"]+)"/.exec(src)[1];
+  assert.strictEqual(pkg.name, "agraris-mcp");
+  assert.strictEqual(pkg.version, ver);
+  assert.strictEqual(pkg.bin["agraris-mcp"], "server.js");
+  assert.ok(!pkg.dependencies && !pkg.private);
+  assert.ok(fs.existsSync(path.join(__dirname, "..", "mcp", "LICENSE")));
+  assert.ok(src.startsWith("#!/usr/bin/env node"));
+});
