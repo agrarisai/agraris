@@ -26,7 +26,9 @@ function initCopyLinkButton(root) {
   const btn = root.querySelector("#copy-link-btn");
   if (!btn) return;
 
-  const defaultLabel = btn.textContent;
+  // The label lives in its own span so the icon next to it survives.
+  const labelEl = btn.querySelector("#copy-link-label") || btn;
+  const defaultLabel = labelEl.textContent;
 
   btn.addEventListener("click", () => {
     if (!navigator.clipboard?.writeText) return;
@@ -34,9 +36,9 @@ function initCopyLinkButton(root) {
     navigator.clipboard
       .writeText(window.location.href)
       .then(() => {
-        btn.textContent = "Copied!";
+        labelEl.textContent = "Copied!";
         setTimeout(() => {
-          btn.textContent = defaultLabel;
+          labelEl.textContent = defaultLabel;
         }, 2000);
       })
       .catch(() => {
@@ -471,6 +473,45 @@ function initReportAgent(root, agentId) {
   });
 }
 
+// ---- detail card icons (inline SVG, currentColor, decorative) ----
+const ICON_EXTERNAL =
+  '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 4h6v6"/><path d="M20 4l-9 9"/><path d="M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg>';
+const ICON_LINK =
+  '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 14a4.5 4.5 0 0 0 6.4 0l3-3a4.5 4.5 0 0 0-6.4-6.4l-1.2 1.2"/><path d="M14 10a4.5 4.5 0 0 0-6.4 0l-3 3a4.5 4.5 0 0 0 6.4 6.4l1.2-1.2"/></svg>';
+
+// Category icons. Categories are free text, so known words get a fitting
+// icon and everything else gets the generic tag icon.
+const CATEGORY_ICONS = {
+  layers:
+    '<path d="M12 3l9 5-9 5-9-5 9-5z"/><path d="M3 13l9 5 9-5"/>',
+  bars: '<path d="M5 20V11"/><path d="M12 20V5"/><path d="M19 20v-7"/>',
+  trend: '<path d="M3 17l6-6 4 4 8-8"/><path d="M15 7h6v6"/>',
+  shield: '<path d="M12 3l8 3v6c0 4.5-3.2 7.7-8 9-4.8-1.3-8-4.5-8-9V6l8-3z"/>',
+  globe:
+    '<circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3c2.5 2.6 3.8 5.6 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.6-3.8-9S9.5 5.6 12 3z"/>',
+  code: '<path d="M8 8l-5 4 5 4"/><path d="M16 8l5 4-5 4"/>',
+  tag: '<path d="M3 12V4h8l10 10-8 8L3 12z"/><circle cx="7.5" cy="8.5" r="1"/>',
+};
+const CATEGORY_ICON_MAP = [
+  [/infra|server|mcp|api|platform/, "layers"],
+  [/data|analy|research|insight|dashboard|monitor/, "bars"],
+  [/trad|market|price|defi|swap|yield|invest|finance/, "trend"],
+  [/secur|audit|safe|risk|verif/, "shield"],
+  [/brows|web|social|news|search/, "globe"],
+  [/dev|code|sdk|tool|agent-kit|framework/, "code"],
+];
+function categoryIcon(name) {
+  const key = String(name || "").toLowerCase();
+  let id = "tag";
+  for (const [re, icon] of CATEGORY_ICON_MAP) {
+    if (re.test(key)) {
+      id = icon;
+      break;
+    }
+  }
+  return `<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${CATEGORY_ICONS[id]}</svg>`;
+}
+
 (async function () {
   const container = document.getElementById("agent-detail");
   const params = new URLSearchParams(window.location.search);
@@ -490,7 +531,7 @@ function initReportAgent(root, agentId) {
     if (agent && ownerProof) agent.owner_signed_at = ownerProof.signed_at;
     const categories = normalizeCategories(agent.category);
     const tags = categories
-      .map((c) => `<span class="tag">${escapeHtml(c)}</span>`)
+      .map((c) => `<span class="tag tag-icon">${categoryIcon(c)}${escapeHtml(c)}</span>`)
       .join("");
     // Same template for both kinds. Only the noun changes for tools, and
     // "similar" means the same kind (agents see agents, tools see tools).
@@ -503,11 +544,12 @@ function initReportAgent(root, agentId) {
     setMetaProperty("og:description", agent.description);
 
     container.innerHTML = `
-      <div class="detail-head reveal">
+      <div class="detail-card reveal">
+      <div class="detail-head">
         <div class="agent-row-top">
           <span class="agent-name">${escapeHtml(agent.name)}</span>
           ${renderKindBadge(agent, { lg: true })}
-          ${renderVerifiedBadge(agent, { lg: true })}
+          ${renderVerifiedBadge(agent, { lg: true, icon: true })}
         </div>
         <div class="agent-meta-row">
           <span class="agent-version">v${escapeHtml(agent.version)}</span>
@@ -526,25 +568,26 @@ function initReportAgent(root, agentId) {
         <div class="detail-links">
           ${
             B.safeHttpsUrl(agent.repo_url)
-              ? `<a class="btn btn-solid" href="${escapeHtml(B.safeHttpsUrl(agent.repo_url))}" target="_blank" rel="noopener noreferrer">View repo</a>`
+              ? `<a class="btn btn-solid" href="${escapeHtml(B.safeHttpsUrl(agent.repo_url))}" target="_blank" rel="noopener noreferrer">View repo${ICON_EXTERNAL}</a>`
               : ""
           }
           ${
             B.safeHttpsUrl(agent.demo_url)
-              ? `<a class="btn" href="${escapeHtml(B.safeHttpsUrl(agent.demo_url))}" target="_blank" rel="noopener noreferrer">View demo</a>`
+              ? `<a class="btn" href="${escapeHtml(B.safeHttpsUrl(agent.demo_url))}" target="_blank" rel="noopener noreferrer">View demo${ICON_EXTERNAL}</a>`
               : ""
           }
-          <button type="button" class="btn" id="copy-link-btn">Copy link</button>
+          <button type="button" class="btn" id="copy-link-btn">${ICON_LINK}<span id="copy-link-label">Copy link</span></button>
           ${renderWatchlistButton(agent.id, { variant: "lg" })}
         </div>
       </div>
 
-      <div class="detail-row reveal">
+      <div class="detail-row detail-published">
         <div class="detail-row-label">Published</div>
         <div>${escapeHtml(formatDate(agent.created_at))}</div>
       </div>
 
       <p class="builder-more" id="builder-more" hidden></p>
+      </div>
 
       ${renderOnchainBlock(agent)}
 

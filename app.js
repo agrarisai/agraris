@@ -70,8 +70,12 @@ function isVerified(agent) {
   return false;
 }
 
-function renderVerifiedBadge(agent, { lg = false } = {}) {
+function renderVerifiedBadge(agent, { lg = false, icon = false } = {}) {
   if (!isVerified(agent)) return "";
+  if (icon) {
+    // Seal with a check mark (detail page). Decorative; the text says it.
+    return `<span class="verified-badge verified-badge-seal${lg ? " verified-badge-lg" : ""}" title="Verified by Agraris"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" aria-hidden="true"><path d="M12 2.5l2.4 1.7 2.9-.1 1 2.7 2.4 1.7-.9 2.8.9 2.8-2.4 1.7-1 2.7-2.9-.1L12 21.5l-2.4-1.7-2.9.1-1-2.7-2.4-1.7.9-2.8-.9-2.8 2.4-1.7 1-2.7 2.9.1L12 2.5z" fill="currentColor" opacity=".18" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/><path d="M8.2 12.2l2.7 2.7 5-5.4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Verified</span>`;
+  }
   return `<span class="verified-badge${lg ? " verified-badge-lg" : ""}">✓ Verified</span>`;
 }
 
