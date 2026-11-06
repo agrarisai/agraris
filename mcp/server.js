@@ -23,7 +23,7 @@
 const fs = require("fs");
 
 const SERVER_NAME = "agraris";
-const SERVER_VERSION = "0.1.0";
+const SERVER_VERSION = "0.1.1";
 const DEFAULT_URL = "https://agraris.xyz/api/agents.json";
 const CACHE_MS = 10 * 60 * 1000;
 const FETCH_TIMEOUT_MS = 15000;

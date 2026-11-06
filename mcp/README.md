@@ -1,5 +1,7 @@
 # agraris-mcp
 
+[![npm](https://img.shields.io/npm/v/agraris-mcp)](https://www.npmjs.com/package/agraris-mcp)
+
 A read-only [MCP](https://modelcontextprotocol.io) server for the
 [Agraris](https://agraris.xyz) registry of AI agents and tools on Robinhood Chain.
 
@@ -15,13 +17,13 @@ Add it to an MCP client (Claude Desktop, Claude Code, Cursor, ...). Needs Node.j
   "mcpServers": {
     "agraris": {
       "command": "npx",
-      "args": ["-y", "github:agrarisai/agraris"]
+      "args": ["-y", "agraris-mcp"]
     }
   }
 }
 ```
 
-Claude Code: `claude mcp add agraris -- npx -y github:agrarisai/agraris`
+Claude Code: `claude mcp add agraris -- npx -y agraris-mcp`
 
 ## Tools
 
