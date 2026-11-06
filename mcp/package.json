@@ -1,0 +1,35 @@
+{
+  "name": "agraris-mcp",
+  "version": "0.1.0",
+  "description": "Read-only MCP server for the Agraris registry of AI agents and tools on Robinhood Chain. No account, no key, no dependencies.",
+  "license": "MIT",
+  "bin": {
+    "agraris-mcp": "server.js"
+  },
+  "main": "server.js",
+  "files": [
+    "server.js",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "ai-agents",
+    "registry",
+    "robinhood-chain",
+    "agraris"
+  ],
+  "homepage": "https://agraris.xyz/docs.html#mcp-server",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/agrarisai/agraris.git",
+    "directory": "mcp"
+  },
+  "bugs": {
+    "url": "https://github.com/agrarisai/agraris/issues"
+  }
+}
