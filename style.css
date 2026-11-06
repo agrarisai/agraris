@@ -5817,3 +5817,93 @@ html::after {
     font-size: 13px;
   }
 }
+
+/* ---------- token page card ---------- */
+.token-card {
+  position: relative;
+  margin: 8px 0 24px;
+  padding: 20px 16px 16px;
+  border: 1px solid var(--line);
+  border-radius: 26px;
+  overflow: hidden;
+  background:
+    linear-gradient(180deg, rgba(255, 250, 238, 0.82) 0%, rgba(255, 250, 238, 0.55) 55%, rgba(255, 250, 238, 0.1) 100%),
+    url("images/hero-light.webp") 72% bottom / cover no-repeat;
+  box-shadow: 0 10px 30px rgba(var(--shadow-rgb, 60, 50, 30), 0.12);
+}
+:root[data-theme="dark"] .token-card {
+  background:
+    linear-gradient(180deg, rgba(14, 22, 16, 0.88) 0%, rgba(14, 22, 16, 0.72) 60%, rgba(14, 22, 16, 0.3) 100%),
+    url("images/hero-dark.webp") 72% bottom / cover no-repeat;
+}
+.token-card .token-hero { padding: 8px 0 14px; }
+.token-card .token-hero-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-family: var(--font-mono);
+  font-weight: 600;
+  font-size: clamp(32px, 9vw, 52px);
+}
+.token-hero-logo {
+  flex: none;
+  width: 1.45em;
+  height: auto;
+  color: var(--green);
+}
+:root[data-theme="dark"] .token-hero-logo { color: var(--text-green); }
+.token-card .token-hero-tagline { opacity: 0.85; font-size: 15px; }
+
+.token-card .official-token {
+  background: none;
+  border: 0;
+  padding: 0;
+  margin: 0;
+}
+.token-ca-box {
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: rgba(255, 252, 244, 0.6);
+}
+:root[data-theme="dark"] .token-card .token-ca-box,
+:root[data-theme="dark"] .token-card .token-price-item,
+:root[data-theme="dark"] .token-card .token-warning {
+  background: rgba(20, 30, 22, 0.6);
+}
+.token-card .official-token-address { font-size: clamp(9px, 2.55vw, 12px); border-radius: 10px; background: rgba(232, 220, 196, 0.8); flex-basis: 100%; }
+:root[data-theme="dark"] .token-card .official-token-address { background: rgba(255, 255, 255, 0.06); }
+.btn-icon { display: inline-flex; align-items: center; gap: 8px; border-radius: 10px; }
+.btn-icon svg { width: 16px; height: 16px; flex: none; }
+
+/* stats become four separate boxes, outside the address box visually */
+.token-card .token-price { border-top: 0; padding-top: 0; margin-top: 0; }
+.token-card .token-price-stats { gap: 10px; margin-top: 10px; }
+.token-card .token-price-item {
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: rgba(255, 252, 244, 0.6);
+}
+.token-card .token-price-value { font-size: 18px; }
+.token-card .token-price-source { margin-top: 12px; }
+
+.token-verify { margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--line); }
+.token-verify h3 { margin: 0 0 10px; font-family: var(--font-mono); font-size: 22px; }
+.token-verify p { font-size: 14px; line-height: 1.6; }
+.token-warning {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 14px 0 0;
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: rgba(255, 252, 244, 0.6);
+}
+.token-warning svg { width: 24px; height: 24px; flex: none; }
+
+@media (min-width: 720px) {
+  .token-card { padding: 32px 36px 24px; }
+  .token-card .token-price-stats { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
