@@ -138,7 +138,8 @@ function initCopyTokenAddress() {
   const addrEl = document.getElementById("official-token-address");
   if (!btn || !addrEl) return;
 
-  const defaultLabel = btn.textContent;
+  const labelEl = btn.querySelector(".btn-label") || btn;
+  const defaultLabel = labelEl.textContent;
 
   btn.addEventListener("click", () => {
     if (!navigator.clipboard?.writeText) return;
@@ -146,9 +147,9 @@ function initCopyTokenAddress() {
     navigator.clipboard
       .writeText(addrEl.textContent.trim())
       .then(() => {
-        btn.textContent = "Copied!";
+        labelEl.textContent = "Copied!";
         setTimeout(() => {
-          btn.textContent = defaultLabel;
+          labelEl.textContent = defaultLabel;
         }, 2000);
       })
       .catch(() => {
