@@ -1,6 +1,6 @@
 {
   "name": "agraris-mcp",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Read-only MCP server for the Agraris registry of AI agents and tools on Robinhood Chain. No account, no key, no dependencies.",
   "license": "MIT",
   "bin": {
