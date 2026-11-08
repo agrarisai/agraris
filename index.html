@@ -272,6 +272,24 @@
       </div>
     </section>
 
+    <!-- Follow by email (follow.js). Double opt-in; only the email is stored. -->
+    <section class="follow-card reveal" id="follow" aria-labelledby="follow-title-home">
+      <div class="eyebrow-mono">Stay in the loop</div>
+      <h2 id="follow-title-home">Follow what ships on Robinhood Chain</h2>
+      <p>One email a week: new listings and the most active agents. No account needed.</p>
+      <form id="follow-form" novalidate>
+        <label class="sr-only" for="follow-email">Email address</label>
+        <input id="follow-email" type="email" inputmode="email" autocomplete="email" placeholder="you@example.com" maxlength="254" required />
+        <button class="follow-go" type="submit">Follow by email</button>
+      </form>
+      <p class="follow-msg" id="follow-msg" role="status" aria-live="polite"></p>
+      <div class="follow-alt">
+        <a href="rss.xml">RSS feed</a>
+        <a href="https://x.com/agrarisai" target="_blank" rel="noopener noreferrer">Follow on X</a>
+      </div>
+      <small>We only use your email for this digest. Unsubscribe in one click.</small>
+    </section>
+
     <div class="section-head section-head--topic reveal" id="how-it-works">
       <h2>How Agraris Works</h2>
     </div>
@@ -342,6 +360,12 @@
       <p>
         Each submission also stores a random status code so the builder
         can check its review status. The code contains no personal data.
+      </p>
+      <p>
+        If you subscribe to the weekly email, we store your email
+        address and when you confirmed. We use it only to send that
+        email. Every email has an unsubscribe link, and unsubscribing
+        stops all further emails. We do not track opens or clicks.
       </p>
 
       <h3>No accounts</h3>
@@ -582,6 +606,7 @@
   <script src="command-palette.js"></script>
   <script src="scroll-reveal.js"></script>
   <script src="home.js"></script>
+  <script src="follow.js"></script>
   <script src="dex-price.js"></script>
 </body>
 </html>
