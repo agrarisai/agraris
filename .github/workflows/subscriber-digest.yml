@@ -1,0 +1,30 @@
+name: Subscriber digest
+
+on:
+  schedule:
+    # Setiap Minggu 03:30 UTC (10:30 WIB)
+    - cron: "30 3 * * 0"
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Only count recipients, send nothing"
+        type: boolean
+        default: true
+
+jobs:
+  digest:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Send weekly digest
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          DRY_RUN: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run || 'false' }}
+        run: node scripts/send-subscriber-emails.js digest

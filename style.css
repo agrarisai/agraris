@@ -5907,3 +5907,68 @@ html::after {
   .token-card { padding: 32px 36px 24px; }
   .token-card .token-price-stats { grid-template-columns: repeat(4, minmax(0, 1fr)); }
 }
+
+/* ---------- follow by email ---------- */
+.eyebrow-mono { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.14em; color: var(--green); text-transform: uppercase; }
+.follow-card, .follow-status {
+  margin: 28px 0;
+  padding: 26px 20px 22px;
+  border: 1px solid var(--line);
+  border-radius: 26px;
+  position: relative;
+  overflow: hidden;
+  background:
+    linear-gradient(180deg, rgba(255, 250, 238, 0.86), rgba(255, 250, 238, 0.5) 60%, rgba(255, 250, 238, 0.15)),
+    url("images/hero-light.webp") 72% bottom / cover no-repeat;
+}
+:root[data-theme="dark"] .follow-card,
+:root[data-theme="dark"] .follow-status {
+  background:
+    linear-gradient(180deg, rgba(14, 22, 16, 0.9), rgba(14, 22, 16, 0.72) 60%, rgba(14, 22, 16, 0.35)),
+    url("images/hero-dark.webp") 72% bottom / cover no-repeat;
+}
+.follow-card h2, .follow-status h1 { font-family: var(--font-display); font-size: 28px; line-height: 1.15; margin: 8px 0; }
+.follow-card p, .follow-status p { font-size: 14px; line-height: 1.55; margin: 0 0 14px; }
+.follow-card form { display: flex; flex-direction: column; gap: 10px; }
+.follow-card input[type="email"] {
+  font: 14px var(--font-mono);
+  min-height: 48px;
+  padding: 0 14px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: rgba(255, 252, 244, 0.8);
+  color: inherit;
+}
+:root[data-theme="dark"] .follow-card input[type="email"] { background: rgba(20, 30, 22, 0.7); }
+.follow-go {
+  min-height: 48px;
+  border: 0;
+  border-radius: 14px;
+  background: var(--green);
+  color: #fff;
+  font: 600 14px var(--font-mono);
+  cursor: pointer;
+}
+.follow-go:disabled { opacity: 0.6; cursor: default; }
+.follow-msg { min-height: 1.4em; margin: 10px 0 0 !important; font: 12.5px/1.5 var(--font-mono); }
+.follow-msg.is-ok { color: var(--text-green, var(--green)); }
+.follow-msg.is-error { color: #a33a2a; }
+.follow-alt { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 8px; }
+.follow-alt a {
+  font: 12px var(--font-mono);
+  padding: 9px 12px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  text-decoration: none;
+  color: inherit;
+  background: rgba(255, 252, 244, 0.55);
+}
+:root[data-theme="dark"] .follow-alt a { background: rgba(20, 30, 22, 0.6); }
+.follow-card small { display: block; margin-top: 12px; padding: 6px 10px; border-radius: 10px; font: 11.5px/1.5 var(--font-mono); background: rgba(255, 252, 244, 0.7); }
+:root[data-theme="dark"] .follow-card small { background: rgba(14, 22, 16, 0.6); }
+@media (min-width: 720px) {
+  .follow-card, .follow-status { padding: 34px 36px 28px; }
+  .follow-card form { flex-direction: row; }
+  .follow-card input[type="email"] { flex: 1; }
+  .follow-go { padding: 0 22px; }
+}
