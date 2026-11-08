@@ -20,7 +20,11 @@ function esc(s) {
 
 function oneLine(s, max = 160) {
   const t = String(s ?? "").replace(/\s+/g, " ").trim();
-  return t.length > max ? t.slice(0, max - 1) + "…" : t;
+  if (t.length <= max) return t;
+  // Potong di batas kata supaya tidak berhenti di tengah kata.
+  const cut = t.slice(0, max - 1);
+  const space = cut.lastIndexOf(" ");
+  return (space > max * 0.6 ? cut.slice(0, space) : cut).replace(/[\s,;:.]+$/, "") + "…";
 }
 
 function listingUrl(id) {

@@ -118,3 +118,15 @@ test("dry run sends nothing and changes nothing", () =>
     await send.runConfirm(true);
     assert.equal(calls.filter((c) => c.table.startsWith("resend") || c.method === "PATCH").length, 0);
   }));
+
+test("digest descriptions are cut at a word boundary", () => {
+  const long = "Read-only MCP server that lets AI agents search the Agraris registry of agents and tools on Robinhood Chain. Tools: search_listings, get_listing, list_categories, most_active.";
+  const m = mail.buildDigestEmail({
+    token: TOKEN,
+    newListings: [{ id: ID1, name: "x", kind: "tool", description: long }],
+    mostActive: [],
+  });
+  const line = m.text.split("\n").find((l) => l.includes("Read-only"));
+  assert.ok(line.endsWith("…"));
+  assert.ok(!line.includes("list_categori…"));
+});
