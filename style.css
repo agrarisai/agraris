@@ -5972,3 +5972,16 @@ html::after {
   .follow-card input[type="email"] { flex: 1; }
   .follow-go { padding: 0 22px; }
 }
+
+/* Listing without a contract address: quiet invitation, not a warning. */
+.onchain-invite-text {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.6;
+  opacity: 0.75;
+  max-width: 60ch;
+}
+
+.onchain-invite-text a {
+  font-weight: 500;
+}

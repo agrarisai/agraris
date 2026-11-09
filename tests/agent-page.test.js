@@ -13,3 +13,10 @@ test("agent.js defines B at top level and agent.html loads builder-lib.js first"
   assert.ok(html.indexOf("builder-lib.js") !== -1);
   assert.ok(html.indexOf("builder-lib.js") < html.indexOf("agent.js"));
 });
+
+test("listings without a contract address render the invitation, not nothing", () => {
+  const js = fs.readFileSync(path.join(__dirname, "..", "agent.js"), "utf8");
+  assert.match(js, /function renderOnchainInvite\(\)/);
+  assert.match(js, /if \(!ADDRESS_PATTERN\.test\(address\)\) return renderOnchainInvite\(\);/);
+  assert.match(js, /href="status\.html"/);
+});
