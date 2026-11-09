@@ -20,3 +20,10 @@ test("listings without a contract address render the invitation, not nothing", (
   assert.match(js, /if \(!ADDRESS_PATTERN\.test\(address\)\) return renderOnchainInvite\(\);/);
   assert.match(js, /href="status\.html"/);
 });
+
+test("published dates are formatted in English, not the Indonesian locale", () => {
+  const app = fs.readFileSync(path.join(__dirname, "..", "app.js"), "utf8");
+  assert.doesNotMatch(app, /id-ID/);
+  const m = app.match(/function formatDate\(isoString\)[\s\S]*?\n}\n/);
+  assert.ok(m && /"en-US"/.test(m[0]));
+});

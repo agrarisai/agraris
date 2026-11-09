@@ -31,7 +31,7 @@ function normalizeCategories(raw) {
 function formatDate(isoString) {
   try {
     const d = new Date(isoString);
-    return d.toLocaleDateString("id-ID", {
+    return d.toLocaleDateString("en-US", {
       year: "numeric",
       month: "short",
       day: "numeric",
