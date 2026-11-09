@@ -27,3 +27,8 @@ test("svg is well-formed enough: one root, balanced tags, no raw ampersands", ()
   assert.equal((svg.match(/<\/svg>/g) || []).length, 1);
   assert.doesNotMatch(svg, /&(?!amp;|lt;|gt;|quot;|#39;)/);
 });
+
+test("100 commits is shown as 100+ because the counter stops at 100", () => {
+  assert.match(renderBadge({ c7: 100 }), /100\+ commits/);
+  assert.doesNotMatch(renderBadge({ c7: 99 }), /99\+/);
+});

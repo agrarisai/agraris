@@ -188,7 +188,7 @@ function buildDraft({ rangeLabel, newAgents, topActive = [], total, tools = 0 })
   if (topActive.length > 0) {
     lines.push("Most active this week (GitHub commits)");
     topActive.forEach((a) =>
-      lines.push(`- ${listingName(a)} (${a.c7.toLocaleString("en-US")} commit${a.c7 === 1 ? "" : "s"})`)
+      lines.push(`- ${listingName(a)} (${a.c7.toLocaleString("en-US")}${a.c7 >= 100 ? "+" : ""} commit${a.c7 === 1 ? "" : "s"})`)
     );
     lines.push("");
   }

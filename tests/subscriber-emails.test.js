@@ -130,3 +130,14 @@ test("digest descriptions are cut at a word boundary", () => {
   assert.ok(line.endsWith("…"));
   assert.ok(!line.includes("list_categori…"));
 });
+
+test("digest shows 100+ for a repo at the 100-commit counter cap", () => {
+  const m = mail.buildDigestEmail({
+    token: TOKEN,
+    newListings: [],
+    mostActive: [{ id: ID2, name: "Capped", c7: 100 }, { id: ID1, name: "Under", c7: 99 }],
+  });
+  assert.ok(m.text.includes("100+ commits"));
+  assert.ok(m.html.includes("100+ commits"));
+  assert.ok(m.text.includes("99 commits"));
+});
