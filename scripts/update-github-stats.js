@@ -81,12 +81,12 @@ async function fetchGithubRepoInfo(owner, repo) {
   };
 }
 
-// Commit 7 hari terakhir di branch default. Repo kosong (409) atau gagal
+// Commit 14 hari terakhir (7 terakhir = c7, 7 sebelumnya = p7) di branch default. Repo kosong (409) atau gagal
 // membaca = null: aktivitas dilewati, bintang tetap diperbarui.
 async function fetchGithubActivity(owner, repo) {
   const headers = { Accept: "application/vnd.github+json" };
   if (GITHUB_TOKEN) headers.Authorization = `Bearer ${GITHUB_TOKEN}`;
-  const since = new Date(Date.now() - 7 * 86400000).toISOString();
+  const since = new Date(Date.now() - 14 * 86400000).toISOString();
   const res = await fetch(
     `https://api.github.com/repos/${owner}/${repo}/commits?since=${encodeURIComponent(since)}&per_page=100`,
     { headers }

@@ -5985,3 +5985,18 @@ html::after {
 .onchain-invite-text a {
   font-weight: 500;
 }
+
+/* "Rising": small neutral chip next to "Active this week". */
+.act-rising {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 1px 7px;
+  border: 1px solid var(--green);
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--text-green);
+}
