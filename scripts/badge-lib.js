@@ -15,7 +15,7 @@ function escapeXml(value) {
 // Teks bagian kanan. c7 > 0 -> aktif; selain itu netral.
 function statusText(activity) {
   const c7 = activity && Number.isFinite(Number(activity.c7)) ? Math.floor(Number(activity.c7)) : 0;
-  if (c7 > 0) return { text: `active this week · ${c7.toLocaleString("en-US")} commit${c7 === 1 ? "" : "s"}`, active: true };
+  if (c7 > 0) return { text: `active this week · ${c7.toLocaleString("en-US")}${c7 >= 100 ? "+" : ""} commit${c7 === 1 ? "" : "s"}`, active: true };
   return { text: "listed · Robinhood Chain", active: false };
 }
 

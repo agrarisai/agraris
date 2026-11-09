@@ -438,7 +438,7 @@ function renderGithubBadge(agent) {
   const activity = getActivity(agent);
   const activeLabel =
     activity && activity.c7 > 0
-      ? `<span class="act-on" title="${activity.c7} commit${activity.c7 === 1 ? "" : "s"} in the last 7 days"><i aria-hidden="true"></i>Active this week</span>`
+      ? `<span class="act-on" title="${activity.c7}${activity.c7 >= 100 ? "+" : ""} commit${activity.c7 === 1 ? "" : "s"} in the last 7 days"><i aria-hidden="true"></i>Active this week</span>`
       : "";
 
   return `

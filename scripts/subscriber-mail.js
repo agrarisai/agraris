@@ -79,8 +79,8 @@ function buildDigestEmail({ newListings, mostActive, token }) {
     lines.push("Most active this week (commits in the last 7 days)", "");
     html.push("<h3>Most active this week</h3><ul>");
     for (const x of mostActive) {
-      lines.push(`- ${oneLine(x.name, 80)}: ${x.c7} commits`, `  ${listingUrl(x.id)}`);
-      html.push(`<li><a href="${esc(listingUrl(x.id))}">${esc(oneLine(x.name, 80))}</a>: ${esc(x.c7)} commits</li>`);
+      lines.push(`- ${oneLine(x.name, 80)}: ${x.c7}${Number(x.c7) >= 100 ? "+" : ""} commits`, `  ${listingUrl(x.id)}`);
+      html.push(`<li><a href="${esc(listingUrl(x.id))}">${esc(oneLine(x.name, 80))}</a>: ${esc(x.c7)}${Number(x.c7) >= 100 ? "+" : ""} commits</li>`);
     }
     lines.push("");
     html.push("</ul>");
