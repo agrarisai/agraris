@@ -125,10 +125,23 @@ function onchainNote(agent) {
   );
 }
 
+// Listings without a contract address get a short, neutral invitation
+// instead of nothing. Many listings have no on-chain contract at all, so
+// it is worded as optional and points builders at status.html, where the
+// address can be added with the status code from publishing.
+function renderOnchainInvite() {
+  return `
+    <div class="detail-row onchain-block onchain-invite reveal">
+      <div class="detail-row-label">On-chain</div>
+      <p class="onchain-invite-text">No contract address listed yet. If this has a contract on Robinhood Chain, the builder can add it from <a href="status.html">the status page</a> to show live on-chain activity here.</p>
+    </div>
+  `;
+}
+
 function renderOnchainBlock(agent) {
   const address =
     typeof agent.contract_address === "string" ? agent.contract_address.trim() : "";
-  if (!ADDRESS_PATTERN.test(address)) return "";
+  if (!ADDRESS_PATTERN.test(address)) return renderOnchainInvite();
 
   const safe = escapeHtml(address);
   const short = escapeHtml(`${address.slice(0, 6)}…${address.slice(-4)}`);
