@@ -29,5 +29,37 @@ test("non-array input gives an empty summary", () => {
 test("normalizeActivity validates and pads", () => {
   assert.strictEqual(normalizeActivity(null), null);
   assert.strictEqual(normalizeActivity({ c7: -1 }), null);
-  assert.deepStrictEqual(normalizeActivity({ c7: 2, d: [1, 1], last: "bad" }), { c7: 2, d: [0, 0, 0, 0, 0, 1, 1], last: null });
+  assert.deepStrictEqual(normalizeActivity({ c7: 2, d: [1, 1], last: "bad" }), { c7: 2, d: [0, 0, 0, 0, 0, 1, 1], last: null, p7: null });
+});
+
+const { isRising } = require("../scripts/activity-lib");
+
+test("p7 counts commits from the 7 days before the current window", () => {
+  const r = summarizeCommits(
+    [commit("2026-10-29T10:00:00Z"), commit("2026-10-20T10:00:00Z"), commit("2026-10-18T10:00:00Z"), commit("2026-10-10T10:00:00Z")],
+    NOW
+  );
+  assert.strictEqual(r.c7, 1);
+  assert.strictEqual(r.p7, 2);
+});
+
+test("p7 is null when the commits page is full (previous week may be cut off)", () => {
+  const many = Array.from({ length: 100 }, () => commit("2026-10-29T10:00:00Z"));
+  assert.strictEqual(summarizeCommits(many, NOW).p7, null);
+});
+
+test("isRising needs 5+ commits, at least double last week, and a known p7", () => {
+  assert.strictEqual(isRising({ c7: 10, p7: 4 }), true);
+  assert.strictEqual(isRising({ c7: 6, p7: 0 }), true);
+  assert.strictEqual(isRising({ c7: 10, p7: 6 }), false);
+  assert.strictEqual(isRising({ c7: 4, p7: 0 }), false);
+  assert.strictEqual(isRising({ c7: 50, p7: null }), false);
+  assert.strictEqual(isRising({ c7: 50 }), false);
+  assert.strictEqual(isRising(null), false);
+});
+
+test("normalizeActivity keeps p7 when valid, null otherwise", () => {
+  assert.strictEqual(normalizeActivity({ c7: 3, p7: 2 }).p7, 2);
+  assert.strictEqual(normalizeActivity({ c7: 3 }).p7, null);
+  assert.strictEqual(normalizeActivity({ c7: 3, p7: -1 }).p7, null);
 });

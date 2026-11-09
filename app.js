@@ -186,8 +186,19 @@ function normalizeActivity(value) {
   const d = Array.isArray(value.d) ? value.d.slice(0, 7).map((n) => Math.max(0, Number(n) || 0)) : [];
   while (d.length < 7) d.unshift(0);
   const last = typeof value.last === "string" && !Number.isNaN(new Date(value.last).getTime()) ? value.last : null;
-  return { c7: Math.floor(c7), d, last };
+  const p = value.p7 === null || value.p7 === undefined ? NaN : Number(value.p7);
+  const p7 = Number.isFinite(p) && p >= 0 ? Math.floor(p) : null;
+  return { c7: Math.floor(c7), d, last, p7 };
 }
+
+// "Rising": at least 5 commits this week and at least double the previous
+// 7 days (p7 known). Code activity only; not usage, not an endorsement.
+function isRising(a) {
+  if (!a || a.p7 === null || a.p7 === undefined) return false;
+  return a.c7 >= 5 && a.c7 >= 2 * a.p7 && a.c7 > a.p7;
+}
+
+const RISING_TITLE = "Commits in the last 7 days are at least double the 7 days before. Code activity only.";
 
 function loadActivity() {
   if (!activityPromise) {
@@ -438,7 +449,7 @@ function renderGithubBadge(agent) {
   const activity = getActivity(agent);
   const activeLabel =
     activity && activity.c7 > 0
-      ? `<span class="act-on" title="${activity.c7}${activity.c7 >= 100 ? "+" : ""} commit${activity.c7 === 1 ? "" : "s"} in the last 7 days"><i aria-hidden="true"></i>Active this week</span>`
+      ? `<span class="act-on" title="${activity.c7}${activity.c7 >= 100 ? "+" : ""} commit${activity.c7 === 1 ? "" : "s"} in the last 7 days"><i aria-hidden="true"></i>Active this week</span>${isRising(activity) ? `<span class="act-rising" title="${RISING_TITLE}">Rising</span>` : ""}`
       : "";
 
   return `
@@ -461,7 +472,7 @@ function renderActivityStrip(agent) {
     .join("");
   const text =
     a.c7 > 0
-      ? `${a.c7}${a.c7 >= 100 ? "+" : ""} commit${a.c7 === 1 ? "" : "s"} this week${a.last ? ` · last commit ${escapeHtml(formatRelativeTime(a.last).replace(/^Updated /, ""))}` : ""}`
+      ? `${a.c7}${a.c7 >= 100 ? "+" : ""} commit${a.c7 === 1 ? "" : "s"} this week${isRising(a) ? ` (up from ${a.p7})` : ""}${a.last ? ` · last commit ${escapeHtml(formatRelativeTime(a.last).replace(/^Updated /, ""))}` : ""}`
       : "No commits in the last 7 days";
   return `<div class="activity-strip${a.c7 > 0 ? "" : " quiet"}" aria-label="GitHub activity, last 7 days"><span class="activity-bars" aria-hidden="true">${bars}</span><span>${text}</span></div><p class="activity-note">Code activity only. It does not show usage, and a listing is not an endorsement.</p>`;
 }
