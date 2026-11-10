@@ -6000,3 +6000,20 @@ html::after {
   white-space: nowrap;
   color: var(--text-green);
 }
+
+/* Weekly card: shareable image of the last 7 days of commits. */
+.card-section {
+  padding: 22px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.card-preview {
+  display: block;
+  width: 100%;
+  max-width: 600px;
+  height: auto;
+  aspect-ratio: 16 / 9;
+  margin: 10px 0 14px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+}

@@ -604,6 +604,8 @@ function categoryIcon(name) {
 
       ${renderOnchainBlock(agent)}
 
+      ${renderWeeklyCardSection(agent)}
+
       <div class="badge-section reveal">
         <div class="detail-row-label">Add this badge to your README</div>
         <div class="badge-block">
@@ -670,6 +672,7 @@ function categoryIcon(name) {
     initCopyAddressButton(container);
     loadOnchainActivity(container);
     loadBuilderMore(container, agent);
+    initWeeklyCard(container, agent);
     initCopyBadgeButton(container);
     initEmbedSnippet(container, agent.id);
     initReportAgent(container, agent.id);
