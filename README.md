@@ -9,26 +9,27 @@ index.html          → home (hero + recent agents)
 search.html          → search + category filter
 publish.html         → open publish form (no login)
 agent.html           → agent detail (?id=<uuid>)
-css/style.css        → all styles
-js/supabase-client.js→ Supabase project URL + anon key (fill this in)
-js/app.js            → shared helpers (fetch, render, format)
-js/home.js           → home page logic
-js/search.js         → search page logic
-js/publish.js        → publish form logic
-js/agent.js          → detail page logic
-public/logo.svg       public/logo.png → Agraris logo
-supabase/migration.sql → run this in Supabase SQL Editor first
+style.css            → all styles
+supabase-client.js   → Supabase project URL + anon key (fill this in)
+app.js               → shared helpers (fetch, render, format)
+home.js              → home page logic
+search.js            → search page logic
+publish.js           → publish form logic
+agent.js             → detail page logic
+logo.svg, logo.png   → Agraris logo
+migration.sql        → run this in Supabase SQL Editor first
+supabase/migration-*.sql → later migrations, run after migration.sql
 ```
 
 ## Setup steps
 
 1. **Supabase project**
    - Create a project at supabase.com (if you haven't).
-   - Go to **SQL Editor** → paste the contents of `supabase/migration.sql` → Run.
+   - Go to **SQL Editor** → paste the contents of `migration.sql` → Run.
    - Go to **Settings → API** → copy the **Project URL** and **anon public** key.
 
 2. **Connect the site to Supabase**
-   - Open `js/supabase-client.js`.
+   - Open `supabase-client.js`.
    - Replace `SUPABASE_URL` and `SUPABASE_ANON_KEY` with the values from step 1.
 
 3. **Push to GitHub**
