@@ -30,6 +30,9 @@ test("not rising: no chip text; singular; 100+ at the counter cap", () => {
   assert.strictEqual(a.upFrom, null);
   const b = buildCardSpec({ ...agent, kind: "tool" }, { c7: 100, d: [14, 14, 14, 14, 14, 15, 15], p7: null }, false);
   assert.strictEqual(b.bigNumber, "100+");
+  assert.deepStrictEqual(b.bars, []);
+  assert.strictEqual(b.upFrom, null);
+  assert.strictEqual(b.rising, false);
   assert.match(b.meta, /^Tool/);
 });
 

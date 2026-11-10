@@ -16,16 +16,19 @@ function buildCardSpec(agent, a, rising) {
   const cats = Array.isArray(agent.category) ? agent.category : [];
   const kind = agent.kind === "tool" ? "Tool" : "Agent";
   const meta = [kind, agent.version ? `v${agent.version}` : "", cats[0] || ""].filter(Boolean).join("  ·  ");
-  const upFrom = rising && a.p7 !== null && a.p7 !== undefined ? `up from ${a.p7}` : null;
+  // At the API's 100-commit cap the daily split and the previous week are
+  // unreliable, so the card shows only "100+" (no bars, no "up from").
+  const capped = a.c7 >= 100;
+  const upFrom = !capped && rising && a.p7 !== null && a.p7 !== undefined ? `up from ${a.p7}` : null;
   const url = `https://agraris.xyz/agent.html?id=${agent.id}`;
   return {
     name: String(agent.name || ""),
     meta,
     bigNumber: c7Text,
     unit: `${noun} this week`,
-    rising: !!rising,
+    rising: !!rising && !capped,
     upFrom,
-    bars: Array.isArray(a.d) ? a.d.slice(0, 7) : [],
+    bars: !capped && Array.isArray(a.d) ? a.d.slice(0, 7) : [],
     note: CARD_NOTE,
     url,
     tweet: `${agent.name}: ${c7Text} ${noun} this week${upFrom ? ` (${upFrom})` : ""}. Code activity only.`,
@@ -50,16 +53,30 @@ function fitText(ctx, text, maxWidth) {
   return t + "…";
 }
 
-function drawWeeklyCard(canvas, spec, bg) {
-  canvas.width = CARD_W;
-  canvas.height = CARD_H;
-  const ctx = canvas.getContext("2d");
-  const DISPLAY = '"Fraunces", Georgia, serif';
-  const MONO = '"IBM Plex Mono", ui-monospace, Menlo, monospace';
-  const GREEN = "#2f6b3f";
-  const INK = "#3b2d22";
+// Fonts used on the card: Inter (loaded by agent.html) and IBM Plex Mono.
+const CARD_SANS = 'Inter, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif';
+const CARD_MONO = '"IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace';
 
-  ctx.fillStyle = "#efe4cf";
+function setSpacing(ctx, px) {
+  if ("letterSpacing" in ctx) ctx.letterSpacing = `${px}px`;
+}
+
+// Night-hills card, drawn at 2x for sharp text. All coordinates are in a
+// 1200x675 space.
+function drawWeeklyCard(canvas, spec, bg) {
+  const SCALE = 2;
+  canvas.width = CARD_W * SCALE;
+  canvas.height = CARD_H * SCALE;
+  const ctx = canvas.getContext("2d");
+  ctx.setTransform(SCALE, 0, 0, SCALE, 0, 0);
+  const CREAM = "#f1ead9";
+  const SOFT = "rgba(241,234,217,0.82)";
+  const RULE = "rgba(241,234,217,0.22)";
+  const GREEN = "#8cc29a";
+  ctx.textBaseline = "alphabetic";
+  ctx.textAlign = "left";
+
+  ctx.fillStyle = "#0b130e";
   ctx.fillRect(0, 0, CARD_W, CARD_H);
   if (bg && bg.naturalWidth) {
     const s = Math.max(CARD_W / bg.naturalWidth, CARD_H / bg.naturalHeight);
@@ -67,97 +84,92 @@ function drawWeeklyCard(canvas, spec, bg) {
     const h = bg.naturalHeight * s;
     ctx.drawImage(bg, (CARD_W - w) / 2, (CARD_H - h) / 2, w, h);
   }
-  ctx.fillStyle = "rgba(246,239,224,0.78)";
+  const veil = ctx.createLinearGradient(0, 0, 0, CARD_H);
+  veil.addColorStop(0, "rgba(8,16,12,0.55)");
+  veil.addColorStop(0.6, "rgba(8,16,12,0.62)");
+  veil.addColorStop(1, "rgba(8,16,12,0.82)");
+  ctx.fillStyle = veil;
   ctx.fillRect(0, 0, CARD_W, CARD_H);
 
-  // panel
-  roundRectPath(ctx, 56, 56, CARD_W - 112, CARD_H - 112, 36);
-  ctx.fillStyle = "rgba(255,253,247,0.94)";
-  ctx.fill();
-  ctx.strokeStyle = "rgba(59,45,34,0.18)";
-  ctx.lineWidth = 2;
-  ctx.stroke();
+  // accent bar, label, title, meta
+  ctx.fillStyle = "#6fa57c";
+  ctx.fillRect(100, 100, 4, 128);
+  ctx.fillStyle = "rgba(241,234,217,0.85)";
+  ctx.font = `400 21px ${CARD_MONO}`;
+  setSpacing(ctx, 5);
+  ctx.fillText("THIS WEEK ON AGRARIS", 130, 120);
+  ctx.fillStyle = CREAM;
+  ctx.font = `600 78px ${CARD_SANS}`;
+  setSpacing(ctx, -1.5);
+  ctx.fillText(fitText(ctx, spec.name, 960), 130, 208);
+  ctx.fillStyle = SOFT;
+  ctx.font = `400 22px ${CARD_MONO}`;
+  setSpacing(ctx, 1);
+  ctx.fillText(fitText(ctx, spec.meta, 960), 130, 258);
 
-  const L = 112;
-  ctx.textBaseline = "alphabetic";
-  ctx.fillStyle = GREEN;
-  ctx.font = `500 20px ${MONO}`;
-  ctx.fillText("THIS WEEK ON AGRARIS", L, 128);
-
-  ctx.fillStyle = INK;
-  ctx.font = `700 60px ${DISPLAY}`;
-  ctx.fillText(fitText(ctx, spec.name, 780), L, 202);
-
-  ctx.fillStyle = "rgba(59,45,34,0.62)";
-  ctx.font = `400 22px ${MONO}`;
-  ctx.fillText(fitText(ctx, spec.meta, 780), L, 246);
+  ctx.fillStyle = RULE;
+  ctx.fillRect(100, 306, 1000, 2);
 
   // big number + unit
-  ctx.fillStyle = GREEN;
-  ctx.font = `800 168px ${DISPLAY}`;
-  ctx.fillText(spec.bigNumber, L, 438);
+  ctx.fillStyle = CREAM;
+  ctx.font = `600 150px ${CARD_SANS}`;
+  setSpacing(ctx, -4);
+  ctx.fillText(spec.bigNumber, 100, 468);
   const numW = ctx.measureText(spec.bigNumber).width;
-  ctx.fillStyle = INK;
-  ctx.font = `500 30px ${MONO}`;
-  ctx.fillText(spec.unit, L + numW + 22, 438);
+  ctx.font = `500 34px ${CARD_SANS}`;
+  setSpacing(ctx, 0);
+  ctx.fillText(spec.unit, 100 + numW + 40, 466);
 
   // rising chip
   if (spec.rising) {
-    ctx.font = `700 24px ${MONO}`;
-    const label = "RISING";
-    const cw = ctx.measureText(label).width + 44;
-    roundRectPath(ctx, L, 470, cw, 46, 23);
-    ctx.fillStyle = "rgba(47,107,63,0.10)";
-    ctx.fill();
-    ctx.strokeStyle = GREEN;
-    ctx.lineWidth = 3;
-    ctx.stroke();
+    roundRectPath(ctx, 100, 512, 150, 52, 12);
     ctx.fillStyle = GREEN;
-    ctx.fillText(label, L + 22, 502);
+    ctx.fill();
+    ctx.fillStyle = "#0b130e";
+    ctx.font = `500 25px ${CARD_MONO}`;
+    setSpacing(ctx, 2);
+    ctx.textAlign = "center";
+    ctx.fillText("RISING", 175 + 1, 546);
+    ctx.textAlign = "left";
     if (spec.upFrom) {
-      ctx.fillStyle = "rgba(59,45,34,0.7)";
-      ctx.font = `400 24px ${MONO}`;
-      ctx.fillText(spec.upFrom, L + cw + 18, 502);
+      ctx.fillStyle = "rgba(241,234,217,0.85)";
+      ctx.font = `400 24px ${CARD_MONO}`;
+      setSpacing(ctx, 0);
+      ctx.fillText(spec.upFrom, 278, 546);
     }
   }
 
   // 7-day bars (oldest first, today last)
   const bars = spec.bars;
   if (bars.length) {
-    const bx = 780;
-    const baseY = 440;
-    const maxH = 190;
-    const bw = 36;
-    const gap = 14;
+    ctx.fillStyle = RULE;
+    ctx.fillRect(700, 338, 2, 236);
     const max = Math.max(1, ...bars);
     bars.forEach((n, i) => {
-      const h = n ? 14 + Math.round(((maxH - 14) * n) / max) : 6;
-      roundRectPath(ctx, bx + i * (bw + gap), baseY - h, bw, h, Math.min(8, h / 2));
-      ctx.fillStyle = n ? GREEN : "rgba(59,45,34,0.22)";
+      const h = n ? 20 + Math.round((150 * n) / max) : 5;
+      roundRectPath(ctx, 760 + i * 48, 522 - h, 34, h, Math.min(5, h / 2));
+      ctx.fillStyle = n ? GREEN : "rgba(241,234,217,0.25)";
       ctx.fill();
     });
-    ctx.fillStyle = "rgba(59,45,34,0.55)";
-    ctx.font = `400 18px ${MONO}`;
-    ctx.fillText("last 7 days", bx, baseY + 34);
+    ctx.fillStyle = SOFT;
+    ctx.font = `400 20px ${CARD_MONO}`;
+    setSpacing(ctx, 0);
+    ctx.fillText("last 7 days", 760, 552);
   }
 
   // footer
-  ctx.strokeStyle = GREEN;
-  ctx.lineWidth = 6;
-  ctx.lineCap = "round";
-  ctx.beginPath();
-  ctx.moveTo(L, 578);
-  ctx.bezierCurveTo(L + 12, 556, L + 24, 556, L + 36, 574);
-  ctx.bezierCurveTo(L + 48, 592, L + 60, 592, L + 72, 566);
-  ctx.stroke();
-  ctx.fillStyle = INK;
-  ctx.font = `700 30px ${DISPLAY}`;
-  ctx.fillText("agraris.xyz", L + 92, 582);
-  ctx.fillStyle = "rgba(59,45,34,0.6)";
-  ctx.font = `400 18px ${MONO}`;
+  ctx.fillStyle = RULE;
+  ctx.fillRect(100, 604, 1000, 2);
+  ctx.fillStyle = CREAM;
+  ctx.font = `600 28px ${CARD_SANS}`;
+  setSpacing(ctx, 0);
+  ctx.fillText("agraris.xyz", 100, 646);
+  ctx.fillStyle = SOFT;
+  ctx.font = `400 17px ${CARD_MONO}`;
   ctx.textAlign = "right";
-  ctx.fillText(spec.note, CARD_W - 112, 582);
+  ctx.fillText(spec.note, 1100, 644);
   ctx.textAlign = "left";
+  setSpacing(ctx, 0);
 }
 
 function renderWeeklyCardSection(agent) {
@@ -167,7 +179,7 @@ function renderWeeklyCardSection(agent) {
   return `
     <div class="card-section reveal" id="weekly-card">
       <div class="detail-row-label">Share this week's card</div>
-      <canvas class="card-preview" id="weekly-card-canvas" width="${CARD_W}" height="${CARD_H}" aria-label="Weekly activity card"></canvas>
+      <canvas class="card-preview" id="weekly-card-canvas" width="${CARD_W * 2}" height="${CARD_H * 2}" aria-label="Weekly activity card"></canvas>
       <div class="badge-code-row">
         <button type="button" class="btn btn-sm" id="card-share-btn">Share image</button>
         <button type="button" class="btn btn-sm" id="card-download-btn">Download PNG</button>
@@ -187,9 +199,18 @@ function initWeeklyCard(root, agent) {
   draw(null);
   const img = new Image();
   img.onload = () => draw(img);
-  img.src = "images/hero-light.webp";
+  img.src = "images/hero-dark.webp";
   // Fonts load lazily; redraw once they are ready so the card matches the site.
-  if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => draw(img.complete ? img : null));
+  if (document.fonts && document.fonts.load) {
+    Promise.all([
+      document.fonts.load('600 78px Inter'),
+      document.fonts.load('500 34px Inter'),
+      document.fonts.load('400 21px "IBM Plex Mono"'),
+      document.fonts.load('500 25px "IBM Plex Mono"'),
+    ])
+      .catch(() => {})
+      .then(() => draw(img.complete && img.naturalWidth ? img : null));
+  }
 
   const x = root.querySelector("#card-x-btn");
   if (x) x.href = `https://twitter.com/intent/tweet?text=${encodeURIComponent(spec.tweet)}&url=${encodeURIComponent(spec.url)}`;
