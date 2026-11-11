@@ -134,6 +134,14 @@ function agentLogoPath(listing) {
 
 // Wraps the title content (name + badges) with the logo, only when the
 // listing has one. Without a logo the markup is unchanged.
+// Just the <img> (own logo or Agraris default), for compact rows.
+function agentLogoImg(listing, size = 32, cls = "agent-logo") {
+  const src =
+    agentLogoPath(listing) ||
+    (listing && listing.kind === "tool" ? DEFAULT_LOGO_TOOL : DEFAULT_LOGO_AGENT);
+  return `<img class="${cls}" src="${src}" width="${size}" height="${size}" alt="" loading="lazy" decoding="async" onerror="this.remove()">`;
+}
+
 function renderTitleWithLogo(listing, titleHtml, { lg = false } = {}) {
   const src =
     agentLogoPath(listing) ||

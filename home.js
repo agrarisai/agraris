@@ -158,6 +158,7 @@ async function loadMostActive() {
         return `
           <a class="ma-row reveal" data-reveal-stagger href="agent.html?id=${encodeURIComponent(agent.id)}">
             <span class="ma-rank" aria-hidden="true">${String(i + 1).padStart(2, "0")}</span>
+            ${agentLogoImg(agent, 36, "agent-logo agent-logo-sm")}
             <span class="ma-name">${escapeHtml(agent.name)}<small>${n}${n >= 100 ? "+" : ""} commit${n === 1 ? "" : "s"} this week</small></span>
             <span class="ma-bar" aria-hidden="true"><b style="width:${pct}%"></b></span>
           </a>`;
@@ -205,7 +206,7 @@ function renderWnItem(ev) {
       : `${ev.description ? `<p class="wn-desc">${escapeHtml(ev.description)}</p>` : ""}${tags ? `<div class="wn-tags">${tags}</div>` : ""}`;
   return `
     <a class="wn-item" href="${href}">
-      <div class="wn-head"><span class="wn-name">${escapeHtml(ev.name)}</span>${kind}${badge}<span class="wn-time">${wnAgo(ev.at)}</span></div>
+      <div class="wn-head">${agentLogoImg(ev, 36, "agent-logo agent-logo-sm")}<span class="wn-name">${escapeHtml(ev.name)}</span>${kind}${badge}<span class="wn-time">${wnAgo(ev.at)}</span></div>
       ${meta}
     </a>`;
 }
@@ -223,12 +224,14 @@ async function loadWhatsNew(published) {
       id: a.id,
       name: a.name,
       kind: a.kind,
+      repo_url: a.repo_url,
       description: a.description,
       categories: normalizeCategories(a.category),
       type: "new",
       at: a.created_at,
     })
   );
+  const repoById = new Map(published.map((a) => [a.id, a.repo_url]));
   updated.forEach((u) => {
     const prev = byId.get(u.id);
     const at = u.last_edited_at;
@@ -237,7 +240,7 @@ async function loadWhatsNew(published) {
       // Edited after publishing: show as one updated event, keep its tags.
       byId.set(u.id, { ...prev, type: "updated", at });
     } else {
-      byId.set(u.id, { id: u.id, name: u.name, kind: u.kind, type: "updated", at });
+      byId.set(u.id, { id: u.id, name: u.name, kind: u.kind, repo_url: repoById.get(u.id), type: "updated", at });
     }
   });
 
