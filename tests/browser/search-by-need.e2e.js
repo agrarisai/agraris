@@ -68,12 +68,17 @@ function serve() {
   // Nothing found: Wanted CTA with the phrase, and one logged miss.
   await page.fill("#search-input", "tax report generator");
   await page.waitForSelector("a[href^='wanted.html?title=']");
+  assert.equal(await page.isVisible("#category-chips"), false, "chips hidden when nothing found");
   assert.match(await page.getAttribute("a[href^='wanted.html?title=']", "href"), /title=tax%20report%20generator#wanted-form-section/);
   await page.waitForTimeout(2300);
   const logs = await page.evaluate(() => window.__rpc.filter((c) => c[0] === "log_search_miss"));
   assert.equal(logs.length, 1);
   assert.equal(logs[0][1].p_term, "tax report generator");
   assert.match(logs[0][1].p_visitor, /^[0-9a-f]{24}$/);
+
+  await page.fill("#search-input", "wallet");
+  await page.waitForSelector(".agent-row .agent-name");
+  assert.equal(await page.isVisible("#category-chips"), true, "chips back with results");
 
   // A wallet address is never sent.
   await page.fill("#search-input", "0x467b7a85f55bd716cb16d59f63b8ccac08852a6c");

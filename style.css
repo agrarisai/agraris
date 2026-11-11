@@ -6025,3 +6025,7 @@ html::after {
   font-size: 11.5px;
   color: var(--green);
 }
+
+.category-chips[hidden] {
+  display: none;
+}
