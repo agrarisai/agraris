@@ -214,6 +214,11 @@
   }
 
   function renderResults(agents, whyById = new Map(), search = "") {
+    // With nothing found for a plain search, the category chips only push
+    // the "Nothing listed" card off screen (long list on phones).
+    const plainNoResult = agents.length === 0 && search && activeKind === "" && activeCategories.size === 0;
+    categoryChipsEl.hidden = Boolean(plainNoResult);
+
     countEl.textContent = agents.length
       ? `${agents.length} result${agents.length === 1 ? "" : "s"}`
       : "";
