@@ -6060,3 +6060,7 @@ html::after {
   height: 76px;
   border-radius: 18px;
 }
+
+/* Small logos in compact home rows (Most active, What's new) */
+.agent-logo-sm{width:36px;height:36px;border-radius:9px;flex:none}
+.ma-row{grid-template-columns:34px 36px 1fr 72px}
