@@ -60,3 +60,8 @@ test("rows and the detail page use the helper; docs mention logos", () => {
   const docs = fs.readFileSync(path.join(root, "docs.html"), "utf8");
   assert.match(docs, /id="logos"/);
 });
+
+test("home trending cards use the logo helper too", () => {
+  const home = fs.readFileSync(path.join(root, "home.js"), "utf8");
+  assert.match(home, /renderTitleWithLogo\(/);
+});
