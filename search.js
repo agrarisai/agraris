@@ -133,11 +133,22 @@
   function applyFilters() {
     const search = searchInput.value.trim().toLowerCase();
 
+    const tokens = needTokens(search);
+    const whyById = new Map();
     const filtered = listingsForKind().filter((a) => {
-      const matchesSearch =
+      let matchesSearch =
         !search ||
         a.name.toLowerCase().includes(search) ||
         a.description.toLowerCase().includes(search);
+      // Not an exact phrase? Try matching the words of the query ("what do
+      // you need"), and remember which words matched to show them.
+      if (!matchesSearch) {
+        const hit = matchNeed(a, tokens);
+        if (hit) {
+          matchesSearch = true;
+          whyById.set(String(a.id), hit.matched);
+        }
+      }
 
       const matchesCategory =
         activeCategories.size === 0 ||
@@ -154,13 +165,69 @@
       return matchesSearch && matchesCategory && matchesVerified && matchesLive && matchesOwner;
     });
 
-    renderResults(sortAgents(filtered));
+    renderResults(sortAgents(filtered), whyById, search);
+    scheduleMissLog(search, filtered.length === 0);
   }
 
-  function renderResults(agents) {
+  // ---------- unmet needs ----------
+
+  const VISITOR_KEY = "agraris-visitor";
+  const loggedTerms = new Set();
+  let missTimer = null;
+
+  function visitorId() {
+    try {
+      let id = localStorage.getItem(VISITOR_KEY);
+      if (!id || !/^[a-z0-9]{8,64}$/.test(id)) {
+        id = Array.from(crypto.getRandomValues(new Uint8Array(12)), (b) => b.toString(16).padStart(2, "0")).join("");
+        localStorage.setItem(VISITOR_KEY, id);
+      }
+      return id;
+    } catch {
+      return null;
+    }
+  }
+
+  // Only a plain search with nothing found is a "need": no category or
+  // checkbox filter that could be hiding a match. Waits until typing stops.
+  function scheduleMissLog(search, noResults) {
+    clearTimeout(missTimer);
+    const plain =
+      activeKind === "" &&
+      activeCategories.size === 0 &&
+      !verifiedFilterInput.checked &&
+      !liveFilterInput.checked &&
+      !ownerFilterInput.checked;
+    if (!noResults || !plain || !isLoggableTerm(search)) return;
+    const term = search.toLowerCase().replace(/\s+/g, " ").trim();
+    if (loggedTerms.has(term)) return;
+    missTimer = setTimeout(async () => {
+      const visitor = visitorId();
+      if (!visitor) return;
+      loggedTerms.add(term);
+      try {
+        await supabaseClient.rpc("log_search_miss", { p_term: term, p_visitor: visitor });
+      } catch {
+        // Logging is best effort and never shown to the visitor.
+      }
+    }, 2000);
+  }
+
+  function renderResults(agents, whyById = new Map(), search = "") {
     countEl.textContent = agents.length
       ? `${agents.length} result${agents.length === 1 ? "" : "s"}`
       : "";
+
+    if (agents.length === 0 && search && activeKind === "" && activeCategories.size === 0) {
+      const title = search.slice(0, 100);
+      listEl.innerHTML = `
+        <div class="agent-row">
+          <div class="agent-row-top"><span class="agent-name">Nothing listed for “${escapeHtml(search)}”</span></div>
+          <p class="agent-desc">No agent or tool matches yet. Add it to the Wanted board so builders can see it.</p>
+          <div class="agent-meta"><a class="btn btn-solid" style="padding:8px 14px" href="wanted.html?title=${encodeURIComponent(title)}#wanted-form-section">Add to Wanted board</a></div>
+        </div>`;
+      return;
+    }
 
     if (agents.length === 0) {
       listEl.innerHTML = renderEmptyState(
@@ -171,6 +238,20 @@
     }
 
     listEl.innerHTML = agents.map(renderAgentRow).join("");
+    if (whyById.size) {
+      listEl.querySelectorAll(".agent-row").forEach((row) => {
+        const href = row.querySelector(".agent-row-link")?.getAttribute("href") || "";
+        const id = decodeURIComponent(href.split("id=")[1] || "");
+        const words = whyById.get(id);
+        const desc = row.querySelector(".agent-desc");
+        if (words && desc) {
+          const p = document.createElement("p");
+          p.className = "why";
+          p.textContent = `Matches: ${words.map((w) => `“${w}”`).join(", ")}`;
+          desc.after(p);
+        }
+      });
+    }
     observeReveal(listEl);
   }
 

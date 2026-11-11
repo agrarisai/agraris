@@ -6017,3 +6017,11 @@ html::after {
   border: 1px solid var(--line);
   border-radius: 14px;
 }
+
+/* Search by need: which query words matched a listing */
+.why {
+  margin: 6px 0 0;
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  color: var(--green);
+}
