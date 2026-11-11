@@ -244,9 +244,55 @@
     }
   });
 
+  // ---------- unmet needs ----------
+
+  // Phrases people searched for without finding a listing (get_unmet_needs
+  // RPC, supabase/migration-search-misses.sql). Written with textContent.
+  async function loadUnmet() {
+    const section = document.getElementById("unmet-section");
+    const list = document.getElementById("unmet-list");
+    if (!section || !list) return;
+    try {
+      const { data, error } = await supabaseClient.rpc("get_unmet_needs", { p_limit: 10 });
+      if (error || !Array.isArray(data)) return;
+      const rows = data.filter(
+        (r) => r && typeof r.term === "string" && r.term !== "" && Number.isFinite(Number(r.searches))
+      );
+      if (rows.length === 0) return;
+      rows.forEach((r) => {
+        const card = el("div", "agent-row");
+        const link = el("a", "agent-row-link");
+        link.href = `wanted.html?title=${encodeURIComponent(r.term.slice(0, MAX_TITLE))}#wanted-form-section`;
+        link.setAttribute("aria-label", `Request: ${r.term}`);
+        const top = el("div", "agent-row-top");
+        top.appendChild(el("span", "agent-name", r.term));
+        const meta = el("div", "agent-meta-row");
+        meta.appendChild(el("span", "agent-version", `${Number(r.searches)} searches this week`));
+        card.append(link, top, meta, el("p", "agent-desc", "Nobody has listed this yet."));
+        list.appendChild(card);
+      });
+      section.hidden = false;
+    } catch {
+      // The board is optional; a failure just leaves it hidden.
+    }
+  }
+
+  // wanted.html?title=... pre-fills the request form (from a search with no
+  // results). Only the title; the visitor writes the description.
+  function prefillTitle() {
+    const t = new URLSearchParams(window.location.search).get("title");
+    if (t && form.title && !form.title.value) {
+      form.title.value = [...t.replace(/[\u0000-\u001f\u007f]/g, " ").trim()].slice(0, MAX_TITLE).join("");
+    }
+  }
+
   // ---------- start ----------
 
   const id = new URLSearchParams(window.location.search).get("id");
   if (id !== null) loadDetail(id.trim().toLowerCase());
-  else loadBoard();
+  else {
+    prefillTitle();
+    loadBoard();
+    loadUnmet();
+  }
 })();
