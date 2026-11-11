@@ -60,8 +60,9 @@ function serve() {
   await page.goto(`${base_}search.html`);
   await page.waitForSelector(".agent-row");
   await page.addStyleTag({ content: ".reveal{opacity:1!important;transform:none!important}" });
-  assert.equal(await page.locator("img.agent-logo").count(), 1, "only the listing with a logo shows one");
-  assert.equal(await page.locator(".agent-row", { hasText: "ScanHood" }).locator("img").count(), 0);
+  const nRows = await page.locator(".agent-row").count();
+  assert.equal(await page.locator("img.agent-logo").count(), nRows, "every row shows a logo (own or default)");
+  assert.match(await page.locator(".agent-row", { hasText: "ScanHood" }).locator("img.agent-logo").getAttribute("src"), /placeholder-(agent|tool)\.webp/);
   await page.waitForFunction(() => [...document.images].every((i) => i.complete));
   assert.ok(await page.evaluate(() => document.querySelector("img.agent-logo").naturalWidth > 0), "logo loads");
   if (process.env.SHOT) await page.screenshot({ path: process.env.SHOT + "-list.png" });

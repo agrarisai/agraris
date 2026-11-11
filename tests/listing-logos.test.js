@@ -9,7 +9,7 @@ const app = fs.readFileSync(path.join(root, "app.js"), "utf8");
 
 // Load only the logo helpers from app.js (it is a browser script).
 function loadHelpers() {
-  const a = app.indexOf("const AGENT_LOGOS = {");
+  const a = app.indexOf("const DEFAULT_LOGO_AGENT");
   const b = app.indexOf("function renderAgentRow(");
   assert.ok(a > 0 && b > a);
   const ctx = {};
@@ -39,10 +39,14 @@ test("agentLogoPath matches case-insensitively and ignores trailing slash", () =
   assert.strictEqual(agentLogoPath({ repo_url: "https://github.com/x/constructor" }), null);
 });
 
-test("without a logo the title markup is unchanged; with one it adds an img", () => {
+test("without a logo the Agraris default is used (agent vs tool); with one it adds its own img", () => {
   const { renderTitleWithLogo } = loadHelpers();
   const none = renderTitleWithLogo({ repo_url: "https://github.com/a/b" }, "<b>x</b>");
-  assert.deepStrictEqual({ ...none }, { cls: "", html: "<b>x</b>" });
+  assert.match(none.html, /src="logos\/placeholder-agent\.webp"/);
+  const tool = renderTitleWithLogo({ kind: "tool", repo_url: "https://github.com/a/b" }, "<b>x</b>");
+  assert.match(tool.html, /src="logos\/placeholder-tool\.webp"/);
+  assert.ok(fs.existsSync(path.join(root, "logos/placeholder-agent.webp")));
+  assert.ok(fs.existsSync(path.join(root, "logos/placeholder-tool.webp")));
   const yes = renderTitleWithLogo({ repo_url: "https://github.com/millw14/merrymen" }, "<b>x</b>", { lg: true });
   assert.match(yes.cls, /has-logo-lg/);
   assert.match(yes.html, /<img class="agent-logo" src="logos\/merrymen\.webp" width="76" height="76" alt=""/);

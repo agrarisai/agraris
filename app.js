@@ -108,9 +108,13 @@ function renderOnchainLink(agent) {
 
 // ---------- listing logos ----------
 // Project logos taken from each project's own public repository, resized to
-// 160x160 and stored in logos/. A listing without an entry shows no logo
-// (no placeholder). Keys are lowercase repo urls. To remove a logo, delete
+// 160x160 and stored in logos/. A listing without an entry shows the default
+// icon below. Keys are lowercase repo urls. To remove a logo, delete
 // its line and the file; see "Logos" in docs.html.
+// Listings without their own logo get the Agraris default: a robot head for
+// agents, a robot holding a screwdriver for tools.
+const DEFAULT_LOGO_AGENT = "logos/placeholder-agent.webp";
+const DEFAULT_LOGO_TOOL = "logos/placeholder-tool.webp";
 const AGENT_LOGOS = {
   "https://github.com/mikeypetrillo/agent402": "logos/agent402.webp",
   "https://github.com/millw14/merrymen": "logos/merrymen.webp",
@@ -131,8 +135,9 @@ function agentLogoPath(listing) {
 // Wraps the title content (name + badges) with the logo, only when the
 // listing has one. Without a logo the markup is unchanged.
 function renderTitleWithLogo(listing, titleHtml, { lg = false } = {}) {
-  const src = agentLogoPath(listing);
-  if (!src) return { cls: "", html: titleHtml };
+  const src =
+    agentLogoPath(listing) ||
+    (listing && listing.kind === "tool" ? DEFAULT_LOGO_TOOL : DEFAULT_LOGO_AGENT);
   const size = lg ? 76 : 44;
   return {
     cls: lg ? " has-logo has-logo-lg" : " has-logo",
