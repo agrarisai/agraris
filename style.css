@@ -6029,3 +6029,34 @@ html::after {
 .category-chips[hidden] {
   display: none;
 }
+
+/* Listing logos (only for listings that have one) */
+.agent-row-top.has-logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.agent-row-title {
+  min-width: 0;
+}
+
+.agent-logo {
+  flex: none;
+  width: 44px;
+  height: 44px;
+  border-radius: 11px;
+  object-fit: cover;
+  background: #fff;
+  border: 1px solid rgba(var(--shadow-rgb), 0.18);
+}
+
+.agent-row-top.has-logo-lg {
+  gap: 18px;
+}
+
+.has-logo-lg .agent-logo {
+  width: 76px;
+  height: 76px;
+  border-radius: 18px;
+}

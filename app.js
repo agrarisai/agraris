@@ -106,6 +106,40 @@ function renderOnchainLink(agent) {
   return `<a class="agent-onchain-link" href="${EXPLORER_ADDRESS_BASE}${escapeHtml(address)}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()" title="${escapeHtml(address)}">On-chain ↗</a>`;
 }
 
+// ---------- listing logos ----------
+// Project logos taken from each project's own public repository, resized to
+// 160x160 and stored in logos/. A listing without an entry shows no logo
+// (no placeholder). Keys are lowercase repo urls. To remove a logo, delete
+// its line and the file; see "Logos" in docs.html.
+const AGENT_LOGOS = {
+  "https://github.com/mikeypetrillo/agent402": "logos/agent402.webp",
+  "https://github.com/millw14/merrymen": "logos/merrymen.webp",
+  "https://github.com/memikko/rh-stockpair-oracle": "logos/rh-stockpair-oracle.webp",
+  "https://github.com/noisyxl/brier": "logos/brier.webp",
+  "https://github.com/factoragents/factor": "logos/factor.webp",
+  "https://github.com/tracehood/robinhood-explorer": "logos/tracehood.webp",
+  "https://github.com/a2i2-sandbox/a2i2-sandbox": "logos/a2i2.webp",
+  "https://github.com/noctenna-lab/noctenna": "logos/noctenna.webp",
+  "https://github.com/proofofstock/proof-of-stock": "logos/proof-of-stock.webp",
+};
+
+function agentLogoPath(listing) {
+  const key = String((listing && listing.repo_url) || "").trim().toLowerCase().replace(/\/+$/, "");
+  return Object.prototype.hasOwnProperty.call(AGENT_LOGOS, key) ? AGENT_LOGOS[key] : null;
+}
+
+// Wraps the title content (name + badges) with the logo, only when the
+// listing has one. Without a logo the markup is unchanged.
+function renderTitleWithLogo(listing, titleHtml, { lg = false } = {}) {
+  const src = agentLogoPath(listing);
+  if (!src) return { cls: "", html: titleHtml };
+  const size = lg ? 76 : 44;
+  return {
+    cls: lg ? " has-logo has-logo-lg" : " has-logo",
+    html: `<img class="agent-logo" src="${src}" width="${size}" height="${size}" alt="" loading="lazy" decoding="async" onerror="this.remove()"><span class="agent-row-title">${titleHtml}</span>`,
+  };
+}
+
 function renderAgentRow(agent) {
   const categories = normalizeCategories(agent.category);
   const tags = categories
@@ -118,15 +152,20 @@ function renderAgentRow(agent) {
   const compareSelected =
     compareState.enabled && compareState.selected.has(String(agent.id));
 
+  const title = renderTitleWithLogo(
+    agent,
+    `<span class="agent-name">${escapeHtml(agent.name)}</span>
+        ${renderKindBadge(agent)}
+        ${renderVerifiedBadge(agent)}`
+  );
+
   return `
     <div class="agent-row reveal${compareState.enabled ? " has-compare" : ""}${compareSelected ? " is-compare-selected" : ""}" data-reveal-stagger>
       <a class="agent-row-link" href="agent.html?id=${encodeURIComponent(agent.id)}" aria-label="${escapeHtml(agent.name)}"></a>
       ${renderWatchlistButton(agent.id)}
       ${renderCompareCheckbox(agent)}
-      <div class="agent-row-top">
-        <span class="agent-name">${escapeHtml(agent.name)}</span>
-        ${renderKindBadge(agent)}
-        ${renderVerifiedBadge(agent)}
+      <div class="agent-row-top${title.cls}">
+        ${title.html}
       </div>
       <div class="agent-meta-row">
         <span class="agent-version">v${escapeHtml(agent.version)}</span>
