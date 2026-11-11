@@ -61,16 +61,17 @@ function renderTrendingCard(agent, rank) {
     )
     .join("");
 
+  const title = renderTitleWithLogo(
+    agent,
+    `<span class="agent-name">${escapeHtml(agent.name)}</span>${renderKindBadge(agent)}${renderVerifiedBadge(agent)}`
+  );
+
   return `
     <div class="agent-row trending-card reveal" data-reveal-stagger>
       <span class="trending-rank" aria-hidden="true">#${rank}</span>
       <a class="agent-row-link" href="agent.html?id=${encodeURIComponent(agent.id)}" aria-label="${escapeHtml(agent.name)}"></a>
       ${renderWatchlistButton(agent.id)}
-      <div class="agent-row-top">
-        <span class="agent-name">${escapeHtml(agent.name)}</span>
-        ${renderKindBadge(agent)}
-        ${renderVerifiedBadge(agent)}
-      </div>
+      <div class="agent-row-top${title.cls}">${title.html}</div>
       <div class="agent-meta-row">
         <span class="agent-version">v${escapeHtml(agent.version)}</span>
         ${renderGithubBadge(agent)}
