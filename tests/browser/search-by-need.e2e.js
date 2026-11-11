@@ -77,7 +77,7 @@ function serve() {
   assert.match(logs[0][1].p_visitor, /^[0-9a-f]{24}$/);
 
   await page.fill("#search-input", "wallet");
-  await page.waitForSelector(".agent-row .agent-name");
+  await page.waitForSelector(".agent-row-link");
   assert.equal(await page.isVisible("#category-chips"), true, "chips back with results");
 
   // A wallet address is never sent.
