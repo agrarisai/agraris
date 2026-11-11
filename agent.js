@@ -556,13 +556,19 @@ function categoryIcon(name) {
     setMetaProperty("og:title", `${agent.name} — Agraris`);
     setMetaProperty("og:description", agent.description);
 
+    const detailTitle = renderTitleWithLogo(
+      agent,
+      `<span class="agent-name">${escapeHtml(agent.name)}</span>
+          ${renderKindBadge(agent, { lg: true })}
+          ${renderVerifiedBadge(agent, { lg: true, icon: true })}`,
+      { lg: true }
+    );
+
     container.innerHTML = `
       <div class="detail-card reveal">
       <div class="detail-head">
-        <div class="agent-row-top">
-          <span class="agent-name">${escapeHtml(agent.name)}</span>
-          ${renderKindBadge(agent, { lg: true })}
-          ${renderVerifiedBadge(agent, { lg: true, icon: true })}
+        <div class="agent-row-top${detailTitle.cls}">
+          ${detailTitle.html}
         </div>
         <div class="agent-meta-row">
           <span class="agent-version">v${escapeHtml(agent.version)}</span>
