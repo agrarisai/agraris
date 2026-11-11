@@ -12,6 +12,7 @@
 //   SUPABASE_SERVICE_ROLE_KEY — service_role key (JANGAN dipakai di client-side!)
 
 const { createClient } = require("@supabase/supabase-js");
+const { buildQueries, pickCandidates } = require("./suggestion-lib");
 
 const SUPABASE_URL = process.env.SUPABASE_URL;
 const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -25,28 +26,10 @@ if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
 
-const GITHUB_SEARCH_QUERY =
-  '"robinhood-chain" AND ("agent" OR "mcp") in:name,description,topics';
-
-const BLACKLIST_KEYWORDS = [
-  "sniper",
-  "bundler",
-  "volume-bot",
-  "volumebot",
-  "pump",
-  "honeypot",
-  "memecoin sniper",
-];
-
-function isBlacklisted(repo) {
-  const haystack = `${repo.full_name} ${repo.description ?? ""}`.toLowerCase();
-  return BLACKLIST_KEYWORDS.some((keyword) => haystack.includes(keyword));
-}
-
 async function searchGithubRepos(query) {
   const url = `https://api.github.com/search/repositories?q=${encodeURIComponent(
     query
-  )}&per_page=100`;
+  )}&sort=updated&per_page=100`;
 
   const headers = {
     Accept: "application/vnd.github+json",
@@ -96,35 +79,18 @@ async function fetchExistingRepoUrls() {
 }
 
 async function main() {
-  console.log(`Searching GitHub: ${GITHUB_SEARCH_QUERY}`);
-  const repos = await searchGithubRepos(GITHUB_SEARCH_QUERY);
+  const repos = [];
+  for (const query of buildQueries()) {
+    console.log(`Searching GitHub: ${query}`);
+    const found = await searchGithubRepos(query);
+    console.log(`  ${found.length} result(s)`);
+    repos.push(...found);
+  }
   console.log(`Found ${repos.length} candidate(s) from GitHub search.`);
 
   const existingRepoUrls = await fetchExistingRepoUrls();
-
-  let skippedBlacklist = 0;
-  let skippedDuplicate = 0;
-  const toInsert = [];
-
-  for (const repo of repos) {
-    if (isBlacklisted(repo)) {
-      skippedBlacklist += 1;
-      continue;
-    }
-    if (existingRepoUrls.has(repo.html_url)) {
-      skippedDuplicate += 1;
-      continue;
-    }
-
-    toInsert.push({
-      name: repo.full_name,
-      description: repo.description ?? null,
-      repo_url: repo.html_url,
-      stars: repo.stargazers_count ?? 0,
-    });
-    // Avoid inserting the same repo twice within this same run.
-    existingRepoUrls.add(repo.html_url);
-  }
+  const { toInsert, skippedBlacklist, skippedDuplicate, leftOver } =
+    pickCandidates(repos, existingRepoUrls);
 
   let insertedCount = 0;
   if (toInsert.length > 0) {
@@ -143,6 +109,7 @@ async function main() {
   console.log(`Skipped (blacklist): ${skippedBlacklist}`);
   console.log(`Skipped (duplicate): ${skippedDuplicate}`);
   console.log(`Inserted:            ${insertedCount}`);
+  console.log(`Left for next run:   ${leftOver}`);
 }
 
 main().catch((err) => {
