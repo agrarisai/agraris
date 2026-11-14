@@ -113,9 +113,23 @@
 
     <p class="guide-link">New here? <a href="guide.html">Read the guide</a>.</p>
 
+    <!-- Board only: filters + sort, filled in by wanted.js once requests load. -->
+    <div class="wanted-tools" id="wanted-tools" hidden>
+      <div class="wanted-filters" id="wanted-filters" role="group" aria-label="Filter requests"></div>
+      <div class="wanted-sortrow">
+        <label class="wanted-sort-label" for="wanted-sort">Sort</label>
+        <select id="wanted-sort" class="wanted-sort">
+          <option value="newest">Newest</option>
+          <option value="oldest">Oldest</option>
+        </select>
+      </div>
+    </div>
+
     <div class="wanted-list" id="wanted-list" aria-busy="true" aria-live="polite">
       <p class="wanted-empty">Loading…</p>
     </div>
+
+    <a class="btn btn-solid wanted-ask" id="wanted-ask" href="#wanted-form-section" hidden>+ Ask for an agent or tool</a>
 
     <!-- One request (?id=…): filled in by wanted.js. -->
     <section class="unmet-section" id="unmet-section" hidden>

@@ -116,7 +116,7 @@ async function main() {
   const base = `http://127.0.0.1:${server.address().port}/`;
   const browser = await chromium.launch(process.env.CHROMIUM_PATH ? { executablePath: process.env.CHROMIUM_PATH } : {});
 
-  async function open(file, opts, width = 1100) {
+  async function open(file, opts, width = Number(process.env.W) || 1100) {
     const page = await browser.newPage({ viewport: { width, height: 900 } });
     const problems = [];
     page.on("pageerror", (e) => problems.push(`pageerror: ${e.message}`));
@@ -176,6 +176,26 @@ async function main() {
   assert.doesNotMatch(await mainText(page), FORBIDDEN);
   assert.deepEqual((await page.evaluate(() => window.__calls)).find((c) => c[1] === "get_wanted")[2], { p_limit: 50 });
   assert.deepEqual(problems, []);
+
+  // --- filters, sort, share, sticky ask button
+  const titles = () => page.$$eval(".wanted-card .wanted-title", (els) => els.map((e) => e.textContent));
+  const chipText = () => page.$$eval(".wanted-filter", (els) => els.map((e) => e.textContent));
+  assert.deepEqual(await chipText(), ["All 3", "Agents 1", "Tools 1", "Unanswered 1"]);
+  assert.equal(await page.isVisible("#wanted-ask"), true);
+  assert.equal(await page.getAttribute("#wanted-ask", "href"), "#wanted-form-section");
+  await page.click(".wanted-filter:nth-child(2)");
+  assert.deepEqual(await titles(), ["Portfolio rebalancing agent"]);
+  assert.equal(await page.textContent("#wanted-count"), "1 request");
+  await page.click(".wanted-filter:nth-child(4)");
+  assert.deepEqual(await titles(), ["Anything for gas estimates"]);
+  await page.click(".wanted-filter:nth-child(1)");
+  await page.selectOption("#wanted-sort", "oldest");
+  assert.deepEqual(await titles(), ["Anything for gas estimates", "Portfolio rebalancing agent", "Order book MCP server"]);
+  await page.selectOption("#wanted-sort", "newest");
+  assert.equal(await page.textContent(".wanted-card .wanted-age"), "today");
+  assert.equal(await page.textContent(".wanted-card:nth-child(3) .wanted-age"), "1d ago");
+  assert.equal(await page.textContent(".wanted-card .wanted-actions button"), "Share");
+  if (process.env.SHOT) await page.screenshot({ path: process.env.SHOT });
 
   // --- form: client check, success
   await page.click("#wanted-submit-btn");
