@@ -28,6 +28,10 @@
   const submitBtn = document.getElementById("wanted-submit-btn");
   const msgEl = document.getElementById("wanted-msg");
   const submittedEl = document.getElementById("wanted-submitted");
+  const toolsEl = document.getElementById("wanted-tools");
+  const filtersEl = document.getElementById("wanted-filters");
+  const sortEl = document.getElementById("wanted-sort");
+  const askEl = document.getElementById("wanted-ask");
 
   const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
   const LIST_LIMIT = 50;
@@ -83,21 +87,103 @@
 
   // ---------- board ----------
 
+  // "3d ago" from created_at; empty when the date is missing or odd.
+  function ageText(iso) {
+    const t = Date.parse(iso);
+    if (!Number.isFinite(t)) return "";
+    const days = Math.floor((Date.now() - t) / 86400000);
+    if (days < 1) return "today";
+    return `${days}d ago`;
+  }
+
+  function shareButton(row) {
+    const btn = el("button", "btn btn-sm", "Share");
+    btn.type = "button";
+    btn.addEventListener("click", async () => {
+      const url = new URL(`wanted.html?id=${encodeURIComponent(row.id)}`, location.href).href;
+      try {
+        if (navigator.share) {
+          await navigator.share({ title: row.title, url });
+          return;
+        }
+        await navigator.clipboard.writeText(url);
+        btn.textContent = "Link copied";
+        setTimeout(() => { btn.textContent = "Share"; }, 2000);
+      } catch {
+        // Share sheet dismissed or clipboard blocked: nothing to do.
+      }
+    });
+    return btn;
+  }
+
   function renderCard(row) {
     const card = el("article", "wanted-card");
 
-    const top = el("div", "wanted-card-top");
-    const title = el("a", "wanted-title", row.title);
-    title.href = `wanted.html?id=${encodeURIComponent(row.id)}`;
-    top.append(title, " ", kindBadge(row.kind));
-
+    const top = el("div", "wanted-card-head");
+    top.appendChild(kindBadge(row.kind));
     const meta = el("div", "wanted-card-meta");
+    const age = ageText(row.created_at);
+    if (age) meta.appendChild(el("span", "wanted-age", age));
     const answers = answersText(row.answers_count);
     if (answers) meta.appendChild(el("span", "wanted-answers", answers));
-    meta.appendChild(builtThisLink(row.id));
+    top.appendChild(meta);
 
-    card.append(top, el("p", "wanted-desc", row.description), meta);
+    const title = el("a", "wanted-title", row.title);
+    title.href = `wanted.html?id=${encodeURIComponent(row.id)}`;
+    const titleWrap = el("h3", "wanted-card-title");
+    titleWrap.appendChild(title);
+
+    const actions = el("div", "wanted-actions");
+    const built = builtThisLink(row.id);
+    built.classList.add("btn-solid");
+    actions.append(built, shareButton(row));
+
+    card.append(top, titleWrap, el("p", "wanted-desc", row.description), actions);
     return card;
+  }
+
+  // ---------- filters + sort (board) ----------
+
+  let boardRows = [];
+  let activeFilter = "all";
+
+  const FILTERS = [
+    ["all", "All", () => true],
+    ["agent", "Agents", (r) => r.kind === "agent"],
+    ["tool", "Tools", (r) => r.kind === "tool"],
+    ["unanswered", "Unanswered", (r) => !(r.answers_count > 0)],
+  ];
+
+  function renderFilters() {
+    filtersEl.textContent = "";
+    FILTERS.forEach(([key, label, test]) => {
+      const n = boardRows.filter(test).length;
+      const b = el("button", "wanted-filter", `${label} ${n}`);
+      b.type = "button";
+      b.setAttribute("aria-pressed", String(key === activeFilter));
+      b.addEventListener("click", () => {
+        activeFilter = key;
+        renderBoard();
+      });
+      filtersEl.appendChild(b);
+    });
+  }
+
+  function renderBoard() {
+    const test = FILTERS.find((f) => f[0] === activeFilter)[2];
+    const rows = boardRows.filter(test);
+    rows.sort((a, b) => {
+      const d = (Date.parse(a.created_at) || 0) - (Date.parse(b.created_at) || 0);
+      return sortEl.value === "oldest" ? d : -d;
+    });
+    renderFilters();
+    countEl.textContent = `${rows.length} request${rows.length === 1 ? "" : "s"}`;
+    listEl.textContent = "";
+    if (rows.length === 0) {
+      listEl.appendChild(el("p", "wanted-empty", "No requests match this filter."));
+      return;
+    }
+    rows.forEach((row) => listEl.appendChild(renderCard(row)));
   }
 
   async function loadBoard() {
@@ -118,9 +204,11 @@
       return;
     }
 
-    countEl.textContent = `${rows.length} request${rows.length === 1 ? "" : "s"}`;
-    listEl.textContent = "";
-    rows.forEach((row) => listEl.appendChild(renderCard(row)));
+    boardRows = rows;
+    toolsEl.hidden = false;
+    askEl.hidden = false;
+    sortEl.addEventListener("change", renderBoard);
+    renderBoard();
   }
 
   // ---------- one request ----------
