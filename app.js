@@ -124,6 +124,7 @@ const AGENT_LOGOS = {
   "https://github.com/tracehood/robinhood-explorer": "logos/tracehood.webp",
   "https://github.com/a2i2-sandbox/a2i2-sandbox": "logos/a2i2.webp",
   "https://github.com/noctenna-lab/noctenna": "logos/noctenna.webp",
+  "https://github.com/purseragents/purser": "logos/purser.webp",
   "https://github.com/proofofstock/proof-of-stock": "logos/proof-of-stock.webp",
 };
 
