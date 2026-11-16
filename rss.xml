@@ -13,19 +13,19 @@
       <guid isPermaLink="true">https://agrarisai.github.io/agraris/agent.html?id=eba66096-0493-46a7-892b-211dffbcb40a</guid>
     </item>
     <item>
-      <title>Noctenna</title>
-      <link>https://agrarisai.github.io/agraris/agent.html?id=aa827945-c1d9-40a4-998c-ec74a52a7930</link>
-      <description>Open-source AI agent for Robinhood Chain. Swaps, checks new launches, reads perps and funding, and runs from a wallet that stays on your computer. Every trade needs your approval first. Also works as an MCP server. Information only, not financial advice.</description>
-      <pubDate>Wed, 11 Nov 2026 23:21:47 GMT</pubDate>
-      <guid isPermaLink="true">https://agrarisai.github.io/agraris/agent.html?id=aa827945-c1d9-40a4-998c-ec74a52a7930</guid>
-    </item>
-    <item>
       <title>[Tool] Proof of Stock</title>
       <link>https://agrarisai.github.io/agraris/agent.html?id=efa728cb-1261-40cf-bd00-8b5aa11459d0</link>
       <description>Checks whether a token is the issuer&apos;s real tokenized stock, using the issuer&apos;s own registry, and shows how far the on-chain price is from the issuer&apos;s price. Read-only: it never trades and gives no advice. Includes a public MCP server.</description>
       <category>Tool</category>
       <pubDate>Wed, 11 Nov 2026 23:21:47 GMT</pubDate>
       <guid isPermaLink="true">https://agrarisai.github.io/agraris/agent.html?id=efa728cb-1261-40cf-bd00-8b5aa11459d0</guid>
+    </item>
+    <item>
+      <title>Noctenna</title>
+      <link>https://agrarisai.github.io/agraris/agent.html?id=aa827945-c1d9-40a4-998c-ec74a52a7930</link>
+      <description>Open-source AI agent for Robinhood Chain. Swaps, checks new launches, reads perps and funding, and runs from a wallet that stays on your computer. Every trade needs your approval first. Also works as an MCP server. Information only, not financial advice.</description>
+      <pubDate>Wed, 11 Nov 2026 23:21:47 GMT</pubDate>
+      <guid isPermaLink="true">https://agrarisai.github.io/agraris/agent.html?id=aa827945-c1d9-40a4-998c-ec74a52a7930</guid>
     </item>
     <item>
       <title>[Tool] Agraris MCP</title>
@@ -36,20 +36,20 @@
       <guid isPermaLink="true">https://agrarisai.github.io/agraris/agent.html?id=78c7cdf0-f45a-4554-b72d-761e5bbf4b5e</guid>
     </item>
     <item>
-      <title>[Tool] Factor</title>
-      <link>https://agrarisai.github.io/agraris/agent.html?id=f3913c10-a210-4fee-a00f-c6a53c8cbf66</link>
-      <description>Open protocol on Robinhood Chain that advances AI agents up to half of a payment their customer has already locked. Includes contracts, an engine, and factor-kit, an SDK and MCP server.</description>
-      <category>Tool</category>
-      <pubDate>Thu, 29 Oct 2026 20:00:58 GMT</pubDate>
-      <guid isPermaLink="true">https://agrarisai.github.io/agraris/agent.html?id=f3913c10-a210-4fee-a00f-c6a53c8cbf66</guid>
-    </item>
-    <item>
       <title>[Tool] Hedgehood agent kit</title>
       <link>https://agrarisai.github.io/agraris/agent.html?id=ad8bc6b3-34f9-42ca-ae53-bf2fbba47b40</link>
       <description>SDK, local MCP server, CLI and Claude Code skill for Hedgehood&apos;s AI-agent options market on Robinhood Chain. Agents sign with their own session keys. Testnet is live; mainnet follows an audit.</description>
       <category>Tool</category>
       <pubDate>Thu, 29 Oct 2026 20:00:58 GMT</pubDate>
       <guid isPermaLink="true">https://agrarisai.github.io/agraris/agent.html?id=ad8bc6b3-34f9-42ca-ae53-bf2fbba47b40</guid>
+    </item>
+    <item>
+      <title>[Tool] Factor</title>
+      <link>https://agrarisai.github.io/agraris/agent.html?id=f3913c10-a210-4fee-a00f-c6a53c8cbf66</link>
+      <description>Open protocol on Robinhood Chain that advances AI agents up to half of a payment their customer has already locked. Includes contracts, an engine, and factor-kit, an SDK and MCP server.</description>
+      <category>Tool</category>
+      <pubDate>Thu, 29 Oct 2026 20:00:58 GMT</pubDate>
+      <guid isPermaLink="true">https://agrarisai.github.io/agraris/agent.html?id=f3913c10-a210-4fee-a00f-c6a53c8cbf66</guid>
     </item>
     <item>
       <title>[Tool] Firmbrain x402 for Robinhood Chain</title>
@@ -183,20 +183,20 @@
       <guid isPermaLink="true">https://agrarisai.github.io/agraris/agent.html?id=8d619c71-985a-4f58-80c9-13293d0372c2</guid>
     </item>
     <item>
-      <title>[Tool] ScanHood</title>
-      <link>https://agrarisai.github.io/agraris/agent.html?id=f628c3b6-15e8-4779-937b-739fee06a603</link>
-      <description>Token safety scanner for Robinhood Chain — honeypot and rug-pull detection, LP-lock checks, contract verification, and deployer reputation, returning a simple PASS/CAUTION/DANGER verdict via MCP.</description>
-      <category>Tool</category>
-      <pubDate>Tue, 15 Sep 2026 14:45:53 GMT</pubDate>
-      <guid isPermaLink="true">https://agrarisai.github.io/agraris/agent.html?id=f628c3b6-15e8-4779-937b-739fee06a603</guid>
-    </item>
-    <item>
       <title>[Tool] robinhood-chain-mcp</title>
       <link>https://agrarisai.github.io/agraris/agent.html?id=9655177f-68cf-44c4-84a2-680a49b4a349</link>
       <description>Read-only MCP server giving AI agents live intelligence on Robinhood Chain — tokens, wallets, Chainlink feeds, heat scores, and tracking error on tokenized equities (the spread between onchain price and the underlying share price). Zero API keys, reference implementation of the open RHC Agent Schema.</description>
       <category>Tool</category>
       <pubDate>Tue, 15 Sep 2026 14:45:53 GMT</pubDate>
       <guid isPermaLink="true">https://agrarisai.github.io/agraris/agent.html?id=9655177f-68cf-44c4-84a2-680a49b4a349</guid>
+    </item>
+    <item>
+      <title>[Tool] ScanHood</title>
+      <link>https://agrarisai.github.io/agraris/agent.html?id=f628c3b6-15e8-4779-937b-739fee06a603</link>
+      <description>Token safety scanner for Robinhood Chain — honeypot and rug-pull detection, LP-lock checks, contract verification, and deployer reputation, returning a simple PASS/CAUTION/DANGER verdict via MCP.</description>
+      <category>Tool</category>
+      <pubDate>Tue, 15 Sep 2026 14:45:53 GMT</pubDate>
+      <guid isPermaLink="true">https://agrarisai.github.io/agraris/agent.html?id=f628c3b6-15e8-4779-937b-739fee06a603</guid>
     </item>
     <item>
       <title>Olas (open-autonomy)</title>
