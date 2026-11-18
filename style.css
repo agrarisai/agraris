@@ -6112,11 +6112,13 @@ html::after {
 }
 .wanted-ask[hidden], .wanted-tools[hidden] { display: none; }
 
-/* Homepage "Wanted right now" */
+/* Homepage "Wanted right now": compact rows */
 .wanted-home { margin-top: 8px; }
-.wanted-home-list { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 14px; }
-.wanted-home-card { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; min-width: 0; background: var(--cream); border: 1px solid var(--line); border-radius: 14px; padding: 16px 18px; color: inherit; text-decoration: none; overflow-wrap: anywhere; }
+.wanted-home-list { display: grid; gap: 8px; margin-bottom: 14px; }
+.wanted-home-card { display: flex; align-items: center; gap: 10px; min-width: 0; background: var(--cream); border: 1px solid var(--line); border-radius: 12px; padding: 13px 14px; color: inherit; text-decoration: none; }
 .wanted-home-card:hover { border-color: var(--green); }
-.wanted-home-title { font-family: var(--font-display); font-size: 16px; font-weight: 600; }
-.wanted-home-desc { font-size: 13px; line-height: 1.55; opacity: 0.8; }
-@media (max-width: 720px) { .wanted-home-list { grid-template-columns: 1fr; } }
+.wanted-home-dot { flex: none; width: 9px; height: 9px; border-radius: 50%; background: var(--green); box-shadow: 0 0 0 4px rgba(47, 107, 63, 0.15); }
+.wanted-home-title { flex: 1; min-width: 0; font-family: var(--font-display); font-size: 15px; font-weight: 600; overflow-wrap: anywhere; }
+.wanted-home-card .kind-badge { flex: none; }
+.wanted-home-arrow { flex: none; color: var(--green); font-size: 18px; }
+.wanted-home-ask { display: block; text-align: center; }

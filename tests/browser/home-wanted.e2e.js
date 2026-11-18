@@ -46,12 +46,11 @@ return Promise.resolve({data:R,error:null});}};}};})();`;
     return { page, problems };
   }
   let { page, problems } = await run("ok");
-  const cards = await page.$$eval("#wanted-home-list a", (a) => a.map((x) => ({ t: x.querySelector("strong").textContent, h: x.getAttribute("href"), d: x.querySelector(".wanted-home-desc").textContent, html: x.innerHTML })));
+  const cards = await page.$$eval("#wanted-home-list a", (a) => a.map((x) => ({ t: x.querySelector("strong").textContent, h: x.getAttribute("href"), html: x.innerHTML })));
   assert.equal(await page.$eval("#wanted-home", (s) => s.hidden), false);
   assert.deepEqual(cards.map((c) => c.t), ["Agent for X", "Tool for <i>Y</i>", "Old request"]);
   assert.ok(cards.every((c) => !c.html.includes("<i>") && !c.html.includes("<b>")), "text must be escaped");
   assert.equal(cards[0].h, "wanted.html?id=a2");
-  assert.ok(cards[0].d.length <= 110 && cards[0].d.endsWith("..."));
   assert.equal(await page.$eval(".wanted-home-ask", (a) => a.getAttribute("href")), "wanted.html#wanted-form-section");
   assert.deepEqual(problems, []);
   if (process.env.SHOT) { await page.setViewportSize({ width: +(process.env.W || 1100), height: 900 }); await (await page.$("#wanted-home")).screenshot({ path: process.env.SHOT }); }
