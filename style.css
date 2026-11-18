@@ -6088,7 +6088,10 @@ html::after {
 .wanted-sort { font-family: var(--font-mono); font-size: 11px; background: transparent; color: inherit; border: 0; padding: 2px 4px; }
 .wanted-card { border-radius: 14px; padding: 16px 18px; }
 .wanted-card-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 8px; }
-.wanted-card-head .wanted-card-meta { display: flex; gap: 6px; font-family: var(--font-mono); font-size: 11px; opacity: 0.65; }
+.wanted-card-head .wanted-card-meta { display: flex; gap: 6px; font-family: var(--font-mono); font-size: 11px; opacity: 0.85; }
+.wanted-card-tags { display: flex; align-items: center; gap: 8px; }
+.wanted-answered { font-family: var(--font-mono); font-size: 11px; font-weight: 700; letter-spacing: 0.02em; padding: 3px 10px; border-radius: 999px; background: var(--green); color: var(--on-green); }
+.wanted-card-head .wanted-card-meta .wanted-answers { font-weight: 700; opacity: 1; }
 .wanted-card-head .wanted-card-meta > span + span::before { content: "·"; margin-right: 6px; }
 .wanted-card-title { margin: 0 0 6px; font-size: inherit; }
 .wanted-card .wanted-desc {
