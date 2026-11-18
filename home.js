@@ -316,17 +316,20 @@ async function loadWantedHome() {
       const card = document.createElement("a");
       card.className = "wanted-home-card";
       card.href = `wanted.html?id=${encodeURIComponent(r.id)}`;
-      const kind = document.createElement("span");
-      kind.className = "kind-badge";
-      kind.textContent = r.kind === "tool" ? "Tool" : "Agent";
+      const dot = document.createElement("span");
+      dot.className = "wanted-home-dot";
+      dot.setAttribute("aria-hidden", "true");
       const title = document.createElement("strong");
       title.className = "wanted-home-title";
       title.textContent = r.title;
-      const desc = document.createElement("span");
-      desc.className = "wanted-home-desc";
-      const d = String(r.description || "").replace(/\s+/g, " ").trim();
-      desc.textContent = d.length > 110 ? d.slice(0, 107) + "..." : d;
-      card.append(kind, title, desc);
+      const kind = document.createElement("span");
+      kind.className = "kind-badge";
+      kind.textContent = r.kind === "tool" ? "Tool" : "Agent";
+      const arrow = document.createElement("span");
+      arrow.className = "wanted-home-arrow";
+      arrow.setAttribute("aria-hidden", "true");
+      arrow.textContent = "\u203a";
+      card.append(dot, title, kind, arrow);
       listEl.appendChild(card);
     }
     sectionEl.hidden = false;
