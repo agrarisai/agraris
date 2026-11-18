@@ -294,10 +294,52 @@ function initCarousel(listEl) {
   update();
 }
 
+// "Wanted right now": newest open requests (unanswered first), max 3.
+// Text goes in with textContent only; hidden when nothing loads.
+async function loadWantedHome() {
+  const sectionEl = document.getElementById("wanted-home");
+  const listEl = document.getElementById("wanted-home-list");
+  if (!sectionEl || !listEl || typeof supabaseClient === "undefined") return;
+  try {
+    const { data, error } = await supabaseClient.rpc("get_wanted", { p_limit: 30 });
+    if (error || !Array.isArray(data)) throw error || new Error("bad");
+    const rows = data
+      .filter((r) => !(r.answers_count > 0))
+      .sort((a, b) => String(b.created_at).localeCompare(String(a.created_at)))
+      .slice(0, 3);
+    if (rows.length === 0) {
+      sectionEl.hidden = true;
+      return;
+    }
+    listEl.textContent = "";
+    for (const r of rows) {
+      const card = document.createElement("a");
+      card.className = "wanted-home-card";
+      card.href = `wanted.html?id=${encodeURIComponent(r.id)}`;
+      const kind = document.createElement("span");
+      kind.className = "kind-badge";
+      kind.textContent = r.kind === "tool" ? "Tool" : "Agent";
+      const title = document.createElement("strong");
+      title.className = "wanted-home-title";
+      title.textContent = r.title;
+      const desc = document.createElement("span");
+      desc.className = "wanted-home-desc";
+      const d = String(r.description || "").replace(/\s+/g, " ").trim();
+      desc.textContent = d.length > 110 ? d.slice(0, 107) + "..." : d;
+      card.append(kind, title, desc);
+      listEl.appendChild(card);
+    }
+    sectionEl.hidden = false;
+  } catch {
+    sectionEl.hidden = true;
+  }
+}
+
 (async function () {
   const listEl = document.getElementById("wn-list");
   initCarousel(document.getElementById("trending-list"));
   enableCompareSelection();
+  loadWantedHome();
 
   try {
     // totalCount is the number of AGENTS (tools are not counted in it); a
