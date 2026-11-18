@@ -120,7 +120,10 @@
     const card = el("article", "wanted-card");
 
     const top = el("div", "wanted-card-head");
-    top.appendChild(kindBadge(row.kind));
+    const tags = el("div", "wanted-card-tags");
+    tags.appendChild(kindBadge(row.kind));
+    if (row.answers_count > 0) tags.appendChild(el("span", "wanted-answered", "\u2713 Answered"));
+    top.appendChild(tags);
     const meta = el("div", "wanted-card-meta");
     const age = ageText(row.created_at);
     if (age) meta.appendChild(el("span", "wanted-age", age));
@@ -152,6 +155,7 @@
     ["agent", "Agents", (r) => r.kind === "agent"],
     ["tool", "Tools", (r) => r.kind === "tool"],
     ["unanswered", "Unanswered", (r) => !(r.answers_count > 0)],
+    ["answered", "Answered", (r) => r.answers_count > 0],
   ];
 
   function renderFilters() {

@@ -180,7 +180,7 @@ async function main() {
   // --- filters, sort, share, sticky ask button
   const titles = () => page.$$eval(".wanted-card .wanted-title", (els) => els.map((e) => e.textContent));
   const chipText = () => page.$$eval(".wanted-filter", (els) => els.map((e) => e.textContent));
-  assert.deepEqual(await chipText(), ["All 3", "Agents 1", "Tools 1", "Unanswered 1"]);
+  assert.deepEqual(await chipText(), ["All 3", "Agents 1", "Tools 1", "Unanswered 1", "Answered 2"]);
   assert.equal(await page.isVisible("#wanted-ask"), true);
   assert.equal(await page.getAttribute("#wanted-ask", "href"), "#wanted-form-section");
   await page.click(".wanted-filter:nth-child(2)");
@@ -188,6 +188,10 @@ async function main() {
   assert.equal(await page.textContent("#wanted-count"), "1 request");
   await page.click(".wanted-filter:nth-child(4)");
   assert.deepEqual(await titles(), ["Anything for gas estimates"]);
+  assert.equal(await page.$$eval(".wanted-card .wanted-answered", (els) => els.length), 0);
+  await page.click(".wanted-filter:nth-child(5)");
+  assert.equal((await titles()).length, 2);
+  assert.deepEqual(await page.$$eval(".wanted-card .wanted-answered", (els) => els.map((e) => e.textContent)), ["\u2713 Answered", "\u2713 Answered"]);
   await page.click(".wanted-filter:nth-child(1)");
   await page.selectOption("#wanted-sort", "oldest");
   assert.deepEqual(await titles(), ["Anything for gas estimates", "Portfolio rebalancing agent", "Order book MCP server"]);
