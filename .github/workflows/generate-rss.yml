@@ -71,11 +71,20 @@ jobs:
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
         run: node scripts/generate-badges.js
 
+      # Opt-in GitHub avatars (use_avatar): downloads a small checked copy
+      # into logos/avatars/ and rewrites avatar-logos.js. Non-fatal.
+      - name: Fetch opt-in avatars
+        continue-on-error: true
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: node scripts/fetch-avatars.js
+
       - name: Commit and push generated files
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add -A rss.xml sitemap.xml api/agents.json badges
+          git add -A rss.xml sitemap.xml api/agents.json badges avatar-logos.js logos/avatars
           if git diff --cached --quiet; then
             echo "No changes to generated files"
             exit 0
