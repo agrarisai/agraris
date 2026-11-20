@@ -196,6 +196,16 @@
         <span class="hint" id="contract_address-hint">Used to link to the Robinhood Chain explorer. Provided by the builder and not verified by Agraris.</span>
       </div>
 
+      <div class="form-sec">Logo (optional)</div>
+
+      <div class="field logo-opt">
+        <label class="logo-check" for="use_avatar">
+          <input type="checkbox" id="use_avatar" name="use_avatar" aria-describedby="use_avatar-hint" />
+          <span>Use the repo owner's GitHub avatar</span>
+        </label>
+        <span class="hint" id="use_avatar-hint">We save a small copy of the avatar from the GitHub account in your repo link, and only after we review it. No logo? Your listing shows the Agraris robot.</span>
+      </div>
+
       <div class="form-actions">
         <button type="submit" class="btn btn-solid" id="submit-btn" data-text-agent="Publish agent" data-text-tool="Publish tool">Publish agent</button>
         <span class="form-msg" id="form-msg"></span>
@@ -263,6 +273,7 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="supabase-client.js"></script>
+  <script src="avatar-logos.js"></script>
   <script src="app.js"></script>
   <script src="command-palette.js"></script>
   <script src="scroll-reveal.js"></script>

@@ -237,6 +237,13 @@
       payload.contract_address = contractAddress;
     }
 
+    // Only sent when ticked, so publishing keeps working even if the
+    // use_avatar column hasn't been added yet (supabase/migration-avatar-optin.sql).
+    // It only asks for the repo owner's GitHub avatar; it is shown after review.
+    if (form.use_avatar && form.use_avatar.checked) {
+      payload.use_avatar = true;
+    }
+
     // Agents are sent exactly as before (no kind): the column defaults to
     // 'agent'. Only tools say so (supabase/migration-listing-kind.sql).
     if (selectedKind() === "tool") {

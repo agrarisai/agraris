@@ -6122,3 +6122,8 @@ html::after {
 .wanted-home-card .kind-badge { flex: none; }
 .wanted-home-arrow { flex: none; color: var(--green); font-size: 18px; }
 .wanted-home-ask { display: block; text-align: center; }
+
+/* Publish form: optional GitHub avatar logo */
+.logo-opt .logo-check { display: flex; align-items: center; gap: 12px; font-weight: 600; cursor: pointer; }
+.logo-opt .logo-check input { flex: none; width: 22px; height: 22px; margin: 0; accent-color: var(--green); }
+.logo-opt .hint { display: block; margin-top: 8px; }

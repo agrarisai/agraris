@@ -584,7 +584,11 @@ curl "https://gnydurjxrynqcbpkxopd.supabase.co/rest/v1/agents?wanted_id=eq.REQUE
         Some listings show a logo. It is the project's own logo from its
         public repository, resized for the site, and listings without one show
         the Agraris default icon (a robot for agents, a robot with a
-        screwdriver for tools). A logo is not an endorsement. To change or remove a
+        screwdriver for tools). When publishing, a builder can tick
+        &ldquo;Use the repo owner's GitHub avatar&rdquo;: after review we save
+        a small copy of the avatar of the GitHub account in the repo link
+        (PNG or JPG, up to 150&nbsp;KB), so the site never loads images from
+        GitHub while you browse. A logo is not an endorsement. To change or remove a
         logo, open an issue on the repository or contact
         <a href="https://x.com/agrarisai" rel="noopener">@agrarisai</a>.
       </p>
@@ -810,6 +814,7 @@ curl -s "https://agraris.xyz/api/agents.json" | jq '.listings[] | select(.owner_
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="supabase-client.js"></script>
+  <script src="avatar-logos.js"></script>
   <script src="app.js"></script>
   <script src="command-palette.js"></script>
   <script src="scroll-reveal.js"></script>

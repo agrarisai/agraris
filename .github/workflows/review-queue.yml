@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
     inputs:
       action:
-        description: "list = lihat antrean, approve = setujui, reject = hapus submission pending, set-contract / set-demo = isi contract address / demo link (agent mana pun)"
+        description: "list = lihat antrean, approve = setujui, reject = hapus submission pending, set-contract / set-demo = isi contract address / demo link (agent mana pun), set-avatar = value on/off untuk avatar GitHub"
         type: choice
         options:
           - list
@@ -14,6 +14,7 @@ on:
           - reject
           - set-contract
           - set-demo
+          - set-avatar
         default: list
         required: true
       name:
@@ -25,7 +26,7 @@ on:
         type: string
         required: false
       value:
-        description: "Untuk set-contract / set-demo: 0x… atau https://…; isi clear untuk mengosongkan"
+        description: "Untuk set-contract / set-demo: 0x… atau https://…; set-avatar: on atau off; isi clear untuk mengosongkan"
         type: string
         required: false
 

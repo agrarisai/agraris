@@ -5,11 +5,11 @@
 // jadi pemilik bisa menyetujui / menolak submission dari HP tanpa SQL.
 //
 // Input (diteruskan workflow lewat env, TIDAK lewat perintah shell):
-//   REVIEW_ACTION — list | approve | reject | set-contract | set-demo
+//   REVIEW_ACTION — list | approve | reject | set-contract | set-demo | set-avatar
 //   REVIEW_NAME   — nama agent persis (opsional)
 //   REVIEW_ID     — uuid agent (opsional; wajib kalau nama dipakai lebih
 //                   dari satu submission pending)
-//   REVIEW_VALUE  — nilai baru untuk set-contract / set-demo, atau
+//   REVIEW_VALUE  — nilai baru untuk set-contract / set-demo (set-avatar: on / off), atau
 //                   "clear" untuk mengosongkan
 //
 // Aturan:
@@ -53,10 +53,11 @@ const {
   appendSummary,
 } = require("./review-lib");
 
-const ACTIONS = ["list", "approve", "reject", "set-contract", "set-demo"];
+const ACTIONS = ["list", "approve", "reject", "set-contract", "set-demo", "set-avatar"];
 const SET_ACTIONS = {
   "set-contract": { column: "contract_address", label: "contract address" },
   "set-demo": { column: "demo_url", label: "demo link" },
+  "set-avatar": { column: "use_avatar", label: "avatar GitHub" },
 };
 const CLEAR_VALUE = "clear";
 
@@ -120,6 +121,13 @@ function parseSetValue(action, raw) {
   if (!raw) {
     throw new UsageError(`${action} butuh value (atau "${CLEAR_VALUE}" untuk mengosongkan).`);
   }
+  if (action === "set-avatar") {
+    // on / off (clear = off). Kolom boolean, bukan teks.
+    const v = raw.toLowerCase();
+    if (v === "on") return true;
+    if (v === "off" || v === CLEAR_VALUE) return false;
+    throw new UsageError('value untuk set-avatar harus "on" atau "off".');
+  }
   if (raw.toLowerCase() === CLEAR_VALUE) return null;
 
   if (action === "set-contract") {
@@ -172,10 +180,10 @@ async function findRows(target, approved) {
 }
 
 function pendingTable(rows) {
-  const lines = ["| Name | Jenis | ID | Repo | Demo | Dikirim |", "| --- | --- | --- | --- | --- | --- |"];
+  const lines = ["| Name | Jenis | ID | Repo | Demo | Avatar | Dikirim |", "| --- | --- | --- | --- | --- | --- | --- |"];
   for (const row of rows) {
     lines.push(
-      `| ${safeMd(row.name, MAX_NAME_LENGTH)} | ${kindLabel(row.kind)} | \`${String(row.id)}\` | ${safeMd(row.repo_url, 200)} | ${row.demo_url ? safeMd(row.demo_url, 200) : "-"} | ${formatUtc(row.created_at)} |`
+      `| ${safeMd(row.name, MAX_NAME_LENGTH)} | ${kindLabel(row.kind)} | \`${String(row.id)}\` | ${safeMd(row.repo_url, 200)} | ${row.demo_url ? safeMd(row.demo_url, 200) : "-"} | ${row.use_avatar ? "ya (lihat avatar pemilik repo di GitHub sebelum approve)" : "-"} | ${formatUtc(row.created_at)} |`
     );
   }
   return lines.join("\n");
@@ -184,13 +192,17 @@ function pendingTable(rows) {
 // ---------- actions ----------
 
 async function listPending() {
-  const query = [
-    "select=id,name,repo_url,demo_url,created_at,kind",
-    filter("approved", "eq", "false"),
-    "order=created_at.asc",
-    `limit=${LIST_LIMIT}`,
-  ].join("&");
-  const { data } = await rest("GET", "agents", query);
+  const build = (columns) =>
+    [`select=${columns}`, filter("approved", "eq", "false"), "order=created_at.asc", `limit=${LIST_LIMIT}`].join("&");
+  let result;
+  try {
+    // use_avatar ada setelah supabase/migration-avatar-optin.sql dijalankan;
+    // sebelum itu daftar tetap tampil tanpa kolom Avatar.
+    result = await rest("GET", "agents", build("id,name,repo_url,demo_url,created_at,kind,use_avatar"));
+  } catch {
+    result = await rest("GET", "agents", build("id,name,repo_url,demo_url,created_at,kind"));
+  }
+  const { data } = result;
   const rows = Array.isArray(data) ? data : [];
 
   const parts = ["## Review queue: pending", ""];
@@ -306,7 +318,7 @@ async function resolveAny(action, target, column) {
 async function setField(action, target) {
   const { column, label } = SET_ACTIONS[action];
   const row = await resolveAny(action, target, column);
-  const before = row[column] ?? null;
+  const before = column === "use_avatar" ? Boolean(row[column]) : (row[column] ?? null);
 
   if (before === target.value) {
     summary(`## Review queue: ${action}\n\nTidak ada perubahan: ${label} untuk ${safeMd(row.name, MAX_NAME_LENGTH)} sudah sama.`);
@@ -324,7 +336,7 @@ async function setField(action, target) {
     throw new UsageError(`Tidak ada baris yang diubah (agent ${row.id} mungkin baru saja dihapus).`);
   }
 
-  const show = (v) => (v ? safeMd(v, MAX_DEMO_URL) : "_(kosong)_");
+  const show = (v) => (v === true ? "on" : v === false && column === "use_avatar" ? "off" : v ? safeMd(v, MAX_DEMO_URL) : "_(kosong)_");
   summary(
     [
       `## Review queue: ${action}`,

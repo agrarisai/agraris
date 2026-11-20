@@ -131,7 +131,13 @@ const AGENT_LOGOS = {
 
 function agentLogoPath(listing) {
   const key = String((listing && listing.repo_url) || "").trim().toLowerCase().replace(/\/+$/, "");
-  return Object.prototype.hasOwnProperty.call(AGENT_LOGOS, key) ? AGENT_LOGOS[key] : null;
+  if (Object.prototype.hasOwnProperty.call(AGENT_LOGOS, key)) return AGENT_LOGOS[key];
+  // Opt-in GitHub avatars (avatar-logos.js, written by scripts/fetch-avatars.js).
+  // A manual logo above always wins; missing file or script = Agraris default.
+  if (typeof AVATAR_LOGOS !== "undefined" && Object.prototype.hasOwnProperty.call(AVATAR_LOGOS, key)) {
+    return AVATAR_LOGOS[key];
+  }
+  return null;
 }
 
 // Wraps the title content (name + badges) with the logo, only when the
