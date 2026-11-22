@@ -323,6 +323,60 @@ function buildReceipt(address, info, counters) {
   return receipt;
 }
 
+// "Answers a Wanted request" box on the listing page. A listing is tied to
+// a request through agents.wanted_id. Both lookups use public data only:
+// the listing's own wanted_id, then the request itself (the wanted table
+// only exposes approved, open requests younger than 60 days). Any failure,
+// no wanted_id, or a request that is no longer public leaves the box
+// hidden. The request title is written with textContent, never innerHTML.
+const WANTED_UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+function wantedOpenDays(requestCreatedAt, listingCreatedAt) {
+  const r = Date.parse(requestCreatedAt);
+  const l = Date.parse(listingCreatedAt);
+  if (!Number.isFinite(r) || !Number.isFinite(l)) return null;
+  return Math.max(0, Math.round((l - r) / 86400000));
+}
+
+function wantedOpenText(days) {
+  if (days === null) return "";
+  if (days < 1) return "Answered within a day";
+  return `Open for ${days} day${days === 1 ? "" : "s"}`;
+}
+
+async function loadWantedAnswer(root, agent) {
+  const el = root.querySelector("#wanted-answer");
+  if (!el || !agent || !agent.id) return;
+
+  let request;
+  try {
+    const own = await supabaseClient.from("agents").select("wanted_id").eq("id", agent.id).maybeSingle();
+    const wantedId = own && own.data && own.data.wanted_id;
+    if (own.error || typeof wantedId !== "string" || !WANTED_UUID.test(wantedId)) return;
+    const req = await supabaseClient.from("wanted").select("id, title, created_at").eq("id", wantedId).maybeSingle();
+    if (req.error || !req.data || req.data.id !== wantedId || typeof req.data.title !== "string" || !req.data.title.trim()) return;
+    request = req.data;
+  } catch {
+    return;
+  }
+
+  const eyebrow = document.createElement("span");
+  eyebrow.className = "wanted-answer-eyebrow";
+  eyebrow.textContent = "\u2713 Answers a Wanted request";
+  const title = document.createElement("span");
+  title.className = "wanted-answer-title";
+  title.textContent = request.title;
+  const sub = document.createElement("span");
+  sub.className = "wanted-answer-sub";
+  const open = wantedOpenText(wantedOpenDays(request.created_at, agent.created_at));
+  sub.textContent = `${open ? `${open} \u00b7 ` : ""}See the request \u2192`;
+
+  el.textContent = "";
+  el.href = `wanted.html?id=${encodeURIComponent(request.id)}`;
+  el.append(eyebrow, title, sub);
+  el.hidden = false;
+}
+
 // "More from <owner> (N)" under the listing, linking to builder.html, when
 // the GitHub owner of this listing's repo URL has more than one approved
 // listing. N is that owner's total number of listings (the count shown on
@@ -583,6 +637,7 @@ function categoryIcon(name) {
             : ""
         }
         <div class="agent-meta">${tags}</div>
+        <a class="wanted-answer" id="wanted-answer" hidden></a>
         <p class="detail-desc">${escapeHtml(agent.description)}</p>
         <div class="detail-links">
           ${
@@ -678,6 +733,7 @@ function categoryIcon(name) {
     initCopyAddressButton(container);
     loadOnchainActivity(container);
     loadBuilderMore(container, agent);
+    loadWantedAnswer(container, agent);
     initWeeklyCard(container, agent);
     initCopyBadgeButton(container);
     initEmbedSnippet(container, agent.id);
