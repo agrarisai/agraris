@@ -6136,3 +6136,8 @@ html::after {
 .wanted-answer-eyebrow { display:block; font:700 11px/1 var(--font-mono, ui-monospace, monospace); letter-spacing:.14em; text-transform:uppercase; color:var(--green); }
 .wanted-answer-title { display:block; margin-top:8px; font:700 17px/1.3 var(--font-display); }
 .wanted-answer-sub { display:block; margin-top:4px; font:13px/1.4 var(--font-mono, ui-monospace, monospace); opacity:.7; }
+
+/* Publish page: open requests above the form (reuses the homepage rows). */
+.publish-wanted { margin: 18px 0 6px; }
+.publish-wanted .section-head { margin-bottom: 10px; }
+.publish-wanted .section-head h2 { font-size: 20px; }

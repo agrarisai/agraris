@@ -122,6 +122,17 @@
       <li>Reviewed first</li>
     </ul>
 
+    <!-- Open requests from the Wanted board (publish.js loadOpenRequests).
+         Hidden when there are none, when they cannot be loaded, or when
+         the page is opened with ?wanted=<id>. -->
+    <section class="wanted-home publish-wanted" id="publish-wanted" aria-labelledby="publish-wanted-title" hidden>
+      <div class="section-head">
+        <h2 id="publish-wanted-title">Open requests you could answer</h2>
+        <a class="section-link" href="wanted.html">View all →</a>
+      </div>
+      <div class="wanted-home-list" id="publish-wanted-list"></div>
+    </section>
+
     <!-- publish.html?wanted=<id>: shown by publish.js when the id is an open
          request on the Wanted board; the listing is then sent with
          wanted_id. -->

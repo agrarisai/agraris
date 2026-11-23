@@ -85,6 +85,52 @@
 
   loadAnswering();
 
+  // Open requests (max 3, unanswered, newest first) above the form, so a
+  // builder can see what is wanted. Skipped when the page is opened to
+  // answer one request (?wanted=). Text goes in with textContent only;
+  // the block stays hidden when nothing loads.
+  async function loadOpenRequests() {
+    const sectionEl = document.getElementById("publish-wanted");
+    const listEl = document.getElementById("publish-wanted-list");
+    if (!sectionEl || !listEl) return;
+    if (new URLSearchParams(window.location.search).has("wanted")) return;
+    try {
+      const { data, error } = await supabaseClient.rpc("get_wanted", { p_limit: 30 });
+      if (error || !Array.isArray(data)) return;
+      const rows = data
+        .filter((r) => r && typeof r.title === "string" && r.title && UUID_PATTERN.test(String(r.id)) && !(r.answers_count > 0))
+        .sort((a, b) => String(b.created_at).localeCompare(String(a.created_at)))
+        .slice(0, 3);
+      if (rows.length === 0) return;
+      listEl.textContent = "";
+      for (const r of rows) {
+        const card = document.createElement("a");
+        card.className = "wanted-home-card";
+        card.href = `wanted.html?id=${encodeURIComponent(r.id)}`;
+        const dot = document.createElement("span");
+        dot.className = "wanted-home-dot";
+        dot.setAttribute("aria-hidden", "true");
+        const title = document.createElement("strong");
+        title.className = "wanted-home-title";
+        title.textContent = r.title;
+        const kind = document.createElement("span");
+        kind.className = "kind-badge";
+        kind.textContent = r.kind === "tool" ? "Tool" : "Agent";
+        const arrow = document.createElement("span");
+        arrow.className = "wanted-home-arrow";
+        arrow.setAttribute("aria-hidden", "true");
+        arrow.textContent = "\u203a";
+        card.append(dot, title, kind, arrow);
+        listEl.appendChild(card);
+      }
+      sectionEl.hidden = false;
+    } catch {
+      // Not reachable: the form works without it.
+    }
+  }
+
+  loadOpenRequests();
+
   // ---------- agent / tool ----------
 
   function selectedKind() {
