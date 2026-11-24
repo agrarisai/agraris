@@ -377,6 +377,25 @@ async function loadWantedAnswer(root, agent) {
   el.hidden = false;
 }
 
+// ERC-8004 agent ID, filled in by the builder (supabase/migration-erc8004.sql).
+// Read on its own so the page keeps working if the column is not there yet.
+// Shown as plain text only: no link, no onchain lookup, not verified.
+const ERC8004_ID = /^[1-9][0-9]{0,19}$/;
+
+async function loadErc8004Identity(root, agent) {
+  const row = root.querySelector("#erc8004-row");
+  if (!row || !agent || !agent.id) return;
+  try {
+    const res = await supabaseClient.from("agents").select("erc8004_agent_id").eq("id", agent.id).maybeSingle();
+    const id = res && res.data && res.data.erc8004_agent_id;
+    if (res.error || typeof id !== "string" || !ERC8004_ID.test(id)) return;
+    row.querySelector(".erc8004-value").textContent = `Agent #${id} on Robinhood Chain`;
+    row.hidden = false;
+  } catch {
+    // Not available: the row stays hidden.
+  }
+}
+
 // "More from <owner> (N)" under the listing, linking to builder.html, when
 // the GitHub owner of this listing's repo URL has more than one approved
 // listing. N is that owner's total number of listings (the count shown on
@@ -655,6 +674,14 @@ function categoryIcon(name) {
         </div>
       </div>
 
+      <div class="detail-row detail-erc8004" id="erc8004-row" hidden>
+        <div class="detail-row-label">ERC-8004 identity</div>
+        <div>
+          <span class="erc8004-value"></span>
+          <p class="erc8004-note">Provided by the builder. Not verified by Agraris, and a listing is not an endorsement.</p>
+        </div>
+      </div>
+
       <div class="detail-row detail-published">
         <div class="detail-row-label">Published</div>
         <div>${escapeHtml(formatDate(agent.created_at))}</div>
@@ -734,6 +761,7 @@ function categoryIcon(name) {
     loadOnchainActivity(container);
     loadBuilderMore(container, agent);
     loadWantedAnswer(container, agent);
+    loadErc8004Identity(container, agent);
     initWeeklyCard(container, agent);
     initCopyBadgeButton(container);
     initEmbedSnippet(container, agent.id);

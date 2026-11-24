@@ -5,7 +5,7 @@
 // jadi pemilik bisa menyetujui / menolak submission dari HP tanpa SQL.
 //
 // Input (diteruskan workflow lewat env, TIDAK lewat perintah shell):
-//   REVIEW_ACTION — list | approve | reject | set-contract | set-demo | set-avatar
+//   REVIEW_ACTION — list | approve | reject | set-contract | set-demo | set-avatar | set-erc8004
 //   REVIEW_NAME   — nama agent persis (opsional)
 //   REVIEW_ID     — uuid agent (opsional; wajib kalau nama dipakai lebih
 //                   dari satu submission pending)
@@ -53,16 +53,18 @@ const {
   appendSummary,
 } = require("./review-lib");
 
-const ACTIONS = ["list", "approve", "reject", "set-contract", "set-demo", "set-avatar"];
+const ACTIONS = ["list", "approve", "reject", "set-contract", "set-demo", "set-avatar", "set-erc8004"];
 const SET_ACTIONS = {
   "set-contract": { column: "contract_address", label: "contract address" },
   "set-demo": { column: "demo_url", label: "demo link" },
   "set-avatar": { column: "use_avatar", label: "avatar GitHub" },
+  "set-erc8004": { column: "erc8004_agent_id", label: "ERC-8004 agent ID" },
 };
 const CLEAR_VALUE = "clear";
 
 // Sama dengan update_submission() di supabase/migration-edit-listing.sql.
 const ADDRESS_PATTERN = /^0x[0-9a-fA-F]{40}$/;
+const ERC8004_ID_PATTERN = /^[1-9][0-9]{0,19}$/;
 const MAX_DEMO_URL = 500;
 const LIST_LIMIT = 100;
 
@@ -129,6 +131,14 @@ function parseSetValue(action, raw) {
     throw new UsageError('value untuk set-avatar harus "on" atau "off".');
   }
   if (raw.toLowerCase() === CLEAR_VALUE) return null;
+
+  if (action === "set-erc8004") {
+    // Sama dengan constraint di supabase/migration-erc8004.sql.
+    if (!ERC8004_ID_PATTERN.test(raw)) {
+      throw new UsageError("value harus angka bulat tanpa nol di depan (maks 20 digit), mis. 20805.");
+    }
+    return raw;
+  }
 
   if (action === "set-contract") {
     if (!ADDRESS_PATTERN.test(raw)) {
