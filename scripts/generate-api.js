@@ -51,6 +51,8 @@ const DB_COLUMNS = [
   "category",
   "demo_url",
   "contract_address",
+  // ID ERC-8004 yang diisi builder, tidak diverifikasi (supabase/migration-erc8004.sql).
+  "erc8004_agent_id",
   "created_at",
   "approved_at",
   "github_stars",
@@ -129,6 +131,7 @@ function buildListing(row, proof = null) {
     category: normalizeCategories(row.category),
     demo_url: nullable(row.demo_url),
     contract_address: nullable(row.contract_address),
+    erc8004_agent_id: nullable(row.erc8004_agent_id),
     created_at: nullable(row.created_at),
     approved_at: nullable(row.approved_at),
     github_stars: nullable(row.github_stars),

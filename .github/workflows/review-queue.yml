@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
     inputs:
       action:
-        description: "list = lihat antrean, approve = setujui, reject = hapus submission pending, set-contract / set-demo = isi contract address / demo link (agent mana pun), set-avatar = value on/off untuk avatar GitHub"
+        description: "list = lihat antrean, approve = setujui, reject = hapus submission pending, set-contract / set-demo = isi contract address / demo link (agent mana pun), set-avatar = value on/off untuk avatar GitHub, set-erc8004 = ID angka ERC-8004"
         type: choice
         options:
           - list
@@ -15,6 +15,7 @@ on:
           - set-contract
           - set-demo
           - set-avatar
+          - set-erc8004
         default: list
         required: true
       name:
@@ -26,7 +27,7 @@ on:
         type: string
         required: false
       value:
-        description: "Untuk set-contract / set-demo: 0x… atau https://…; set-avatar: on atau off; isi clear untuk mengosongkan"
+        description: "Untuk set-contract / set-demo: 0x… atau https://…; set-avatar: on atau off; set-erc8004: angka ID; isi clear untuk mengosongkan"
         type: string
         required: false
 

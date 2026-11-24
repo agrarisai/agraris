@@ -79,6 +79,7 @@ function view(l) {
     repo_url: l.repo_url ?? null,
     demo_url: l.demo_url ?? null,
     contract_address: l.contract_address ?? null,
+    erc8004_agent_id: l.erc8004_agent_id ?? null,
     verified: l.verified === true,
     live_status: l.live_status ?? null,
     github_stars: l.github_stars ?? null,

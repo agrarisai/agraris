@@ -248,6 +248,17 @@
       return;
     }
 
+    // Optional. Same pattern as the database check constraint in
+    // supabase/migration-erc8004.sql.
+    const erc8004Id = form.erc8004_agent_id ? form.erc8004_agent_id.value.trim() : "";
+    if (erc8004Id && !/^[1-9][0-9]{0,19}$/.test(erc8004Id)) {
+      setMessage(
+        "ERC-8004 agent ID must be a whole number without leading zeros (up to 20 digits), e.g. 20805. Leave it empty if you don't have one.",
+        "error"
+      );
+      return;
+    }
+
     const category = categoryRaw
       .split(",")
       .map((s) => s.trim())
@@ -281,6 +292,12 @@
     // contract_address column hasn't been added to the database yet.
     if (contractAddress) {
       payload.contract_address = contractAddress;
+    }
+
+    // Only sent when filled in, so publishing keeps working even if the
+    // erc8004_agent_id column hasn't been added yet (supabase/migration-erc8004.sql).
+    if (erc8004Id) {
+      payload.erc8004_agent_id = erc8004Id;
     }
 
     // Only sent when ticked, so publishing keeps working even if the

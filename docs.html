@@ -200,6 +200,7 @@
             <tr><td><code>category</code></td><td>string[]</td><td>Category / tool tags</td></tr>
             <tr><td><code>demo_url</code></td><td>string | null</td><td>Optional demo link</td></tr>
             <tr><td><code>contract_address</code></td><td>string | null</td><td>Optional address provided by the builder, not verified by Agraris</td></tr>
+            <tr><td><code>erc8004_agent_id</code></td><td>string | null</td><td>Optional ERC-8004 agent ID (digits only) provided by the builder, not verified by Agraris</td></tr>
             <tr><td><code>created_at</code></td><td>string (ISO 8601)</td><td>When the listing was submitted</td></tr>
             <tr><td><code>approved_at</code></td><td>string | null</td><td>When it was approved; null for listings from before the review queue</td></tr>
             <tr><td><code>github_stars</code></td><td>integer | null</td><td>Refreshed daily from GitHub</td></tr>
@@ -495,6 +496,7 @@ const topTradingAgents = await res.json();</code></pre>
             <tr><td><code>github_stars</code></td><td>integer</td><td>Nullable; refreshed daily from GitHub</td></tr>
             <tr><td><code>github_updated_at</code></td><td>timestamptz</td><td>Nullable; last push to the repo</td></tr>
             <tr><td><code>contract_address</code></td><td>text</td><td>Optional; contract or wallet address (<code>0x</code> + 40 hex) provided by the builder, not verified by Agraris</td></tr>
+            <tr><td><code>erc8004_agent_id</code></td><td>text</td><td>Optional; ERC-8004 agent ID (digits only, no leading zeros) provided by the builder, not verified by Agraris</td></tr>
             <tr><td><code>kind</code></td><td>text</td><td><code>agent</code> or <code>tool</code>; filter with <code>?kind=eq.tool</code></td></tr>
             <tr><td><code>live_status</code></td><td>text</td><td>Nullable; <code>up</code> or <code>down</code>, see <a href="#live-check">Live check</a></td></tr>
             <tr><td><code>live_checked_at</code></td><td>timestamptz</td><td>Nullable; when the demo link was last checked</td></tr>

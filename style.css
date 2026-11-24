@@ -6141,3 +6141,8 @@ html::after {
 .publish-wanted { margin: 18px 0 6px; }
 .publish-wanted .section-head { margin-bottom: 10px; }
 .publish-wanted .section-head h2 { font-size: 20px; }
+
+/* Listing page: ERC-8004 identity row (builder-provided, not verified). */
+.detail-erc8004[hidden] { display: none; }
+.erc8004-value { font-family: var(--font-mono, monospace); }
+.erc8004-note { margin: 6px 0 0; font-size: 12.5px; line-height: 1.5; opacity: 0.7; }
