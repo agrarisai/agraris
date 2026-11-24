@@ -126,7 +126,7 @@ const AGENT_LOGOS = {
   "https://github.com/noctenna-lab/noctenna": "logos/noctenna.webp",
   "https://github.com/purseragents/purser": "logos/purser.webp",
   "https://github.com/valory-xyz/open-autonomy": "logos/olas-open-autonomy.webp",
-  "https://github.com/proofofstock/proof-of-stock": "logos/proof-of-stock.webp",
+  "https://github.com/proofofstock/proof-of-stock": "logos/proof-of-stock-shield.webp",
   "https://github.com/veyanet/veya-mcp": "logos/veya-mcp.webp",
 };
 
