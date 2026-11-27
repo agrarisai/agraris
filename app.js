@@ -129,6 +129,7 @@ const AGENT_LOGOS = {
   "https://github.com/proofofstock/proof-of-stock": "logos/proof-of-stock-shield.webp",
   "https://github.com/veyanet/veya-mcp": "logos/veya-mcp.webp",
   "https://github.com/agentcitylabs/gmgn-robinhood-mcp": "logos/agentcity-research.webp",
+  "https://github.com/oakagentkit/oak": "logos/oak-agent-kit.webp",
 };
 
 function agentLogoPath(listing) {
